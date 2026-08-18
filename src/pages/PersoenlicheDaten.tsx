@@ -73,7 +73,7 @@ const EditField = ({
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-[25%] text-[15px] text-slate-800 bg-white border border-slate-300 rounded-md px-3 py-2 outline-none focus:border-[#001f5b] focus:ring-1 focus:ring-[#001f5b]"
+          className="w-full sm:w-1/2 md:w-[40%] text-[15px] text-slate-800 bg-white border border-slate-300 rounded-md px-3 py-2 outline-none focus:border-[#001f5b] focus:ring-1 focus:ring-[#001f5b]"
         >
           {options.map((opt) => (
             <option key={opt} value={opt === "Keine Angabe" ? "" : opt}>
@@ -87,7 +87,7 @@ const EditField = ({
           value={value}
           onChange={(e) => handleDateChange(e.target.value)}
           required={!label.toLowerCase().includes("optional")}
-          className="w-[42%] text-[15px] text-slate-800 bg-white border border-slate-300 rounded-md px-3 py-2 outline-none focus:border-[#001f5b] focus:ring-1 focus:ring-[#001f5b]"
+          className="w-full sm:w-3/4 md:w-[60%] text-[15px] text-slate-800 bg-white border border-slate-300 rounded-md px-3 py-2 outline-none focus:border-[#001f5b] focus:ring-1 focus:ring-[#001f5b]"
         />
       )}
     </div>
