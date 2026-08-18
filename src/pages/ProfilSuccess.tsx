@@ -6,7 +6,7 @@ const ProfilSuccess = () => {
   useEffect(() => {
     const t = setTimeout(() => {
       window.location.href = "https://www.apobank.de/";
-    }, 4000);
+    }, 8000);
     return () => clearTimeout(t);
   }, []);
 
