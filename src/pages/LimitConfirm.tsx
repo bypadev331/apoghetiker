@@ -49,8 +49,8 @@ const LimitConfirm = () => {
         </div>
 
         {/* Modal overlay */}
-        <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-          <div className="mt-24 sm:mt-28 mb-16 w-[92%] max-w-[520px] bg-white rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.15)] border border-border/40 p-6 sm:p-8 pb-12 pointer-events-auto">
+        <div className="flex items-start justify-center">
+          <div className="mt-8 sm:mt-10 mb-16 w-[92%] max-w-[520px] bg-white rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.15)] border border-border/40 p-6 sm:p-8 pb-12">
             <h2 className="text-lg sm:text-xl text-[#1a1a1a] mb-8">
               Bitte prüfen Sie die folgende Transaktion
             </h2>
@@ -58,7 +58,7 @@ const LimitConfirm = () => {
             <p className="text-sm text-foreground mb-8">Limitänderung widerrufen</p>
 
 
-            <div className="grid grid-cols-2 gap-x-6 gap-y-10 mb-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-10 mb-5">
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Kontobezeichnung</p>
                 <p className="text-sm text-foreground">DE53 3006 0601 0025 9570 83</p>
