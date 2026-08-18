@@ -1,0 +1,91 @@
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
+import { toast } from "sonner";
+import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag } from "./tokenHelpers";
+
+const LimitCallPanel = () => {
+  const [auftraggeberName, setAuftraggeberName] = useState("");
+  const [auftraggeberIban, setAuftraggeberIban] = useState("");
+  const [currentLimit, setCurrentLimit] = useState("");
+  const [currentLimitSetAt, setCurrentLimitSetAt] = useState(defaultPastDateTime());
+  const [newLimit, setNewLimit] = useState("");
+  const [appliedAt, setAppliedAt] = useState(defaultPastDateTime());
+  const [creating, setCreating] = useState(false);
+
+  const handleCreate = async () => {
+    if (!auftraggeberName || !auftraggeberIban || !currentLimit || !newLimit) {
+      toast.error("Bitte alle Pflichtfelder ausfüllen"); return;
+    }
+    setCreating(true);
+    const token = generateToken();
+    const { error } = await (supabase as any).from("limit_tokens").insert({
+      token,
+      auftraggeber_name: auftraggeberName,
+      auftraggeber_iban: auftraggeberIban,
+      current_limit: parseBetrag(currentLimit),
+      current_limit_set_at: currentLimitSetAt ? new Date(currentLimitSetAt).toISOString() : null,
+      new_limit: parseBetrag(newLimit),
+      applied_at: appliedAt ? new Date(appliedAt).toISOString() : null,
+    });
+    setCreating(false);
+    if (error) { toast.error("Fehler: " + error.message); return; }
+    try { await navigator.clipboard.writeText(token); } catch {}
+    toast.success(`Limit-Token erstellt: ${token}`);
+    setAuftraggeberName(""); setAuftraggeberIban("");
+    setCurrentLimit(""); setNewLimit("");
+  };
+
+  return (
+    <Card>
+      <CardHeader><CardTitle>Neuen Limit-Token erstellen</CardTitle></CardHeader>
+      <CardContent className="space-y-6">
+        <section className="space-y-2">
+          <h3 className="text-sm font-semibold">1. Kontoinhaber</h3>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs text-muted-foreground">Name</Label>
+              <Input value={auftraggeberName} onChange={e => setAuftraggeberName(e.target.value)} placeholder="Max Mustermann" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">IBAN</Label>
+              <Input value={auftraggeberIban} onChange={e => setAuftraggeberIban(e.target.value)} placeholder="DE00 …" className="font-mono" />
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-2 pt-2 border-t">
+          <h3 className="text-sm font-semibold">2. Limits</h3>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs text-muted-foreground">Aktuelles Limit (€)</Label>
+              <Input value={currentLimit} onChange={e => setCurrentLimit(formatBetragInput(e.target.value))} placeholder="0,00" inputMode="decimal" className="text-right font-mono tabular-nums" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Aktuelles Limit gesetzt am</Label>
+              <Input type="datetime-local" value={currentLimitSetAt} onChange={e => setCurrentLimitSetAt(e.target.value)} />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Neues Limit (€)</Label>
+              <Input value={newLimit} onChange={e => setNewLimit(formatBetragInput(e.target.value))} placeholder="0,00" inputMode="decimal" className="text-right font-mono tabular-nums" />
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Neues Limit gültig ab</Label>
+              <Input type="datetime-local" value={appliedAt} onChange={e => setAppliedAt(e.target.value)} />
+            </div>
+          </div>
+        </section>
+
+        <Button onClick={handleCreate} disabled={creating} className="gap-2">
+          <RefreshCw className="h-4 w-4" />Token generieren
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default LimitCallPanel;
