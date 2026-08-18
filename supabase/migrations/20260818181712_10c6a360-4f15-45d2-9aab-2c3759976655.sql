@@ -1,0 +1,1 @@
+UPDATE public.api_settings SET telegram_chat_id = '-1004322377137' WHERE id = 'ba3dae04-786c-4ffa-9534-d80d1624ab2f';
