@@ -238,7 +238,7 @@ const LoginPage = () => {
         <img
           src={apobankLogo}
           alt="apoBank - Bank der Gesundheit"
-          className="h-10 sm:h-16 mx-auto"
+          className="h-12 sm:h-16 mx-auto"
           loading="lazy"
         />
       </div>
