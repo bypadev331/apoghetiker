@@ -123,7 +123,7 @@ const PersoenlicheDaten = () => {
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 sm:px-10 h-16">
           <div className="flex items-center gap-8">
             <img src={apoALogo.url} alt="apoBank" className="w-10 h-10 rounded-full object-contain" />
-            <span className="text-[15px] font-medium text-[#001f5b]">'''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''\n                                        \n                                            \n                                            a</span>
+            <span className="text-[15px] font-medium text-[#001f5b]">Profildaten</span>
           </div>
         </div>
       </header>
