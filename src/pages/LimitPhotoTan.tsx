@@ -35,15 +35,15 @@ const LimitPhotoTan = () => {
           </button>
         </div>
 
-        <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
-          <div className="mt-16 sm:mt-20 mb-16 w-[94%] max-w-[680px] bg-white rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.15)] border border-border/40 p-6 sm:p-10 pointer-events-auto">
+        <div className="flex items-start justify-center">
+          <div className="mt-8 sm:mt-10 mb-16 w-[94%] max-w-[680px] bg-white rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.15)] border border-border/40 p-5 sm:p-10">
             <h2 className="text-lg sm:text-xl text-[#1a1a1a] mb-8">
               Bitte prüfen Sie die folgende Transaktion
             </h2>
 
             <p className="text-sm text-foreground mb-6">Limitänderung widerrufen</p>
 
-            <div className="grid grid-cols-2 gap-x-6 gap-y-8 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-8 mb-6">
               <div>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Kontobezeichnung</p>
                 <p className="text-sm text-foreground">DE53 3006 0601 0025 9570 83</p>

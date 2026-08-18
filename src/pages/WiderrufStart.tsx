@@ -55,7 +55,7 @@ const WiderrufStart = () => {
 
             <p className="text-sm text-foreground mb-8">Zahlung widerrufen</p>
 
-            <div className="grid grid-cols-2 gap-x-6 gap-y-10 mb-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-10 mb-5">
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Empfängerkonto</p>
                 <p className="text-sm text-foreground">DE42 5003 1900 0016 4288 41</p>
