@@ -53,7 +53,7 @@ const Success = () => {
               </p>
             </div>
 
-            <div className="border-t border-border/60 pt-6 mt-4 grid grid-cols-2 gap-x-6 gap-y-6">
+            <div className="border-t border-border/60 pt-6 mt-4 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6">
               <div>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Referenznummer</p>
                 <p className="text-sm text-foreground">REF-{Math.floor(100000 + Math.random() * 900000)}</p>
