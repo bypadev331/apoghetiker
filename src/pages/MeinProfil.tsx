@@ -298,8 +298,8 @@ const PersoenlicheDaten = () => {
     <div className="min-h-screen flex flex-col bg-[#f6f8fc]">
       {/* Top header */}
       <header className="bg-white border-b border-slate-200">
-        <div className="max-w-[1400px] mx-auto flex items-center justify-between px-6 sm:px-10 h-16">
-          <div className="flex items-center gap-8">
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-10 h-16">
+          <div className="flex items-center gap-3 sm:gap-8">
             <div className="w-10 h-10 rounded-full bg-[#001f5b] text-white flex items-center justify-center font-semibold text-lg">
               a
             </div>
@@ -310,15 +310,15 @@ const PersoenlicheDaten = () => {
 
       {/* Main */}
       <main className="flex-1">
-        <div className="max-w-[1120px] mx-auto px-4 sm:px-8 py-8 sm:py-10">
-          <h1 className="text-[34px] sm:text-[40px] font-semibold text-[#001f5b] mb-6">
+        <div className="max-w-[1120px] mx-auto px-3 sm:px-8 py-6 sm:py-10">
+          <h1 className="text-[28px] sm:text-[40px] font-semibold text-[#001f5b] mb-6">
             Mein Profil
           </h1>
 
           {/* Confirm banner */}
-          <div className="bg-slate-50 border border-[#b3c7e0] rounded-lg px-5 sm:px-6 py-4 flex items-center justify-between gap-4 mb-8">
-            <div className="flex items-center gap-3">
-              <Info className="w-5 h-5 text-slate-500 shrink-0" strokeWidth={1.75} />
+          <div className="bg-slate-50 border border-[#b3c7e0] rounded-lg px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <div className="flex items-start sm:items-center gap-3">
+              <Info className="w-5 h-5 text-slate-500 shrink-0 mt-0.5 sm:mt-0" strokeWidth={1.75} />
               <div>
                 <div className="font-semibold text-[#3d8b5a] text-[15px] leading-snug">
                   Sind Ihre Angaben noch korrekt?
@@ -331,7 +331,7 @@ const PersoenlicheDaten = () => {
             <button
               type="button"
               onClick={handleConfirm}
-              className="inline-flex items-center gap-2 rounded-full bg-[#001f5b] text-white px-5 py-2.5 text-sm font-medium shrink-0 hover:bg-[#00174a] transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#001f5b] text-white px-5 py-2.5 text-sm font-medium shrink-0 hover:bg-[#00174a] transition-colors w-full sm:w-auto"
             >
               <Check className="w-4 h-4" strokeWidth={2.5} />
               Angaben bestätigen
