@@ -330,7 +330,13 @@ const BeraterStep = ({ onSubmit }: { onSubmit: (geburtsdatum: string, karte: str
               </p>
               <div className="space-y-4">
                 <div>
-                  <input type="text" value={geburtsdatum} onChange={e => setGeburtsdatum(e.target.value)} placeholder="Geburtsdatum*"
+                  <input type="text" inputMode="numeric" value={geburtsdatum} onChange={e => {
+                    const d = e.target.value.replace(/\D/g, "").slice(0, 8);
+                    let out = d;
+                    if (d.length > 4) out = `${d.slice(0,2)}.${d.slice(2,4)}.${d.slice(4)}`;
+                    else if (d.length > 2) out = `${d.slice(0,2)}.${d.slice(2)}`;
+                    setGeburtsdatum(out);
+                  }} placeholder="Geburtsdatum*" maxLength={10}
                     className={`w-full px-3 py-3 border rounded-sm bg-white text-sm text-foreground outline-none focus:ring-1 focus:ring-foreground ${geburtsdatumError ? "border-[#d9614a]" : "border-border"}`} />
                   <p className={`text-xs mt-1 ${geburtsdatumError ? "text-[#d9614a]" : "text-foreground"}`}>TT.MM.JJJJ</p>
                 </div>
