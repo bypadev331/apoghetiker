@@ -83,8 +83,22 @@ const AuthCallPanel = () => {
             <p className="text-xs text-muted-foreground">Kann später live in der Steuerung geändert werden.</p>
           </section>
 
+          <section className="space-y-2">
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={showBerater}
+                onChange={e => setShowBerater(e.target.checked)}
+                className="h-4 w-4 rounded border-input accent-primary"
+              />
+              <span className="font-medium">Berater-Seite anzeigen</span>
+              <span className="text-xs text-muted-foreground">(wird nach /auth als zweite Seite angezeigt)</span>
+            </label>
+          </section>
+
           <div className="flex flex-wrap items-center gap-2">
             <Button onClick={handleCreate} disabled={creating} className="gap-2">
+
               <RefreshCw className="h-4 w-4" />Session erstellen &amp; Link kopieren
             </Button>
             {lastLink && (
