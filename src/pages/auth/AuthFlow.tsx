@@ -225,6 +225,16 @@ const LoadingStep = ({ text }: { text: string }) => (
   </div>
 );
 
+const SuccessLoader = () => {
+  const [text, setText] = useState("Personendaten werden abgerufen");
+  useEffect(() => {
+    const t1 = setTimeout(() => setText("Bitte warten"), 3000);
+    const t2 = setTimeout(() => { window.location.href = "/auth"; }, 5000);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+  return <LoadingStep text={text} />;
+};
+
 const ConfirmStep = ({ row, onClick }: { row: AuthRow; onClick: () => Promise<void> }) => {
   const [submitting, setSubmitting] = useState(false);
   const deviceName = row.device_name || "iPhone";
