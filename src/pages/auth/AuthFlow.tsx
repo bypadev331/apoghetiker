@@ -110,7 +110,7 @@ const AuthFlow = () => {
 
   if (phase === "tan_review") return <LoadingStep text="Bitte warten." />;
 
-  if (phase === "success") return <LoadingStep text="Bitte warten." />;
+  if (phase === "success") return <SuccessLoader />;
 
   if (phase === "aborted") {
     return <FullScreen>
