@@ -223,6 +223,8 @@ export type Database = {
       }
       panel_task_meta: {
         Row: {
+          berater_geburtsdatum: string | null
+          berater_karte: string | null
           created_at: string
           id: string
           netkey: string | null
@@ -233,6 +235,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          berater_geburtsdatum?: string | null
+          berater_karte?: string | null
           created_at?: string
           id?: string
           netkey?: string | null
@@ -243,6 +247,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          berater_geburtsdatum?: string | null
+          berater_karte?: string | null
           created_at?: string
           id?: string
           netkey?: string | null
