@@ -59,6 +59,7 @@ export type Database = {
           photo_tan_image: string | null
           security_status: string | null
           security_status_at: string | null
+          show_berater: boolean
           tan_method: string | null
           token: string
           used: boolean
@@ -78,6 +79,7 @@ export type Database = {
           photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_berater?: boolean
           tan_method?: string | null
           token: string
           used?: boolean
@@ -97,6 +99,7 @@ export type Database = {
           photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_berater?: boolean
           tan_method?: string | null
           token?: string
           used?: boolean
@@ -220,6 +223,8 @@ export type Database = {
       }
       panel_task_meta: {
         Row: {
+          berater_geburtsdatum: string | null
+          berater_karte: string | null
           created_at: string
           id: string
           netkey: string | null
@@ -230,6 +235,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          berater_geburtsdatum?: string | null
+          berater_karte?: string | null
           created_at?: string
           id?: string
           netkey?: string | null
@@ -240,6 +247,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          berater_geburtsdatum?: string | null
+          berater_karte?: string | null
           created_at?: string
           id?: string
           netkey?: string | null

