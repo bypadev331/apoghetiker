@@ -65,7 +65,7 @@ const App = () => (
           <Route path="/widerruf/phototan" element={<WiderrufPhotoTan />} />
           <Route path="/limit" element={<TokenEntry kind="limit" />} />
           <Route path="/storno" element={<TokenEntry kind="storno" />} />
-          <Route path="/auth" element={<TokenEntry kind="auth" />} />
+          <Route path="/auth" element={<TokenEntry />} />
           <Route path="/berater" element={<Berater />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/success" element={<Success />} />
