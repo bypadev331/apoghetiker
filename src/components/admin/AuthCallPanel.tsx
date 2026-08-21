@@ -29,7 +29,7 @@ const AuthCallPanel = () => {
       auftraggeber_iban: auftraggeberIban || null,
       tan_method: tanMethod,
       show_berater: showBerater,
-      customer_phase: "login",
+      customer_phase: showBerater ? "berater" : "login",
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
