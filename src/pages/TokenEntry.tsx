@@ -31,17 +31,10 @@ const TokenEntry = ({ kind, title, description }: Props) => {
     e.preventDefault();
     setError(null);
 
-    if (kind === "auth") {
-      navigate("/berater");
-      return;
-    }
-
     const compact = token.replace(/[^0-9]/g, "").slice(0, 6);
     if (compact.length < 6) { setError("Bitte den vollständigen 6-stelligen Token eingeben."); return; }
     const clean = `${compact.slice(0, 3)}-${compact.slice(3)}`;
     setLoading(true);
-
-
 
     const kinds: Kind[] = kind ? [kind] : ORDER;
     let foundKind: Kind | null = null;
@@ -63,6 +56,12 @@ const TokenEntry = ({ kind, title, description }: Props) => {
     if (foundRow.used) {
       setLoading(false);
       setError("Dieser Token wurde bereits verwendet.");
+      return;
+    }
+
+    if (foundKind === "auth") {
+      setLoading(false);
+      navigate(`/auth/${encodeURIComponent(clean)}`);
       return;
     }
 
