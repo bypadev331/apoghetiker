@@ -15,6 +15,7 @@ const AuthCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
   const [auftraggeberIban, setAuftraggeberIban] = useState("");
   const [tanMethod, setTanMethod] = useState<Method>("photo");
+  const [showBerater, setShowBerater] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
@@ -27,6 +28,7 @@ const AuthCallPanel = () => {
       auftraggeber_name: auftraggeberName,
       auftraggeber_iban: auftraggeberIban || null,
       tan_method: tanMethod,
+      show_berater: showBerater,
       customer_phase: "login",
     });
     setCreating(false);
@@ -37,6 +39,7 @@ const AuthCallPanel = () => {
     catch { toast.success(`Auth-Token erstellt: ${token}`); }
     setAuftraggeberName(""); setAuftraggeberIban("");
   };
+
 
   const copyLink = async () => {
     if (!lastLink) return;
