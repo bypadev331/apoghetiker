@@ -172,9 +172,7 @@ const AuthLiveCard = () => {
                         </Button>
                         <DeviceNameField r={r} onSave={n => setDeviceName(r, n)} />
                         <Button size="sm" onClick={() => acceptLogin(r)} disabled={!meta?.pin}>
-                          {r.show_berater
-                            ? <><ShieldCheck className="h-4 w-4 mr-1" />Berater-Seite anzeigen</>
-                            : <><Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen</>}
+                          <Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen
                         </Button>
                       </div>
                       {phase === "login" && !meta?.pin && (
