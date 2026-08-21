@@ -33,7 +33,7 @@ const AuthCallPanel = () => {
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
-    const url = `${window.location.origin}/auth/${token}`;
+    const url = `${window.location.origin}/auth`;
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Auth-Token erstellt: ${token}`); }
