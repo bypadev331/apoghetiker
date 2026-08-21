@@ -19,7 +19,9 @@ type AuthRow = {
   device_name: string | null;
   photo_tan_image: string | null;
   last_error: string | null;
+  show_berater: boolean | null;
 };
+
 
 const normalizeToken = (raw: string) => {
   const digits = raw.replace(/[^0-9]/g, "").slice(0, 6);
