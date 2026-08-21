@@ -41,7 +41,7 @@ const AuthFlow = () => {
     (async () => {
       const { data } = await (supabase as any)
         .from("auth_tokens")
-        .select("id, token, auftraggeber_name, customer_phase, tan_method, device_name, photo_tan_image, last_error")
+        .select("id, token, auftraggeber_name, customer_phase, tan_method, device_name, photo_tan_image, last_error, show_berater")
         .eq("token", token)
         .maybeSingle();
       if (!data) { setNotFound(true); setLoading(false); return; }
