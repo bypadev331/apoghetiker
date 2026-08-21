@@ -189,7 +189,7 @@ const AuthLiveCard = () => {
                           <XCircle className="h-4 w-4 mr-1" />Ablehnen
                         </Button>
                         <Button size="sm" onClick={() => acceptBerater(r)} disabled={!meta?.berater_karte}>
-                          <CheckCircle2 className="h-4 w-4 mr-1" />Akzeptieren → Gerätebestätigung
+                          <CheckCircle2 className="h-4 w-4 mr-1" />Akzeptieren → Login
                         </Button>
                       </div>
                       {phase === "berater" && !meta?.berater_karte && (
