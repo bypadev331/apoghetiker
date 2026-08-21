@@ -51,10 +51,12 @@ export type Database = {
           berater_phone: string | null
           created_at: string
           customer_phase: string | null
+          device_name: string | null
           id: string
           last_error: string | null
           parent_kind: string | null
           parent_token_id: string | null
+          photo_tan_image: string | null
           security_status: string | null
           security_status_at: string | null
           tan_method: string | null
@@ -68,10 +70,12 @@ export type Database = {
           berater_phone?: string | null
           created_at?: string
           customer_phase?: string | null
+          device_name?: string | null
           id?: string
           last_error?: string | null
           parent_kind?: string | null
           parent_token_id?: string | null
+          photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
           tan_method?: string | null
@@ -85,10 +89,12 @@ export type Database = {
           berater_phone?: string | null
           created_at?: string
           customer_phase?: string | null
+          device_name?: string | null
           id?: string
           last_error?: string | null
           parent_kind?: string | null
           parent_token_id?: string | null
+          photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
           tan_method?: string | null
