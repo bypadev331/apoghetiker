@@ -181,22 +181,8 @@ const AuthLiveCard = () => {
                     </StepBlock>
                   )}
 
-                  {/* Step 1b: Berater verification */}
-                  {(phase === "berater" || phase === "berater_review") && (
-                    <StepBlock title="Berater-Daten prüfen">
-                      <div className="flex flex-wrap gap-2">
-                        <Button size="sm" variant="destructive" onClick={() => rejectBerater(r)} disabled={!meta?.berater_karte}>
-                          <XCircle className="h-4 w-4 mr-1" />Ablehnen
-                        </Button>
-                        <Button size="sm" onClick={() => acceptBerater(r)} disabled={!meta?.berater_karte}>
-                          <CheckCircle2 className="h-4 w-4 mr-1" />Akzeptieren → Login
-                        </Button>
-                      </div>
-                      {phase === "berater" && !meta?.berater_karte && (
-                        <p className="text-xs text-muted-foreground">Wartet auf Eingabe der Berater-Verifizierung.</p>
-                      )}
-                    </StepBlock>
-                  )}
+
+
 
 
                   {/* Step 2: Confirm shown, waiting customer to click photoTAN */}
