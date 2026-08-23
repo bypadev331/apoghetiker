@@ -75,10 +75,7 @@ const LoginPage = () => {
         <div className="px-4 sm:px-8 py-5 sm:py-6 space-y-6 sm:space-y-8 bg-muted border border-border/40 border-t-0">
           {/* Welcome */}
           <p className="font-semibold text-foreground" style={{ fontFamily: "'Tanseek Modern Arabic Medium', Arial, sans-serif" }}>
-            '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-                                        
-                                            
-                                            geht nicht
+            Willkommen im Online-Banking der apoBank
           </p>
 
           {/* Security Banner */}
