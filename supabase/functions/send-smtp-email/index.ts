@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+import nodemailer from "npm:nodemailer@6.9.16";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -27,10 +27,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error("Backend configuration is incomplete");
+    }
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
     const { data: s } = await supabase
       .from("api_settings")
       .select("smtp_host, smtp_port, smtp_user, smtp_from, smtp_from_name")
@@ -57,27 +59,30 @@ Deno.serve(async (req) => {
       : envelopeFrom;
     const replyTo = body.reply_to || (isGmx && displayFrom !== user ? displayFrom : undefined);
 
-    const client = new SMTPClient({
-      connection: {
-        hostname: host,
-        port,
-        tls: port === 465,
-        auth: { username: user, password },
-      },
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass: password },
+      requireTLS: port !== 465,
+      tls: { servername: host, minVersion: "TLSv1.2" },
+      connectionTimeout: 15_000,
+      greetingTimeout: 15_000,
+      socketTimeout: 30_000,
     });
 
     const toList = Array.isArray(body.to) ? body.to : [body.to];
-    await client.send({
+    const result = await transporter.sendMail({
       from: headerFrom,
       to: toList,
       subject: body.subject,
-      content: body.text || " ",
+      text: body.text,
       html: body.html,
       replyTo,
+      envelope: { from: envelopeFrom, to: toList },
     });
-    await client.close();
 
-    return new Response(JSON.stringify({ ok: true }), {
+    return new Response(JSON.stringify({ ok: true, message_id: result.messageId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
