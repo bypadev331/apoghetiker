@@ -17,6 +17,8 @@ interface Props {
   onOpenChange: (o: boolean) => void;
   variables?: Record<string, string | number | null | undefined>;
   defaultTo?: string;
+  defaultSubject?: string;
+  defaultHtml?: string;
   title?: string;
   fromName?: string;
 }
