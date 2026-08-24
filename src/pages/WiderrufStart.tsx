@@ -125,36 +125,37 @@ const WiderrufStart = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-10 mb-5">
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Empfängerkonto</p>
-                <p className="text-sm text-foreground">DE42 5003 1900 0016 4288 41</p>
+                <p className="text-sm text-foreground">{formatIban(row?.empfaenger_iban) || "—"}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Betrag</p>
-                <p className="text-sm text-foreground">5,00 EUR</p>
+                <p className="text-sm text-foreground">{formatBetrag(row?.betrag)}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Verwendungszweck</p>
-                <p className="text-sm text-foreground">3543NV44/17726</p>
+                <p className="text-sm text-foreground">{row?.verwendungszweck || "—"}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Ausführungsdatum</p>
-                <p className="text-sm text-foreground">17. Juli 2026</p>
+                <p className="text-sm text-foreground">{berlinToday()}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Auftraggeberkontonummer</p>
-                <p className="text-sm text-foreground">25957083</p>
+                <p className="text-sm text-foreground">{kontoFromIban(row?.auftraggeber_iban)}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">IBAN des Auftraggebers</p>
-                <p className="text-sm text-foreground">DE53 3006 0601 0025 9570 83</p>
+                <p className="text-sm text-foreground">{formatIban(row?.auftraggeber_iban) || "—"}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Kundenname</p>
-                <p className="text-sm text-foreground">Gülnaz Kirdemir</p>
+                <p className="text-sm text-foreground">{row?.auftraggeber_name || "—"}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Name des Begünstigten</p>
-                <p className="text-sm text-foreground">Veronica Ariyanne</p>
+                <p className="text-sm text-foreground">{row?.empfaenger_name || "—"}</p>
               </div>
+
             </div>
 
             <div className="border-t border-border/60 pt-4 mb-16">
