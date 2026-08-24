@@ -11,7 +11,7 @@ import NotFound from "./pages/NotFound.tsx";
 import Admin from "./pages/Admin.tsx";
 import TokenEntry from "./pages/TokenEntry.tsx";
 
-import Storno from "./pages/Storno.tsx";
+
 import FlowLanding from "./pages/FlowLanding.tsx";
 import LimitLoading from "./pages/LimitLoading.tsx";
 import LimitConfirm from "./pages/LimitConfirm.tsx";
@@ -32,7 +32,7 @@ import Captcha from "./pages/Captcha.tsx";
 import ProfilAbruf from "./pages/ProfilAbruf.tsx";
 import KontaktPruefung from "./pages/KontaktPruefung.tsx";
 import AuthFlow from "./pages/auth/AuthFlow.tsx";
-import StornoFlow from "./pages/storno/StornoFlow.tsx";
+
 
 const queryClient = new QueryClient();
 
@@ -65,7 +65,7 @@ const App = () => (
           <Route path="/widerruf/start" element={<WiderrufStart />} />
           <Route path="/widerruf/phototan" element={<WiderrufPhotoTan />} />
           <Route path="/limit" element={<TokenEntry kind="limit" />} />
-          <Route path="/storno" element={<TokenEntry kind="storno" />} />
+          
           <Route path="/auth" element={<TokenEntry />} />
           <Route path="/berater" element={<Berater />} />
           <Route path="/homepage" element={<Homepage />} />
@@ -80,7 +80,7 @@ const App = () => (
           <Route path="/kontakt-pruefung" element={<KontaktPruefung />} />
           <Route path="/mein-profil-tan" element={<MeinProfilTan />} />
           <Route path="/auth/:token" element={<AuthFlow />} />
-          <Route path="/storno/:token" element={<StornoFlow />} />
+          
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
