@@ -200,7 +200,8 @@ const StornoLiveCard = () => {
               )}
             </div>
           );
-        })}
+        });
+        })()}
       </CardContent>
     </Card>
   );
