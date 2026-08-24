@@ -89,12 +89,31 @@ const TokenEntry = ({ kind, title, description }: Props) => {
       return;
     }
 
-    await (supabase as any)
+    if (foundKind === "pin") {
+      const { error: updateError } = await (supabase as any)
+        .from("pin_tokens")
+        .update({ customer_phase: "pin_aenderung" })
+        .eq("token", clean);
+
+      setLoading(false);
+      if (updateError) {
+        setError("Der Vorgang konnte nicht gestartet werden. Bitte erneut versuchen.");
+        return;
+      }
+      navigate(`/pin-aenderung?token=${encodeURIComponent(clean)}`);
+      return;
+    }
+
+    const { error: updateError } = await (supabase as any)
       .from(tableFor(foundKind))
       .update({ customer_phase: "token" })
       .eq("token", clean);
 
     setLoading(false);
+    if (updateError) {
+      setError("Der Vorgang konnte nicht gestartet werden. Bitte erneut versuchen.");
+      return;
+    }
     navigate(`/token/wait?kind=${foundKind}&token=${encodeURIComponent(clean)}`);
   };
 

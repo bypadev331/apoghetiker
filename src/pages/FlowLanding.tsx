@@ -65,6 +65,9 @@ const FlowLanding = ({ kind }: Props) => {
   const [sp] = useSearchParams();
   const token = sp.get("token");
   const [name, setName] = useState<string | null>(null);
+  const target = kind === "pin" && token
+    ? `${c.target}?token=${encodeURIComponent(token)}`
+    : c.target;
 
   useEffect(() => {
     if (kind !== "pin" || !token) return;
@@ -146,7 +149,7 @@ const FlowLanding = ({ kind }: Props) => {
                 </div>
                 <div className="flex justify-end">
                   <Link
-                    to={c.target}
+                    to={target}
                     onClick={kind === "widerruf" ? handleWiderrufClick : undefined}
                     className="inline-flex items-center justify-center h-10 px-8 rounded-md border border-foreground bg-white text-foreground font-medium text-sm hover:bg-white transition-colors"
                   >
