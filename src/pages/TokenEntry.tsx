@@ -117,6 +117,25 @@ const TokenEntry = ({ kind, title, description }: Props) => {
     navigate(`/token/wait?kind=${foundKind}&token=${encodeURIComponent(clean)}`);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await runSubmit(token);
+  };
+
+  useEffect(() => {
+    const t = searchParams.get("t") || searchParams.get("token");
+    if (t && !autoRan.current) {
+      autoRan.current = true;
+      const compact = t.replace(/[^0-9]/g, "").slice(0, 6);
+      const formatted = compact.length > 3 ? `${compact.slice(0, 3)}-${compact.slice(3)}` : compact;
+      setToken(formatted);
+      runSubmit(compact);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+
+
   return (
     <div className="min-h-screen bg-white flex flex-col relative">
       <img src={apoBankLogo} alt="apoBank Logo" className="absolute top-3 left-3 sm:top-4 sm:left-4 h-10 sm:h-16 w-auto z-10" />
