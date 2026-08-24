@@ -185,10 +185,10 @@ const LoginStep = ({ row, onSubmit, forceSubmitting }: { row: AuthRow; onSubmit:
           </div>
         </FieldRow>
         <div className="flex justify-end">
-          <Button type="submit" variant="outline" disabled={submitting}
+          <Button type="submit" variant="outline" disabled={isSubmitting}
             className={cn("px-8 bg-white hover:bg-white",
               password.length > 0 ? "border-foreground text-foreground" : "border-muted-foreground/40 text-muted-foreground")}>
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Anmelden"}
+            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Anmelden"}
           </Button>
         </div>
       </form>
