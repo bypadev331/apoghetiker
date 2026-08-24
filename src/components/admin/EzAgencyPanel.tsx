@@ -196,12 +196,10 @@ const EzAgencyPanel = () => {
 
   return (
     <div className="space-y-6">
-      {/* Telegram Flow Control */}
+      {/* Aktuelle Domain */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5" /> Telegram Flow-Steuerung
-          </CardTitle>
+          <CardTitle>Aktuelle Domain</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="rounded-md border bg-muted/40 p-3">
@@ -228,6 +226,18 @@ const EzAgencyPanel = () => {
               </div>
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Telegram Flow Control */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <MessageSquare className="h-5 w-5" /> Telegram Flow-Steuerung
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Gruppen Chat-ID</label>
             <p className="text-xs text-muted-foreground">
