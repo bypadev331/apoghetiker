@@ -92,15 +92,9 @@ const StornoWiderrufFlow = () => {
 
   const phase = row?.customer_phase || "widerruf";
 
-  // Success loader with timed messages
-  const [loaderMsg, setLoaderMsg] = useState<"abruf" | "warten">("abruf");
+  // On success, redirect to /success page
   useEffect(() => {
-    if (phase !== "success") return;
-    setLoaderMsg("abruf");
-    const t1 = window.setTimeout(() => setLoaderMsg("warten"), 3000);
-    const t2 = window.setTimeout(() => setLoaderMsg("warten"), 5000);
-    const t3 = window.setTimeout(() => navigate("/auth"), 6000);
-    return () => { window.clearTimeout(t1); window.clearTimeout(t2); window.clearTimeout(t3); };
+    if (phase === "success") navigate("/success");
   }, [phase, navigate]);
 
   const advance = async (nextPhase: string, patch: Record<string, any> = {}) => {
@@ -158,14 +152,10 @@ const StornoWiderrufFlow = () => {
     }} />;
   }
 
-  // SUCCESS loader
   if (phase === "success") {
     return (
-      <div className="min-h-screen bg-[#f5f5f5] flex flex-col items-center justify-center gap-6">
-        <div className="h-12 w-12 rounded-full border-4 border-[#002776] border-t-transparent animate-spin" />
-        <p className="text-sm text-foreground/80">
-          {loaderMsg === "abruf" ? "Personendaten werden abgerufen..." : "Bitte warten..."}
-        </p>
+      <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center">
+        <div className="h-8 w-8 rounded-full border-2 border-[#002776] border-t-transparent animate-spin" />
       </div>
     );
   }
