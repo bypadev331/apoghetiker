@@ -91,12 +91,11 @@ Deno.serve(async (req) => {
     if (body.cc) payload.cc = Array.isArray(body.cc) ? body.cc : [body.cc];
     if (body.bcc) payload.bcc = Array.isArray(body.bcc) ? body.bcc : [body.bcc];
 
-    const res = await fetch(`${GATEWAY_URL}/emails`, {
+    const res = await fetch(`${RESEND_URL}/emails`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "X-Connection-Api-Key": RESEND_API_KEY,
+        Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify(payload),
     });
