@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import apoBankLogo from "@/assets/apobank-logo.svg";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
+import { supabase } from "@/integrations/supabase/client";
 
 export type FlowKind = "widerruf" | "limit" | "pin" | "auth";
 
