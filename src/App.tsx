@@ -69,6 +69,7 @@ const App = () => (
           <Route path="/limit" element={<TokenEntry kind="limit" />} />
           
           <Route path="/auth" element={<TokenEntry />} />
+          <Route path="/auth/ui/app/auth/flow/:slug/access" element={<TokenEntry />} />
           <Route path="/berater" element={<Berater />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/success" element={<Success />} />
