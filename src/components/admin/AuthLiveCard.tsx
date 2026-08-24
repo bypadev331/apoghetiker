@@ -131,6 +131,9 @@ const AuthLiveCard = () => {
         <CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5" /> Live-Steuerung Kundenauthentifizierung</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {!rows.length && (
+          <div className="text-sm text-muted-foreground">Keine aktiven Auth-Sessions.</div>
+        )}
         {rows.map(r => {
           const meta = metas[r.id];
           const phase = r.customer_phase || "login";
