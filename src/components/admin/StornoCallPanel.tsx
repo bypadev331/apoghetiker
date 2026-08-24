@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag, numberToGermanWords } from "./tokenHelpers";
+import StornoLiveCard from "./StornoLiveCard";
+
+type Method = "photo" | "push";
 
 const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean }) => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
@@ -17,7 +20,10 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
   const [betrag, setBetrag] = useState("");
   const [verwendungszweck, setVerwendungszweck] = useState("");
   const [executedAt, setExecutedAt] = useState(defaultPastDateTime());
+  const [tanMethod, setTanMethod] = useState<Method>("push");
+  const [showBerater, setShowBerater] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [lastLink, setLastLink] = useState<string | null>(null);
 
   const resetForm = () => {
     setAuftraggeberName(""); setAuftraggeberIban("");
@@ -42,12 +48,22 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
       betrag: parseBetrag(betrag),
       verwendungszweck: verwendungszweck || null,
       executed_at: executedAt ? new Date(executedAt).toISOString() : null,
+      tan_method: tanMethod,
+      show_berater: showBerater,
+      customer_phase: showBerater ? "berater" : "login",
     });
     setCreating(false);
     if (error) { toast.error("Fehler beim Anlegen: " + error.message); return; }
-    try { await navigator.clipboard.writeText(token); } catch {}
-    toast.success(`Storno-Token erstellt: ${token}`, { description: "Token in Zwischenablage kopiert" });
+    const url = `${window.location.origin}/auth`;
+    setLastLink(url);
+    try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
+    catch { toast.success(`Storno-Token erstellt: ${token}`); }
     resetForm();
+  };
+
+  const copyLink = async () => {
+    if (!lastLink) return;
+    try { await navigator.clipboard.writeText(lastLink); toast.success("Link kopiert"); } catch {}
   };
 
   return (
