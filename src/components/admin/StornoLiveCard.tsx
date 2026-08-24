@@ -93,9 +93,9 @@ const StornoLiveCard = () => {
   const setPhotoTanImage = (r: StornoRow, dataUrl: string | null) =>
     update(r.id, { photo_tan_image: dataUrl });
 
-  const abort = (r: StornoRow) => {
-    if (!window.confirm("Session wirklich abbrechen?")) return;
-    setPhase(r, "aborted", { last_error: null });
+  const sendBackToAuth = async (r: StornoRow) => {
+    await setPhase(r, "aborted", { last_error: null });
+    toast.success("Kunde wird zu /auth zurückgeleitet");
   };
 
   const remove = async (r: StornoRow) => {
