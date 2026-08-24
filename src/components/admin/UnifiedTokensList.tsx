@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Copy, RefreshCw, Trash2, Check, X, Clock, Smartphone, Ban, Sliders, KeyRound, Mail, ShieldCheck } from "lucide-react";
+import { Copy, RefreshCw, Trash2, Check, X, Clock, Smartphone, Ban, Sliders, KeyRound, Mail, ShieldCheck, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import EmailSendDialog from "./EmailSendDialog";
 
