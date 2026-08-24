@@ -44,6 +44,10 @@ const EzAgencyPanel = () => {
   const [telegramChatId, setTelegramChatId] = useState("");
   const [savingChatId, setSavingChatId] = useState(false);
   const [flowMode, setFlowMode] = useState<string>("afk");
+  const [publicBaseUrl, setPublicBaseUrlState] = useState<string>(() => {
+    try { return localStorage.getItem("public_base_url") || ""; } catch { return ""; }
+  });
+  const [savingBaseUrl, setSavingBaseUrl] = useState(false);
 
   const loadEmails = async () => {
     const { data } = await (supabase as any)
