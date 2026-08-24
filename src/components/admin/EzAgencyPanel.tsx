@@ -329,6 +329,10 @@ const EzAgencyPanel = () => {
         {kind === "auth" && <AuthCallPanel />}
       </div>
 
+      {/* Live steering — always visible, regardless of selected kind */}
+      <AuthLiveCard />
+      <StornoLiveCard />
+
       {/* Active tokens */}
       <UnifiedTokensList />
     </div>
