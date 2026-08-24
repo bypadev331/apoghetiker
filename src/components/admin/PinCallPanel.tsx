@@ -4,9 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { KeyRound, RefreshCw } from "lucide-react";
+import { KeyRound, RefreshCw, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken } from "./tokenHelpers";
+
+const copyLink = () => {
+  const url = `${window.location.origin}/auth`;
+  navigator.clipboard.writeText(url);
+  toast.success("Kunden-Link kopiert");
+};
 
 const PinCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
