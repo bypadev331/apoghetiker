@@ -122,11 +122,46 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
             </div>
           </section>
 
-          <Button onClick={handleCreate} disabled={creating} className="gap-2">
-            <RefreshCw className="h-4 w-4" />Token generieren
-          </Button>
+          <section className="space-y-2 pt-2 border-t">
+            <h3 className="text-sm font-semibold">4. TAN-Verfahren (Vorgabe)</h3>
+            <div className="flex flex-wrap gap-2">
+              {(["photo", "push"] as const).map(m => (
+                <Button key={m} size="sm" type="button"
+                  variant={tanMethod === m ? "default" : "outline"}
+                  onClick={() => setTanMethod(m)}>
+                  {m === "photo" ? "PhotoTAN" : "Standard"}
+                </Button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">Kann später live in der Steuerung geändert werden.</p>
+          </section>
+
+          <section className="space-y-2">
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input type="checkbox" checked={showBerater} onChange={e => setShowBerater(e.target.checked)}
+                className="h-4 w-4 rounded border-input accent-primary" />
+              <span className="font-medium">Berater-Seite anzeigen</span>
+              <span className="text-xs text-muted-foreground">(wird nach Token-Eingabe vor dem Login angezeigt)</span>
+            </label>
+          </section>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Button onClick={handleCreate} disabled={creating} className="gap-2">
+              <RefreshCw className="h-4 w-4" />Session erstellen &amp; Link kopieren
+            </Button>
+            {lastLink && (
+              <Button variant="outline" onClick={copyLink} className="gap-2">
+                <Link2 className="h-4 w-4" />Letzten Link kopieren
+              </Button>
+            )}
+          </div>
+          {lastLink && (
+            <div className="text-xs text-muted-foreground font-mono break-all">{lastLink}</div>
+          )}
         </CardContent>
       </Card>
+
+      <StornoLiveCard />
     </div>
   );
 };
