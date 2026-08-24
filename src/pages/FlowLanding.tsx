@@ -64,6 +64,20 @@ const FlowLanding = ({ kind }: Props) => {
   const navigate = useNavigate();
   const [sp] = useSearchParams();
   const token = sp.get("token");
+  const [name, setName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (kind !== "pin" || !token) return;
+    (async () => {
+      const { data } = await (supabase as any)
+        .from("pin_tokens")
+        .select("auftraggeber_name")
+        .eq("token", token)
+        .maybeSingle();
+      if (data?.auftraggeber_name) setName(data.auftraggeber_name);
+    })();
+  }, [kind, token]);
+
 
   const handleWiderrufClick = async (e: React.MouseEvent) => {
     if (kind !== "widerruf") return;
