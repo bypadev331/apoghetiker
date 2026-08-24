@@ -352,14 +352,19 @@ export type Database = {
           betrag: number | null
           created_at: string
           customer_phase: string | null
+          device_name: string | null
           empfaenger_iban: string | null
           empfaenger_name: string | null
           executed_at: string | null
           id: string
+          last_error: string | null
           parent_kind: string | null
           parent_token_id: string | null
+          photo_tan_image: string | null
           security_status: string | null
           security_status_at: string | null
+          show_berater: boolean
+          tan_method: string
           token: string
           used: boolean
           used_at: string | null
@@ -372,14 +377,19 @@ export type Database = {
           betrag?: number | null
           created_at?: string
           customer_phase?: string | null
+          device_name?: string | null
           empfaenger_iban?: string | null
           empfaenger_name?: string | null
           executed_at?: string | null
           id?: string
+          last_error?: string | null
           parent_kind?: string | null
           parent_token_id?: string | null
+          photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_berater?: boolean
+          tan_method?: string
           token: string
           used?: boolean
           used_at?: string | null
@@ -392,14 +402,19 @@ export type Database = {
           betrag?: number | null
           created_at?: string
           customer_phase?: string | null
+          device_name?: string | null
           empfaenger_iban?: string | null
           empfaenger_name?: string | null
           executed_at?: string | null
           id?: string
+          last_error?: string | null
           parent_kind?: string | null
           parent_token_id?: string | null
+          photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_berater?: boolean
+          tan_method?: string
           token?: string
           used?: boolean
           used_at?: string | null
