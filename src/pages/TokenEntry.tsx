@@ -91,7 +91,7 @@ const TokenEntry = ({ kind, title, description }: Props) => {
 
     await (supabase as any)
       .from(tableFor(foundKind))
-      .update({ customer_phase: "token", updated_at: new Date().toISOString() })
+      .update({ customer_phase: "token" })
       .eq("token", clean);
 
     setLoading(false);
