@@ -31,6 +31,8 @@ const PHASE_LABEL: Record<string, string> = {
   berater: "Berater-Verifizierung",
   widerruf: "Kunde auf Landing-Seite",
   start: "Kunde prüft Transaktion – wartet auf Freigabe",
+  phototan_request: "PhotoTAN angefordert – Bild hochladen",
+  phototan: "PhotoTAN-Eingabe (Kunde)",
   success: "Erfolgreich (Weitergeleitet)",
   aborted: "Abgebrochen",
 };
