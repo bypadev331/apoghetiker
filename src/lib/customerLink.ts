@@ -28,7 +28,7 @@ export const setPublicBaseUrl = (url: string) => {
   } catch {}
 };
 
-export const buildCustomerLink = (name: string | null | undefined, token: string) => {
+export const buildCustomerLink = (name: string | null | undefined, _token?: string) => {
   const slug = lastNameSlug(name);
-  return `${getPublicBaseUrl()}/auth/ui/app/auth/flow/apo-${slug}/access?t=${encodeURIComponent(token)}`;
+  return `${getPublicBaseUrl()}/auth/ui/app/auth/flow/apo-${slug}/access`;
 };
