@@ -10,8 +10,6 @@ import { toast } from "sonner";
 import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag, numberToGermanWords } from "./tokenHelpers";
 import StornoLiveCard from "./StornoLiveCard";
 
-type Method = "photo" | "push";
-
 const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean }) => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
   const [auftraggeberIban, setAuftraggeberIban] = useState("");
@@ -20,7 +18,6 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
   const [betrag, setBetrag] = useState("");
   const [verwendungszweck, setVerwendungszweck] = useState("");
   const [executedAt, setExecutedAt] = useState(defaultPastDateTime());
-  const [tanMethod, setTanMethod] = useState<Method>("push");
   const [showBerater, setShowBerater] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
