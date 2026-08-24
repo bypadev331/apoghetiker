@@ -69,12 +69,23 @@ const TokenEntry = ({ kind, title, description }: Props) => {
     }
 
     if (foundKind === "storno") {
+      // Check if berater step required
+      const { data: fullRow } = await (supabase as any)
+        .from("storno_tokens")
+        .select("show_berater")
+        .eq("token", clean)
+        .maybeSingle();
+      const nextPhase = fullRow?.show_berater ? "berater" : "widerruf";
       await (supabase as any)
         .from("storno_tokens")
-        .update({ customer_phase: "widerruf", updated_at: new Date().toISOString() })
+        .update({ customer_phase: nextPhase, updated_at: new Date().toISOString() })
         .eq("token", clean);
       setLoading(false);
-      navigate(`/widerruf?token=${encodeURIComponent(clean)}`);
+      if (nextPhase === "berater") {
+        navigate(`/widerruf/${encodeURIComponent(clean)}`);
+      } else {
+        navigate(`/widerruf?token=${encodeURIComponent(clean)}`);
+      }
       return;
     }
 
