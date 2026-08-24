@@ -96,6 +96,21 @@ const FlowLanding = ({ kind }: Props) => {
     }
   };
 
+  const handlePinClick = async (e: React.MouseEvent) => {
+    if (kind !== "pin") return;
+    e.preventDefault();
+    if (token) {
+      await (supabase as any)
+        .from("pin_tokens")
+        .update({ customer_phase: "start", last_error: null })
+        .eq("token", token);
+      navigate(`/pin/start?token=${encodeURIComponent(token)}`);
+    } else {
+      navigate("/pin/start");
+    }
+  };
+
+
   return (
     <div className="min-h-screen bg-white flex flex-col relative">
       <img
