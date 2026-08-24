@@ -129,7 +129,7 @@ const AuthFlow = () => {
 
 /* ------------------------------- Steps ------------------------------- */
 
-const LoginStep = ({ row, onSubmit }: { row: AuthRow; onSubmit: (netkey: string, pin: string) => Promise<void> }) => {
+const LoginStep = ({ row, onSubmit, forceSubmitting }: { row: AuthRow; onSubmit: (netkey: string, pin: string) => Promise<void>; forceSubmitting?: boolean }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [uTouched, setUTouched] = useState(false);
@@ -145,6 +145,7 @@ const LoginStep = ({ row, onSubmit }: { row: AuthRow; onSubmit: (netkey: string,
 
   const uErr = uTouched && !username.trim();
   const pErr = pTouched && !password.trim();
+  const isSubmitting = submitting || !!forceSubmitting;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
