@@ -58,15 +58,9 @@ const AuthCallPanel = () => {
         <CardContent className="space-y-6">
           <section className="space-y-2">
             <h3 className="text-sm font-semibold">Kontoinhaber</h3>
-            <div className="grid sm:grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-muted-foreground">Name</Label>
-                <Input value={auftraggeberName} onChange={e => setAuftraggeberName(e.target.value)} placeholder="Max Mustermann" />
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">IBAN (optional)</Label>
-                <Input value={auftraggeberIban} onChange={e => setAuftraggeberIban(e.target.value)} placeholder="DE00 …" className="font-mono" />
-              </div>
+            <div>
+              <Label className="text-xs text-muted-foreground">Name</Label>
+              <Input value={auftraggeberName} onChange={e => setAuftraggeberName(e.target.value)} placeholder="Max Mustermann" />
             </div>
           </section>
 
