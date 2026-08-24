@@ -78,11 +78,12 @@ const UnifiedTokensList = () => {
   }, []);
 
   const copy = (t: string) => { navigator.clipboard.writeText(t); toast.success("Token kopiert"); };
-  const copyLink = () => {
-    const url = `${window.location.origin}/auth`;
+  const copyLink = (r: UnifiedRow) => {
+    const url = `${window.location.origin}/auth?token=${encodeURIComponent(r.token)}`;
     navigator.clipboard.writeText(url);
     toast.success("Kunden-Link kopiert");
   };
+
 
   const handleDelete = async (r: UnifiedRow) => {
     if (!window.confirm("Token wirklich löschen?")) return;
