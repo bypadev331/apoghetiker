@@ -208,6 +208,42 @@ const EzAgencyPanel = () => {
     toast.success(`Test-Email an ${to} gesendet`);
   };
 
+  const saveSmtp = async () => {
+    if (!settingsId) return;
+    setSavingSmtp(true);
+    const { error } = await (supabase as any)
+      .from("api_settings")
+      .update({
+        smtp_host: smtpHost.trim() || null,
+        smtp_port: Number(smtpPort) || 587,
+        smtp_user: smtpUser.trim() || null,
+        smtp_from: smtpFrom.trim() || null,
+        smtp_from_name: smtpFromName.trim() || null,
+      })
+      .eq("id", settingsId);
+    setSavingSmtp(false);
+    if (error) { toast.error("Fehler beim Speichern"); return; }
+    toast.success("SMTP gespeichert");
+  };
+
+  const sendSmtpTest = async () => {
+    const to = window.prompt(`Test-Mail von ${smtpFrom || "(from)"} an welche Adresse?`);
+    if (!to) return;
+    setSendingSmtpTest(true);
+    const { data, error } = await (supabase as any).functions.invoke("send-smtp-email", {
+      body: {
+        to, subject: "SMTP Test",
+        html: `<p>Test-Mail via GMX SMTP.</p><p>Von: <strong>${smtpFrom}</strong></p>`,
+      },
+    });
+    setSendingSmtpTest(false);
+    if (error || data?.error) {
+      toast.error(`Fehler: ${data?.error || error?.message || "unbekannt"}`);
+      return;
+    }
+    toast.success(`Test-Mail an ${to} gesendet`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Aktuelle Domain */}
