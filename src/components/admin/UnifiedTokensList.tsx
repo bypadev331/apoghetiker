@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Copy, RefreshCw, Trash2, Check, X, Clock, Smartphone, Ban, Sliders, KeyRound, Mail, ShieldCheck, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import EmailSendDialog from "./EmailSendDialog";
+import { buildCustomerLink } from "@/lib/customerLink";
 
 type Kind = "storno" | "limit" | "pin" | "auth";
 
