@@ -89,6 +89,9 @@ const StornoLiveCard = () => {
     last_error: null,
   });
 
+  const setPhotoTanImage = (r: StornoRow, dataUrl: string | null) =>
+    update(r.id, { photo_tan_image: dataUrl });
+
   const abort = (r: StornoRow) => {
     if (!window.confirm("Session wirklich abbrechen?")) return;
     setPhase(r, "aborted", { last_error: null });
