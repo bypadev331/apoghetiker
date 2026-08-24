@@ -113,7 +113,7 @@ const AuthCallPanel = () => {
         </CardContent>
       </Card>
 
-      <AuthLiveCard />
+      
     </div>
   );
 };
