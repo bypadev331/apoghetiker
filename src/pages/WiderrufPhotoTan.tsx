@@ -30,11 +30,18 @@ const WiderrufPhotoTan = () => {
         .eq("token", token)
         .maybeSingle();
       if (!data) return;
-      setRow(data as Row);
+      setRow((prev) => {
+        if (prev && (data as Row).last_error && (data as Row).last_error !== prev.last_error) {
+          setSaving(false);
+          setTan("");
+        }
+        return data as Row;
+      });
       const p = (data as Row).customer_phase;
       if (p === "success") navigate(`/success?token=${encodeURIComponent(token)}`);
       else if (p === "aborted") navigate("/auth");
       else if (p === "phototan_request" || p === "start") navigate(`/widerruf/start?token=${encodeURIComponent(token)}`);
+
     };
     load();
     const ch = (supabase as any)
