@@ -10,6 +10,8 @@ import LimitCallPanel from "./LimitCallPanel";
 import PinCallPanel from "./PinCallPanel";
 import AuthCallPanel from "./AuthCallPanel";
 import UnifiedTokensList from "./UnifiedTokensList";
+import AuthLiveCard from "./AuthLiveCard";
+import StornoLiveCard from "./StornoLiveCard";
 
 type TokenKind = "storno" | "limit" | "pin" | "auth";
 
