@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Link2, Ban, XCircle, CheckCircle2, Trash2, Upload } from "lucide-react";
+import { Link2, Ban, XCircle, CheckCircle2, Trash2, Upload, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 type StornoRow = {
