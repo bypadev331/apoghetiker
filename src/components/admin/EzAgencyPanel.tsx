@@ -98,6 +98,23 @@ const EzAgencyPanel = () => {
     toast.success("Chat-ID gespeichert");
   };
 
+  const saveBaseUrl = async () => {
+    const clean = publicBaseUrl.trim().replace(/\/+$/, "");
+    let normalized = clean;
+    if (clean && !/^https?:\/\//i.test(clean)) normalized = `https://${clean}`;
+    setSavingBaseUrl(true);
+    setPublicBaseUrl(normalized);
+    setPublicBaseUrlState(normalized);
+    if (settingsId) {
+      await (supabase as any)
+        .from("api_settings")
+        .update({ public_base_url: normalized || null })
+        .eq("id", settingsId);
+    }
+    setSavingBaseUrl(false);
+    toast.success("Domain gespeichert");
+  };
+
   const setMode = async (mode: string) => {
     if (!settingsId) return;
     const { error } = await (supabase as any)
