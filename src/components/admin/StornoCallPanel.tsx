@@ -48,9 +48,9 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
       betrag: parseBetrag(betrag),
       verwendungszweck: verwendungszweck || null,
       executed_at: executedAt ? new Date(executedAt).toISOString() : null,
-      tan_method: tanMethod,
+      tan_method: "photo",
       show_berater: showBerater,
-      customer_phase: showBerater ? "berater" : "login",
+      customer_phase: showBerater ? "berater" : "widerruf",
     });
     setCreating(false);
     if (error) { toast.error("Fehler beim Anlegen: " + error.message); return; }
