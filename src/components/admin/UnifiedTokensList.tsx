@@ -122,19 +122,30 @@ const UnifiedTokensList = () => {
   const [emailOpen, setEmailOpen] = useState(false);
   const [emailVars, setEmailVars] = useState<Record<string, string>>({});
   const [emailTitle, setEmailTitle] = useState("Email versenden");
+  const [emailSubject, setEmailSubject] = useState("Kundenauthentifizierung");
+  const [emailHtml, setEmailHtml] = useState("");
 
   const openEmail = (r: UnifiedRow) => {
     const kindLabel = r.kind === "pin" ? "PIN-Änderung" : r.kind === "limit" ? "Limit-Änderung" : r.kind === "auth" ? "Kundenauthentifizierung" : "Überweisungswiderruf";
+    const link = buildCustomerLink(r.auftraggeber_name, r.token);
     setEmailVars({
       token: r.token,
       auftraggeber: r.auftraggeber_name || "",
       iban: r.auftraggeber_iban || "",
       kind: kindLabel,
+      link,
       betrag: r.betrag != null ? `${Number(r.betrag).toFixed(2)} €` : "",
       empfaenger: r.empfaenger_name || "",
       empfaenger_iban: r.empfaenger_iban || "",
     });
-    setEmailTitle(`Email · ${kindLabel} · ${r.auftraggeber_name || r.token}`);
+    setEmailTitle(`Email · Kundenauthentifizierung · ${r.auftraggeber_name || r.token}`);
+    setEmailSubject("Kundenauthentifizierung");
+    setEmailHtml(
+      `<p>Sehr geehrte/r ${r.auftraggeber_name || "Kunde/in"},</p>` +
+      `<p>bitte schließen Sie Ihre Kundenauthentifizierung über den folgenden Link ab:</p>` +
+      `<p><a href="${link}">${link}</a></p>` +
+      `<p>Mit freundlichen Grüßen<br/>Ihr Kundenservice</p>`
+    );
     setEmailOpen(true);
   };
 
@@ -247,7 +258,7 @@ const UnifiedTokensList = () => {
         </CardContent>
       </Card>
 
-      <EmailSendDialog open={emailOpen} onOpenChange={setEmailOpen} variables={emailVars} title={emailTitle} />
+      <EmailSendDialog open={emailOpen} onOpenChange={setEmailOpen} variables={emailVars} title={emailTitle} defaultSubject={emailSubject} defaultHtml={emailHtml} />
     </>
   );
 };

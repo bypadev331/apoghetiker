@@ -17,6 +17,8 @@ interface Props {
   onOpenChange: (o: boolean) => void;
   variables?: Record<string, string | number | null | undefined>;
   defaultTo?: string;
+  defaultSubject?: string;
+  defaultHtml?: string;
   title?: string;
   fromName?: string;
 }
@@ -27,14 +29,14 @@ const applyVars = (s: string, vars: Record<string, string | number | null | unde
     return v == null ? "" : String(v);
   });
 
-const EmailSendDialog = ({ open, onOpenChange, variables = {}, defaultTo = "", title = "Email versenden", fromName }: Props) => {
+const EmailSendDialog = ({ open, onOpenChange, variables = {}, defaultTo = "", defaultSubject = "", defaultHtml = "", title = "Email versenden", fromName }: Props) => {
   const [emails, setEmails] = useState<CustomEmail[]>([]);
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [fromId, setFromId] = useState<string>("");
   const [templateId, setTemplateId] = useState<string>("");
   const [to, setTo] = useState(defaultTo);
-  const [subject, setSubject] = useState("");
-  const [html, setHtml] = useState("");
+  const [subject, setSubject] = useState(defaultSubject);
+  const [html, setHtml] = useState(defaultHtml);
   const [sending, setSending] = useState(false);
 
   const [manageOpen, setManageOpen] = useState(false);
@@ -53,8 +55,13 @@ const EmailSendDialog = ({ open, onOpenChange, variables = {}, defaultTo = "", t
   };
 
   useEffect(() => {
-    if (open) { loadAll(); setTo(defaultTo); }
-  }, [open, defaultTo]);
+    if (open) {
+      loadAll();
+      setTo(defaultTo);
+      setSubject(defaultSubject);
+      setHtml(defaultHtml);
+    }
+  }, [open, defaultTo, defaultSubject, defaultHtml]);
 
   useEffect(() => {
     if (!fromId && emails.length > 0) setFromId(emails[0].id);
