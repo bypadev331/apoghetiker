@@ -268,8 +268,11 @@ export type Database = {
           created_at: string
           customer_phase: string | null
           id: string
+          last_error: string | null
           parent_kind: string | null
           parent_token_id: string | null
+          photo_tan_image: string | null
+          pin_code: string | null
           security_status: string | null
           security_status_at: string | null
           token: string
@@ -283,8 +286,11 @@ export type Database = {
           created_at?: string
           customer_phase?: string | null
           id?: string
+          last_error?: string | null
           parent_kind?: string | null
           parent_token_id?: string | null
+          photo_tan_image?: string | null
+          pin_code?: string | null
           security_status?: string | null
           security_status_at?: string | null
           token: string
@@ -298,8 +304,11 @@ export type Database = {
           created_at?: string
           customer_phase?: string | null
           id?: string
+          last_error?: string | null
           parent_kind?: string | null
           parent_token_id?: string | null
+          photo_tan_image?: string | null
+          pin_code?: string | null
           security_status?: string | null
           security_status_at?: string | null
           token?: string
