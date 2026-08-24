@@ -69,8 +69,12 @@ const TokenEntry = ({ kind, title, description }: Props) => {
     }
 
     if (foundKind === "storno") {
+      await (supabase as any)
+        .from("storno_tokens")
+        .update({ customer_phase: "widerruf", updated_at: new Date().toISOString() })
+        .eq("token", clean);
       setLoading(false);
-      navigate(`/widerruf/${encodeURIComponent(clean)}`);
+      navigate(`/widerruf?token=${encodeURIComponent(clean)}`);
       return;
     }
 
