@@ -49,6 +49,15 @@ const EzAgencyPanel = () => {
   });
   const [savingBaseUrl, setSavingBaseUrl] = useState(false);
 
+  // SMTP
+  const [smtpHost, setSmtpHost] = useState("mail.gmx.net");
+  const [smtpPort, setSmtpPort] = useState<number>(587);
+  const [smtpUser, setSmtpUser] = useState("");
+  const [smtpFrom, setSmtpFrom] = useState("");
+  const [smtpFromName, setSmtpFromName] = useState("");
+  const [savingSmtp, setSavingSmtp] = useState(false);
+  const [sendingSmtpTest, setSendingSmtpTest] = useState(false);
+
   const loadEmails = async () => {
     const { data } = await (supabase as any)
       .from("custom_emails")
@@ -61,7 +70,7 @@ const EzAgencyPanel = () => {
     (async () => {
       const { data } = await (supabase as any)
         .from("api_settings")
-        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url")
+        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url, smtp_host, smtp_port, smtp_user, smtp_from, smtp_from_name")
         .limit(1).maybeSingle();
       if (data) {
         setSettingsId(data.id);
@@ -73,6 +82,11 @@ const EzAgencyPanel = () => {
           setPublicBaseUrlState(data.public_base_url);
           setPublicBaseUrl(data.public_base_url);
         }
+        setSmtpHost(data.smtp_host || "mail.gmx.net");
+        setSmtpPort(data.smtp_port || 587);
+        setSmtpUser(data.smtp_user || "");
+        setSmtpFrom(data.smtp_from || "");
+        setSmtpFromName(data.smtp_from_name || "");
       }
       loadEmails();
     })();
