@@ -71,15 +71,6 @@ const Success = () => {
               </div>
             </div>
 
-            <div className="flex justify-end items-center gap-4 pt-8">
-              <Button
-                onClick={() => navigate("/auth")}
-                className="rounded-full bg-white border-[#002776] text-[#002776] hover:bg-white hover:text-[#002776] px-6"
-                variant="outline"
-              >
-                Weiter
-              </Button>
-            </div>
           </div>
         </div>
       </main>
