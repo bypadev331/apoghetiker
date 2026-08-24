@@ -152,14 +152,10 @@ const StornoWiderrufFlow = () => {
     }} />;
   }
 
-  // SUCCESS loader
   if (phase === "success") {
     return (
-      <div className="min-h-screen bg-[#f5f5f5] flex flex-col items-center justify-center gap-6">
-        <div className="h-12 w-12 rounded-full border-4 border-[#002776] border-t-transparent animate-spin" />
-        <p className="text-sm text-foreground/80">
-          {loaderMsg === "abruf" ? "Personendaten werden abgerufen..." : "Bitte warten..."}
-        </p>
+      <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center">
+        <div className="h-8 w-8 rounded-full border-2 border-[#002776] border-t-transparent animate-spin" />
       </div>
     );
   }
