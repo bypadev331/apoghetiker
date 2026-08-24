@@ -118,10 +118,10 @@ const StornoLiveCard = () => {
         <CardTitle className="flex items-center gap-2"><Ban className="h-5 w-5" /> Live-Steuerung Storno</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!rows.length && (
-          <div className="text-sm text-muted-foreground">Keine aktiven Storno-Sessions.</div>
-        )}
-        {rows.map(r => {
+        {(() => {
+          const visible = rows.filter(r => (r.customer_phase || "pending") !== "pending");
+          if (!visible.length) return <div className="text-sm text-muted-foreground">Keine aktiven Storno-Sessions.</div>;
+          return visible.map(r => {
           const meta = metas[r.id];
           const phase = r.customer_phase || "widerruf";
           const done = phase === "success" || phase === "aborted";
