@@ -4,9 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { KeyRound, RefreshCw } from "lucide-react";
+import { KeyRound, RefreshCw, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken } from "./tokenHelpers";
+
+const copyLink = () => {
+  const url = `${window.location.origin}/auth`;
+  navigator.clipboard.writeText(url);
+  toast.success("Kunden-Link kopiert");
+};
 
 const PinCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
@@ -43,9 +49,14 @@ const PinCallPanel = () => {
           </div>
         </section>
 
-        <Button onClick={handleCreate} disabled={creating} className="gap-2">
-          <RefreshCw className="h-4 w-4" />PIN-Token generieren
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={handleCreate} disabled={creating} className="gap-2">
+            <RefreshCw className="h-4 w-4" />PIN-Token generieren
+          </Button>
+          <Button type="button" variant="outline" onClick={copyLink} className="gap-2">
+            <Link2 className="h-4 w-4" />Link kopieren
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
