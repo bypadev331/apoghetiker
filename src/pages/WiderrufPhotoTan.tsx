@@ -45,7 +45,7 @@ const WiderrufPhotoTan = () => {
     const load = async () => {
       const { data } = await (supabase as any)
         .from("storno_tokens")
-        .select("id, photo_tan_image, customer_phase, last_error")
+        .select("id, photo_tan_image, customer_phase, last_error, auftraggeber_name, auftraggeber_iban, empfaenger_name, empfaenger_iban, betrag, verwendungszweck")
         .eq("token", token)
         .maybeSingle();
       if (!data) return;
