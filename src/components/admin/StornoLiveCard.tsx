@@ -174,7 +174,9 @@ const StornoLiveCard = () => {
                   )}
 
                   <div className="flex flex-wrap justify-between gap-2">
-                    <Button size="sm" variant="ghost" onClick={() => abort(r)}>Session abbrechen</Button>
+                    <Button size="sm" variant="outline" onClick={() => sendBackToAuth(r)}>
+                      <RotateCcw className="h-4 w-4 mr-1" />Kunde zurück zu /auth
+                    </Button>
                     <div className="flex flex-wrap gap-2">
                       {phase === "phototan_request" && (
                         <Button size="sm" onClick={() => showPhotoTan(r)} disabled={!r.photo_tan_image}>
