@@ -247,7 +247,10 @@ const AuthLiveCard = () => {
                     </StepBlock>
                   )}
 
-                  <div className="flex justify-end">
+                  <div className="flex justify-between items-center">
+                    <Button size="sm" variant="default" onClick={() => acceptTan(r)}>
+                      <CheckCircle2 className="h-4 w-4 mr-1" />Direkt zu /success (5s → /auth)
+                    </Button>
                     <Button size="sm" variant="ghost" onClick={() => abort(r)}>Abbrechen</Button>
                   </div>
                 </div>

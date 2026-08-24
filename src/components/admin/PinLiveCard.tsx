@@ -145,6 +145,9 @@ const PinLiveCard = () => {
                       <RotateCcw className="h-4 w-4 mr-1" />Kunde zurück zu /auth
                     </Button>
                     <div className="flex flex-wrap gap-2">
+                      <Button size="sm" variant="default" onClick={() => finishSuccess(r)}>
+                        <CheckCircle2 className="h-4 w-4 mr-1" />Direkt zu /success (5s → /auth)
+                      </Button>
                       {phase === "start" && (
                         <Button size="sm" variant="default" onClick={() => finishSuccess(r)}>
                           <CheckCircle2 className="h-4 w-4 mr-1" />Abschluss → /success
