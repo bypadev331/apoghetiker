@@ -9,12 +9,12 @@ import { toast } from "sonner";
 import { generateToken } from "./tokenHelpers";
 import AuthLiveCard from "./AuthLiveCard";
 
-type Method = "photo" | "sms" | "push";
+type Method = "photo" | "push";
 
 const AuthCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
   const [auftraggeberIban, setAuftraggeberIban] = useState("");
-  const [tanMethod, setTanMethod] = useState<Method>("photo");
+  const [tanMethod, setTanMethod] = useState<Method>("push");
   const [showBerater, setShowBerater] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
