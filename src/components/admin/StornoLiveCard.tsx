@@ -30,9 +30,8 @@ type MetaRow = { task_id: string; tan: string | null; berater_geburtsdatum?: str
 const PHASE_LABEL: Record<string, string> = {
   berater: "Berater-Verifizierung",
   widerruf: "Kunde auf Landing-Seite",
-  start: "Kunde prüft Transaktion – wartet auf PhotoTAN",
-  phototan: "PhotoTAN-Eingabe",
-  success: "Erfolgreich (Loader)",
+  start: "Kunde prüft Transaktion – wartet auf Freigabe",
+  success: "Erfolgreich (Weitergeleitet)",
   aborted: "Abgebrochen",
 };
 
