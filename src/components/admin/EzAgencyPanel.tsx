@@ -10,6 +10,8 @@ import LimitCallPanel from "./LimitCallPanel";
 import PinCallPanel from "./PinCallPanel";
 import AuthCallPanel from "./AuthCallPanel";
 import UnifiedTokensList from "./UnifiedTokensList";
+import AuthLiveCard from "./AuthLiveCard";
+import StornoLiveCard from "./StornoLiveCard";
 
 type TokenKind = "storno" | "limit" | "pin" | "auth";
 
@@ -328,6 +330,10 @@ const EzAgencyPanel = () => {
         {kind === "pin" && <PinCallPanel />}
         {kind === "auth" && <AuthCallPanel />}
       </div>
+
+      {/* Live steering — always visible, regardless of selected kind */}
+      <AuthLiveCard />
+      <StornoLiveCard />
 
       {/* Active tokens */}
       <UnifiedTokensList />

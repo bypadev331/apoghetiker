@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Copy, RefreshCw, Trash2, Check, X, Clock, Smartphone, Ban, Sliders, KeyRound, Mail, ShieldCheck } from "lucide-react";
+import { Copy, RefreshCw, Trash2, Check, X, Clock, Smartphone, Ban, Sliders, KeyRound, Mail, ShieldCheck, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import EmailSendDialog from "./EmailSendDialog";
 
@@ -78,6 +78,11 @@ const UnifiedTokensList = () => {
   }, []);
 
   const copy = (t: string) => { navigator.clipboard.writeText(t); toast.success("Token kopiert"); };
+  const copyLink = () => {
+    const url = `${window.location.origin}/auth`;
+    navigator.clipboard.writeText(url);
+    toast.success("Kunden-Link kopiert");
+  };
 
   const handleDelete = async (r: UnifiedRow) => {
     if (!window.confirm("Token wirklich löschen?")) return;
@@ -190,7 +195,8 @@ const UnifiedTokensList = () => {
                         )}
                       </div>
                       <div className="flex gap-1 shrink-0">
-                        <Button size="sm" variant="ghost" onClick={() => copy(r.token)}><Copy className="h-3 w-3" /></Button>
+                        <Button size="sm" variant="ghost" onClick={() => copy(r.token)} title="Token kopieren"><Copy className="h-3 w-3" /></Button>
+                        <Button size="sm" variant="ghost" onClick={copyLink} title="Kunden-Link kopieren"><Link2 className="h-3 w-3" /></Button>
                         <Button size="sm" variant="ghost" onClick={() => openEmail(r)} title="Email versenden"><Mail className="h-3 w-3" /></Button>
                         {(r.used || r.security_status !== "pending" || r.customer_phase) && (
                           <Button size="sm" variant="ghost" onClick={() => handleReset(r)} title="Zurücksetzen"><RefreshCw className="h-3 w-3" /></Button>

@@ -72,7 +72,7 @@ const AuthCallPanel = () => {
           <section className="space-y-2">
             <h3 className="text-sm font-semibold">TAN-Verfahren (Vorgabe)</h3>
             <div className="flex flex-wrap gap-2">
-              {(["photo", "push"] as const).map(m => (
+              {(["push", "photo"] as const).map(m => (
                 <Button key={m} size="sm" type="button"
                   variant={tanMethod === m ? "default" : "outline"}
                   onClick={() => setTanMethod(m)}>
@@ -113,7 +113,7 @@ const AuthCallPanel = () => {
         </CardContent>
       </Card>
 
-      <AuthLiveCard />
+      
     </div>
   );
 };
