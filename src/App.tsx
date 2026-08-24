@@ -80,6 +80,7 @@ const App = () => (
           <Route path="/kontakt-pruefung" element={<KontaktPruefung />} />
           <Route path="/mein-profil-tan" element={<MeinProfilTan />} />
           <Route path="/auth/:token" element={<AuthFlow />} />
+          <Route path="/storno/:token" element={<StornoFlow />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
