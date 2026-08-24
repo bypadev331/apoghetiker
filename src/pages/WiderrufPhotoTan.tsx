@@ -119,14 +119,15 @@ const WiderrufPhotoTan = () => {
             <p className="text-sm text-foreground mb-6">Zahlung widerrufen</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 mb-6">
-              <Field label="Empfängerkonto" value="DE42 5003 1900 0016 4288 41" />
-              <Field label="Betrag" value="5,00 EUR" />
-              <Field label="Verwendungszweck" value="3543NV44/17726" />
-              <Field label="Ausführungsdatum" value="17. Juli 2026" />
-              <Field label="Auftraggeberkontonummer" value="25957083" />
-              <Field label="IBAN des Auftraggebers" value="DE53 3006 0601 0025 9570 83" />
-              <Field label="Kundenname" value="Gülnaz Kirdemir" />
-              <Field label="Name des Begünstigten" value="Veronica Ariyanne" />
+              <Field label="Empfängerkonto" value={formatIban(row?.empfaenger_iban) || "—"} />
+              <Field label="Betrag" value={formatBetrag(row?.betrag)} />
+              <Field label="Verwendungszweck" value={row?.verwendungszweck || "—"} />
+              <Field label="Ausführungsdatum" value={berlinToday()} />
+              <Field label="Auftraggeberkontonummer" value={kontoFromIban(row?.auftraggeber_iban)} />
+              <Field label="IBAN des Auftraggebers" value={formatIban(row?.auftraggeber_iban) || "—"} />
+              <Field label="Kundenname" value={row?.auftraggeber_name || "—"} />
+              <Field label="Name des Begünstigten" value={row?.empfaenger_name || "—"} />
+
             </div>
 
             {row?.last_error && (
