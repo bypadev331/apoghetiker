@@ -163,7 +163,7 @@ const StornoLiveCard = () => {
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {phase === "berater" && "Kunde füllt Berater-Verifizierung aus."}
-                        {phase === "widerruf" && "Kunde ist auf der Landing-Seite und klickt „Überweisung widerrufen"."}
+                        {phase === "widerruf" && "Kunde ist auf der Landing-Seite und klickt Überweisung widerrufen."}
                         {phase === "start" && "Kunde sieht Transaktionsdetails und wartet auf PhotoTAN."}
                       </p>
                     </StepBlock>
