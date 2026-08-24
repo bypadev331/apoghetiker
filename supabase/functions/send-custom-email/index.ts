@@ -25,9 +25,7 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
     if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY missing — please add the secret in Project Settings");
 
     const body = (await req.json()) as SendBody;
