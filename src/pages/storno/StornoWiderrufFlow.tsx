@@ -216,9 +216,6 @@ const StornoWiderrufFlow = () => {
         <Header />
         <main className="flex-1 relative">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
-            <button className="flex items-center gap-2 text-sm text-[#002776]">
-              <HelpCircle className="h-4 w-4" /> Fragen zu dieser Seite?
-            </button>
             <div className="flex justify-center mt-4">
               <div className="inline-flex flex-col items-stretch rounded-md bg-[#e6e8eb] px-4 py-2 text-sm text-foreground min-w-[200px]">
                 <span className="text-center">Ladevorgang läuft ...</span>
@@ -265,11 +262,6 @@ const StornoWiderrufFlow = () => {
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
       <Header />
       <main className="flex-1 relative">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
-          <button className="flex items-center gap-2 text-sm text-[#002776]">
-            <HelpCircle className="h-4 w-4" /> Fragen zu dieser Seite?
-          </button>
-        </div>
         <div className="flex items-start justify-center">
           <div className="mt-8 sm:mt-10 mb-16 w-[94%] max-w-[680px] bg-white rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.15)] border border-border/40 p-6 sm:p-10">
             <h2 className="text-lg sm:text-xl text-[#1a1a1a] mb-6">Bitte prüfen Sie die folgende Transaktion</h2>
