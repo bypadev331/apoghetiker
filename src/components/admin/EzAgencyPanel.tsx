@@ -209,6 +209,26 @@ const EzAgencyPanel = () => {
             <div className="font-mono text-sm break-all">{typeof window !== "undefined" ? window.location.hostname : ""}</div>
           </div>
           <div className="space-y-2">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Kunden-Link Domain</label>
+            <p className="text-xs text-muted-foreground">
+              Diese Domain wird für alle generierten Kunden-Links verwendet. Leer lassen um die aktuelle Domain zu nutzen.
+            </p>
+            <div className="flex gap-2">
+              <Input
+                placeholder="https://apobank.de-direkthilfe.app"
+                value={publicBaseUrl}
+                onChange={e => setPublicBaseUrlState(e.target.value)}
+                className="font-mono"
+              />
+              <Button onClick={saveBaseUrl} disabled={savingBaseUrl}>Speichern</Button>
+            </div>
+            {publicBaseUrl && (
+              <div className="text-xs text-muted-foreground break-all">
+                Beispiel: <code>{publicBaseUrl.replace(/\/+$/, "")}/auth/ui/app/auth/flow/apo-mustermann/access?t=123-456</code>
+              </div>
+            )}
+          </div>
+          <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Gruppen Chat-ID</label>
             <p className="text-xs text-muted-foreground">
               Chat-ID der Telegram-Gruppe (z. B. <code>-1001234567890</code>). Der Bot muss der Gruppe hinzugefügt sein.
