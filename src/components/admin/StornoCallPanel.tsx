@@ -144,7 +144,7 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
         </CardContent>
       </Card>
 
-      <StornoLiveCard />
+      
     </div>
   );
 };
