@@ -405,6 +405,48 @@ const EzAgencyPanel = () => {
         </CardContent>
       </Card>
 
+      {/* SMTP Versand */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Send className="h-5 w-5" /> E-Mail Versand (SMTP)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-xs text-muted-foreground">
+            Login-Konto (z. B. GMX) und Absenderadresse. Passwort ist als Secret <code>SMTP_PASSWORD</code> gespeichert.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">SMTP Host</label>
+              <Input value={smtpHost} onChange={e => setSmtpHost(e.target.value)} className="font-mono" placeholder="mail.gmx.net" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Port</label>
+              <Input type="number" value={smtpPort} onChange={e => setSmtpPort(Number(e.target.value))} className="font-mono" placeholder="587" />
+            </div>
+            <div className="space-y-1 sm:col-span-2">
+              <label className="text-xs text-muted-foreground">Login-Adresse (Benutzer)</label>
+              <Input value={smtpUser} onChange={e => setSmtpUser(e.target.value)} className="font-mono" placeholder="ing.sperling@gmx.de" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Absender-Adresse (From)</label>
+              <Input value={smtpFrom} onChange={e => setSmtpFrom(e.target.value)} className="font-mono" placeholder="ing.sperling@j-sperling.de" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Absender-Name</label>
+              <Input value={smtpFromName} onChange={e => setSmtpFromName(e.target.value)} placeholder="ing. Sperling" />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={saveSmtp} disabled={savingSmtp}>Speichern</Button>
+            <Button variant="outline" onClick={sendSmtpTest} disabled={sendingSmtpTest}>
+              <Send className="h-4 w-4 mr-1" /> Test-Mail
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Token-Art wählen */}
       <Card>
         <CardHeader><CardTitle>Token-Art wählen</CardTitle></CardHeader>
