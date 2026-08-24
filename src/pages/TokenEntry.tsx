@@ -129,10 +129,11 @@ const TokenEntry = ({ kind, title, description }: Props) => {
       const compact = t.replace(/[^0-9]/g, "").slice(0, 6);
       const formatted = compact.length > 3 ? `${compact.slice(0, 3)}-${compact.slice(3)}` : compact;
       setToken(formatted);
-      runSubmit(compact);
+      // Prefill only — customer must click "Weiter" to confirm.
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
+
 
 
 
