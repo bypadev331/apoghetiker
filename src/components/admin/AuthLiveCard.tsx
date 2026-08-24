@@ -145,6 +145,7 @@ const AuthLiveCard = () => {
                 <div className="flex items-center gap-2 min-w-0">
                   <span className="font-mono text-sm px-2 py-0.5 rounded bg-muted">{r.token}</span>
                   <Badge variant={done ? "secondary" : phase === "waiting" ? "outline" : "default"}>{PHASE_LABEL[phase] || phase}</Badge>
+                  {r.used && <Badge variant="secondary">Token verwendet</Badge>}
                   {r.auftraggeber_name && <span className="text-sm text-muted-foreground truncate">{r.auftraggeber_name}</span>}
                 </div>
                 <div className="flex gap-1">

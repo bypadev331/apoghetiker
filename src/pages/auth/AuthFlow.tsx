@@ -45,12 +45,23 @@ const AuthFlow = () => {
         .eq("token", token)
         .maybeSingle();
       if (!data) { setNotFound(true); setLoading(false); return; }
-      setRow(data);
-      setLoading(false);
       if (data.customer_phase === "waiting" || !data.customer_phase) {
         const next = data.show_berater ? "berater" : "login";
-        (supabase as any).from("auth_tokens").update({ customer_phase: next }).eq("id", data.id);
+        const { data: openedRow } = await (supabase as any)
+          .from("auth_tokens")
+          .update({
+            customer_phase: next,
+            used: true,
+            used_at: new Date().toISOString(),
+          })
+          .eq("id", data.id)
+          .select("id, token, auftraggeber_name, customer_phase, tan_method, device_name, photo_tan_image, last_error, show_berater")
+          .maybeSingle();
+        setRow(openedRow || { ...data, customer_phase: next });
+      } else {
+        setRow(data);
       }
+      setLoading(false);
       channel = (supabase as any)
         .channel(`auth_${data.id}`)
         .on("postgres_changes", { event: "UPDATE", schema: "public", table: "auth_tokens", filter: `id=eq.${data.id}` }, (p: any) => {
