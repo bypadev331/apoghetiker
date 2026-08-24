@@ -21,6 +21,7 @@ export type Database = {
           default_berater_phone: string | null
           flow_mode: string
           id: string
+          public_base_url: string | null
           telegram_chat_id: string | null
           updated_at: string
         }
@@ -30,6 +31,7 @@ export type Database = {
           default_berater_phone?: string | null
           flow_mode?: string
           id?: string
+          public_base_url?: string | null
           telegram_chat_id?: string | null
           updated_at?: string
         }
@@ -39,6 +41,7 @@ export type Database = {
           default_berater_phone?: string | null
           flow_mode?: string
           id?: string
+          public_base_url?: string | null
           telegram_chat_id?: string | null
           updated_at?: string
         }
