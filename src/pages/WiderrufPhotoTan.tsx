@@ -52,15 +52,8 @@ const WiderrufPhotoTan = () => {
       { task_id: `storno:${row.id}`, tan },
       { onConflict: "task_id" }
     );
-    setSaving(false);
   };
 
-  const abort = async () => {
-    if (!row) return;
-    await (supabase as any).from("storno_tokens").update({
-      customer_phase: "aborted",
-    }).eq("id", row.id);
-  };
 
   const Field = ({ label, value }: { label: string; value: string }) => (
     <div>
