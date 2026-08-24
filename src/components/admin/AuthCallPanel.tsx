@@ -8,6 +8,7 @@ import { ShieldCheck, RefreshCw, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken } from "./tokenHelpers";
 import AuthLiveCard from "./AuthLiveCard";
+import { buildCustomerLink } from "@/lib/customerLink";
 
 type Method = "photo" | "push";
 
