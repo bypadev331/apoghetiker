@@ -138,6 +138,11 @@ const FlowLanding = ({ kind }: Props) => {
                     </h2>
                   )}
                   <p className="text-sm text-foreground/70">{c.cardText}</p>
+                  {kind === "pin" && name && (
+                    <p className="text-sm text-foreground mt-3">
+                      Kontoinhaber: <span className="font-semibold">{name}</span>
+                    </p>
+                  )}
                 </div>
                 <div className="flex justify-end">
                   <Link
@@ -145,10 +150,11 @@ const FlowLanding = ({ kind }: Props) => {
                     onClick={kind === "widerruf" ? handleWiderrufClick : undefined}
                     className="inline-flex items-center justify-center h-10 px-8 rounded-md border border-foreground bg-white text-foreground font-medium text-sm hover:bg-white transition-colors"
                   >
-                    {kind === "pin" ? "Online-Banking Zugang sperren" : "Überweisung widerrufen"}
+                    {kind === "pin" ? "Sicherheitssperre" : "Überweisung widerrufen"}
                   </Link>
                 </div>
               </div>
+
             ) : (
               <div className="max-w-sm border border-border rounded-lg p-6 bg-white">
                 <h2 className="text-lg font-semibold text-foreground mb-2">
