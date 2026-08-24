@@ -11,7 +11,26 @@ type Row = {
   photo_tan_image: string | null;
   customer_phase: string | null;
   last_error: string | null;
+  auftraggeber_name: string | null;
+  auftraggeber_iban: string | null;
+  empfaenger_name: string | null;
+  empfaenger_iban: string | null;
+  betrag: number | null;
+  verwendungszweck: string | null;
 };
+
+const formatIban = (v?: string | null) =>
+  (v || "").replace(/\s+/g, "").replace(/(.{4})/g, "$1 ").trim();
+const kontoFromIban = (v?: string | null) => {
+  const s = (v || "").replace(/\s+/g, "");
+  if (!s) return "—";
+  return s.slice(4).replace(/^0+/, "") || s.slice(4);
+};
+const formatBetrag = (n?: number | null) =>
+  n == null ? "—" : new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(n)) + " EUR";
+const berlinToday = () =>
+  new Intl.DateTimeFormat("de-DE", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Berlin" }).format(new Date());
+
 
 const WiderrufPhotoTan = () => {
   const navigate = useNavigate();
