@@ -123,7 +123,7 @@ const AuthLiveCard = () => {
     try { await navigator.clipboard.writeText(url); toast.success("Kunden-Link kopiert"); } catch { toast.error("Kopieren fehlgeschlagen"); }
   };
 
-  if (!rows.length) return null;
+  
 
   return (
     <Card>
