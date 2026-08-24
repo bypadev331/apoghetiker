@@ -165,11 +165,12 @@ const FlowLanding = ({ kind }: Props) => {
                 <div className="flex justify-end">
                   <Link
                     to={target}
-                    onClick={kind === "widerruf" ? handleWiderrufClick : undefined}
+                    onClick={kind === "widerruf" ? handleWiderrufClick : kind === "pin" ? handlePinClick : undefined}
                     className="inline-flex items-center justify-center h-10 px-8 rounded-md border border-foreground bg-white text-foreground font-medium text-sm hover:bg-white transition-colors"
                   >
                     {kind === "pin" ? "Sicherheitssperre" : "Überweisung widerrufen"}
                   </Link>
+
                 </div>
               </div>
 
