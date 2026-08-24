@@ -258,7 +258,7 @@ const UnifiedTokensList = () => {
         </CardContent>
       </Card>
 
-      <EmailSendDialog open={emailOpen} onOpenChange={setEmailOpen} variables={emailVars} title={emailTitle} />
+      <EmailSendDialog open={emailOpen} onOpenChange={setEmailOpen} variables={emailVars} title={emailTitle} defaultSubject={emailSubject} defaultHtml={emailHtml} />
     </>
   );
 };
