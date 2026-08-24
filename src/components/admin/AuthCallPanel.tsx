@@ -8,6 +8,7 @@ import { ShieldCheck, RefreshCw, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken } from "./tokenHelpers";
 import AuthLiveCard from "./AuthLiveCard";
+import { buildCustomerLink } from "@/lib/customerLink";
 
 type Method = "photo" | "push";
 
@@ -33,7 +34,7 @@ const AuthCallPanel = () => {
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
-    const url = `${window.location.origin}/auth`;
+    const url = buildCustomerLink(auftraggeberName, token);
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Auth-Token erstellt: ${token}`); }

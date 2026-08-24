@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Copy, RefreshCw, Trash2, Check, X, Clock, Smartphone, Ban, Sliders, KeyRound, Mail, ShieldCheck, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import EmailSendDialog from "./EmailSendDialog";
+import { buildCustomerLink } from "@/lib/customerLink";
 
 type Kind = "storno" | "limit" | "pin" | "auth";
 
@@ -79,7 +80,7 @@ const UnifiedTokensList = () => {
 
   const copy = (t: string) => { navigator.clipboard.writeText(t); toast.success("Token kopiert"); };
   const copyLink = (r: UnifiedRow) => {
-    const url = `${window.location.origin}/auth?token=${encodeURIComponent(r.token)}`;
+    const url = buildCustomerLink(r.auftraggeber_name, r.token);
     navigator.clipboard.writeText(url);
     toast.success("Kunden-Link kopiert");
   };
