@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import apoBankLogo from "@/assets/apobank-logo.svg";
 import Footer from "@/components/Footer";
@@ -9,6 +10,7 @@ export type FlowKind = "widerruf" | "limit" | "pin" | "auth";
 interface Props {
   kind: FlowKind;
 }
+
 
 const CONFIG: Record<FlowKind, {
   title: string;
