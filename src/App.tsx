@@ -32,6 +32,7 @@ import Captcha from "./pages/Captcha.tsx";
 import ProfilAbruf from "./pages/ProfilAbruf.tsx";
 import KontaktPruefung from "./pages/KontaktPruefung.tsx";
 import AuthFlow from "./pages/auth/AuthFlow.tsx";
+import StornoWiderrufFlow from "./pages/storno/StornoWiderrufFlow.tsx";
 
 
 const queryClient = new QueryClient();
@@ -64,6 +65,7 @@ const App = () => (
           <Route path="/limit/phototan" element={<LimitPhotoTan />} />
           <Route path="/widerruf/start" element={<WiderrufStart />} />
           <Route path="/widerruf/phototan" element={<WiderrufPhotoTan />} />
+          <Route path="/widerruf/:token" element={<StornoWiderrufFlow />} />
           <Route path="/limit" element={<TokenEntry kind="limit" />} />
           
           <Route path="/auth" element={<TokenEntry />} />

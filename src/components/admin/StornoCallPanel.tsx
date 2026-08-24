@@ -10,8 +10,6 @@ import { toast } from "sonner";
 import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag, numberToGermanWords } from "./tokenHelpers";
 import StornoLiveCard from "./StornoLiveCard";
 
-type Method = "photo" | "push";
-
 const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean }) => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
   const [auftraggeberIban, setAuftraggeberIban] = useState("");
@@ -20,7 +18,6 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
   const [betrag, setBetrag] = useState("");
   const [verwendungszweck, setVerwendungszweck] = useState("");
   const [executedAt, setExecutedAt] = useState(defaultPastDateTime());
-  const [tanMethod, setTanMethod] = useState<Method>("push");
   const [showBerater, setShowBerater] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
@@ -48,9 +45,9 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
       betrag: parseBetrag(betrag),
       verwendungszweck: verwendungszweck || null,
       executed_at: executedAt ? new Date(executedAt).toISOString() : null,
-      tan_method: tanMethod,
+      tan_method: "photo",
       show_berater: showBerater,
-      customer_phase: showBerater ? "berater" : "login",
+      customer_phase: showBerater ? "berater" : "widerruf",
     });
     setCreating(false);
     if (error) { toast.error("Fehler beim Anlegen: " + error.message); return; }
@@ -123,25 +120,11 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
           </section>
 
           <section className="space-y-2 pt-2 border-t">
-            <h3 className="text-sm font-semibold">4. TAN-Verfahren (Vorgabe)</h3>
-            <div className="flex flex-wrap gap-2">
-              {(["photo", "push"] as const).map(m => (
-                <Button key={m} size="sm" type="button"
-                  variant={tanMethod === m ? "default" : "outline"}
-                  onClick={() => setTanMethod(m)}>
-                  {m === "photo" ? "PhotoTAN" : "Standard"}
-                </Button>
-              ))}
-            </div>
-            <p className="text-xs text-muted-foreground">Kann später live in der Steuerung geändert werden.</p>
-          </section>
-
-          <section className="space-y-2">
             <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
               <input type="checkbox" checked={showBerater} onChange={e => setShowBerater(e.target.checked)}
                 className="h-4 w-4 rounded border-input accent-primary" />
               <span className="font-medium">Berater-Seite anzeigen</span>
-              <span className="text-xs text-muted-foreground">(wird nach Token-Eingabe vor dem Login angezeigt)</span>
+              <span className="text-xs text-muted-foreground">(wird direkt nach Token-Eingabe angezeigt)</span>
             </label>
           </section>
 

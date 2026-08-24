@@ -32,9 +32,6 @@ const WiderrufStart = () => {
       {/* Content */}
       <main className="flex-1 relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
-          <button className="flex items-center gap-2 text-sm text-[#002776]">
-            <HelpCircle className="h-4 w-4" /> Fragen zu dieser Seite?
-          </button>
 
           <div className="flex justify-center mt-4">
             <div className="inline-flex flex-col items-stretch rounded-md bg-[#e6e8eb] px-4 py-2 text-sm text-foreground min-w-[200px]">
@@ -87,18 +84,6 @@ const WiderrufStart = () => {
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Name des Begünstigten</p>
                 <p className="text-sm text-foreground">Veronica Ariyanne</p>
-              </div>
-              <div>
-                <p className="text-sm text-[#002776] mb-3 font-medium">Kreditinstitut</p>
-                <p className="text-sm text-foreground">BANCO BILBAO VIZCAYA ARGENTARIA SA.</p>
-              </div>
-              <div>
-                <p className="text-sm text-[#002776] mb-3 font-medium">Auftraggeberkonto</p>
-                <p className="text-sm text-foreground">Privatkonto 25957083</p>
-              </div>
-              <div>
-                <p className="text-sm text-[#002776] mb-3 font-medium">BIC</p>
-                <p className="text-sm text-foreground">BBVADEFFXXX</p>
               </div>
             </div>
 
