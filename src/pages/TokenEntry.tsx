@@ -26,9 +26,11 @@ const ORDER: Kind[] = ["limit", "pin", "auth", "storno"];
 
 const TokenEntry = ({ kind, title, description }: Props) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const autoRan = useRef(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
