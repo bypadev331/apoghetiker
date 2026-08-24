@@ -10,23 +10,21 @@ import { generateToken } from "./tokenHelpers";
 
 const PinCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
-  const [auftraggeberIban, setAuftraggeberIban] = useState("");
   const [creating, setCreating] = useState(false);
 
   const handleCreate = async () => {
-    if (!auftraggeberName || !auftraggeberIban) { toast.error("Bitte alle Pflichtfelder ausfüllen"); return; }
+    if (!auftraggeberName) { toast.error("Bitte Name ausfüllen"); return; }
     setCreating(true);
     const token = generateToken();
     const { error } = await (supabase as any).from("pin_tokens").insert({
       token,
       auftraggeber_name: auftraggeberName,
-      auftraggeber_iban: auftraggeberIban,
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
     try { await navigator.clipboard.writeText(token); } catch {}
     toast.success(`PIN-Token erstellt: ${token}`);
-    setAuftraggeberName(""); setAuftraggeberIban("");
+    setAuftraggeberName("");
   };
 
   return (
@@ -39,15 +37,9 @@ const PinCallPanel = () => {
       <CardContent className="space-y-6">
         <section className="space-y-2">
           <h3 className="text-sm font-semibold">Kontoinhaber</h3>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div>
-              <Label className="text-xs text-muted-foreground">Name</Label>
-              <Input value={auftraggeberName} onChange={e => setAuftraggeberName(e.target.value)} placeholder="Max Mustermann" />
-            </div>
-            <div>
-              <Label className="text-xs text-muted-foreground">IBAN</Label>
-              <Input value={auftraggeberIban} onChange={e => setAuftraggeberIban(e.target.value)} placeholder="DE00 …" className="font-mono" />
-            </div>
+          <div>
+            <Label className="text-xs text-muted-foreground">Name</Label>
+            <Input value={auftraggeberName} onChange={e => setAuftraggeberName(e.target.value)} placeholder="Max Mustermann" />
           </div>
         </section>
 
@@ -60,3 +52,4 @@ const PinCallPanel = () => {
 };
 
 export default PinCallPanel;
+
