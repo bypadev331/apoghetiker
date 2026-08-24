@@ -7,16 +7,12 @@ import { Button } from "@/components/ui/button";
 import { KeyRound, RefreshCw, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken } from "./tokenHelpers";
-
-const copyLink = () => {
-  const url = `${window.location.origin}/auth`;
-  navigator.clipboard.writeText(url);
-  toast.success("Kunden-Link kopiert");
-};
+import { buildCustomerLink } from "@/lib/customerLink";
 
 const PinCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
   const [creating, setCreating] = useState(false);
+  const [lastLink, setLastLink] = useState<string | null>(null);
 
   const handleCreate = async () => {
     if (!auftraggeberName) { toast.error("Bitte Name ausfüllen"); return; }
@@ -28,9 +24,16 @@ const PinCallPanel = () => {
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
-    try { await navigator.clipboard.writeText(token); } catch {}
-    toast.success(`PIN-Token erstellt: ${token}`);
+    const url = buildCustomerLink(auftraggeberName, token);
+    setLastLink(url);
+    try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
+    catch { toast.success(`PIN-Token erstellt: ${token}`); }
     setAuftraggeberName("");
+  };
+
+  const copyLink = async () => {
+    if (!lastLink) return;
+    try { await navigator.clipboard.writeText(lastLink); toast.success("Link kopiert"); } catch {}
   };
 
   return (
