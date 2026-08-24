@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 
-type Kind = "storno" | "limit" | "pin" | "auth";
+type Kind = "limit" | "pin" | "auth";
 
 interface Props {
   kind?: Kind; // if omitted: try all tables
@@ -17,9 +17,9 @@ interface Props {
 }
 
 const tableFor = (k: Kind) =>
-  k === "storno" ? "storno_tokens" : k === "limit" ? "limit_tokens" : k === "auth" ? "auth_tokens" : "pin_tokens";
+  k === "limit" ? "limit_tokens" : k === "auth" ? "auth_tokens" : "pin_tokens";
 
-const ORDER: Kind[] = ["storno", "limit", "pin", "auth"];
+const ORDER: Kind[] = ["limit", "pin", "auth"];
 
 const TokenEntry = ({ kind, title, description }: Props) => {
   const navigate = useNavigate();
@@ -62,11 +62,6 @@ const TokenEntry = ({ kind, title, description }: Props) => {
     if (foundKind === "auth") {
       setLoading(false);
       navigate(`/auth/${encodeURIComponent(clean)}`);
-      return;
-    }
-    if (foundKind === "storno") {
-      setLoading(false);
-      navigate(`/storno/${encodeURIComponent(clean)}`);
       return;
     }
 
