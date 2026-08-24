@@ -101,7 +101,6 @@ const StornoWiderrufFlow = () => {
     if (!row) return;
     await (supabase as any).from("storno_tokens").update({
       customer_phase: nextPhase,
-      updated_at: new Date().toISOString(),
       ...patch,
     }).eq("id", row.id);
   };
