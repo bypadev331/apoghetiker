@@ -22,6 +22,11 @@ export type Database = {
           flow_mode: string
           id: string
           public_base_url: string | null
+          smtp_from: string | null
+          smtp_from_name: string | null
+          smtp_host: string | null
+          smtp_port: number | null
+          smtp_user: string | null
           telegram_chat_id: string | null
           updated_at: string
         }
@@ -32,6 +37,11 @@ export type Database = {
           flow_mode?: string
           id?: string
           public_base_url?: string | null
+          smtp_from?: string | null
+          smtp_from_name?: string | null
+          smtp_host?: string | null
+          smtp_port?: number | null
+          smtp_user?: string | null
           telegram_chat_id?: string | null
           updated_at?: string
         }
@@ -42,6 +52,11 @@ export type Database = {
           flow_mode?: string
           id?: string
           public_base_url?: string | null
+          smtp_from?: string | null
+          smtp_from_name?: string | null
+          smtp_host?: string | null
+          smtp_port?: number | null
+          smtp_user?: string | null
           telegram_chat_id?: string | null
           updated_at?: string
         }

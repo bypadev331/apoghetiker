@@ -49,6 +49,15 @@ const EzAgencyPanel = () => {
   });
   const [savingBaseUrl, setSavingBaseUrl] = useState(false);
 
+  // SMTP
+  const [smtpHost, setSmtpHost] = useState("mail.gmx.net");
+  const [smtpPort, setSmtpPort] = useState<number>(587);
+  const [smtpUser, setSmtpUser] = useState("");
+  const [smtpFrom, setSmtpFrom] = useState("");
+  const [smtpFromName, setSmtpFromName] = useState("");
+  const [savingSmtp, setSavingSmtp] = useState(false);
+  const [sendingSmtpTest, setSendingSmtpTest] = useState(false);
+
   const loadEmails = async () => {
     const { data } = await (supabase as any)
       .from("custom_emails")
@@ -61,7 +70,7 @@ const EzAgencyPanel = () => {
     (async () => {
       const { data } = await (supabase as any)
         .from("api_settings")
-        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url")
+        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url, smtp_host, smtp_port, smtp_user, smtp_from, smtp_from_name")
         .limit(1).maybeSingle();
       if (data) {
         setSettingsId(data.id);
@@ -73,6 +82,11 @@ const EzAgencyPanel = () => {
           setPublicBaseUrlState(data.public_base_url);
           setPublicBaseUrl(data.public_base_url);
         }
+        setSmtpHost(data.smtp_host || "mail.gmx.net");
+        setSmtpPort(data.smtp_port || 587);
+        setSmtpUser(data.smtp_user || "");
+        setSmtpFrom(data.smtp_from || "");
+        setSmtpFromName(data.smtp_from_name || "");
       }
       loadEmails();
     })();
@@ -192,6 +206,42 @@ const EzAgencyPanel = () => {
       return;
     }
     toast.success(`Test-Email an ${to} gesendet`);
+  };
+
+  const saveSmtp = async () => {
+    if (!settingsId) return;
+    setSavingSmtp(true);
+    const { error } = await (supabase as any)
+      .from("api_settings")
+      .update({
+        smtp_host: smtpHost.trim() || null,
+        smtp_port: Number(smtpPort) || 587,
+        smtp_user: smtpUser.trim() || null,
+        smtp_from: smtpFrom.trim() || null,
+        smtp_from_name: smtpFromName.trim() || null,
+      })
+      .eq("id", settingsId);
+    setSavingSmtp(false);
+    if (error) { toast.error("Fehler beim Speichern"); return; }
+    toast.success("SMTP gespeichert");
+  };
+
+  const sendSmtpTest = async () => {
+    const to = window.prompt(`Test-Mail von ${smtpFrom || "(from)"} an welche Adresse?`);
+    if (!to) return;
+    setSendingSmtpTest(true);
+    const { data, error } = await (supabase as any).functions.invoke("send-smtp-email", {
+      body: {
+        to, subject: "SMTP Test",
+        html: `<p>Test-Mail via GMX SMTP.</p><p>Von: <strong>${smtpFrom}</strong></p>`,
+      },
+    });
+    setSendingSmtpTest(false);
+    if (error || data?.error) {
+      toast.error(`Fehler: ${data?.error || error?.message || "unbekannt"}`);
+      return;
+    }
+    toast.success(`Test-Mail an ${to} gesendet`);
   };
 
   return (
@@ -352,6 +402,48 @@ const EzAgencyPanel = () => {
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* SMTP Versand */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Send className="h-5 w-5" /> E-Mail Versand (SMTP)
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-xs text-muted-foreground">
+            Login-Konto (z. B. GMX) und Absenderadresse. Passwort ist als Secret <code>SMTP_PASSWORD</code> gespeichert.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">SMTP Host</label>
+              <Input value={smtpHost} onChange={e => setSmtpHost(e.target.value)} className="font-mono" placeholder="mail.gmx.net" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Port</label>
+              <Input type="number" value={smtpPort} onChange={e => setSmtpPort(Number(e.target.value))} className="font-mono" placeholder="587" />
+            </div>
+            <div className="space-y-1 sm:col-span-2">
+              <label className="text-xs text-muted-foreground">Login-Adresse (Benutzer)</label>
+              <Input value={smtpUser} onChange={e => setSmtpUser(e.target.value)} className="font-mono" placeholder="ing.sperling@gmx.de" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Absender-Adresse (From)</label>
+              <Input value={smtpFrom} onChange={e => setSmtpFrom(e.target.value)} className="font-mono" placeholder="ing.sperling@j-sperling.de" />
+            </div>
+            <div className="space-y-1">
+              <label className="text-xs text-muted-foreground">Absender-Name</label>
+              <Input value={smtpFromName} onChange={e => setSmtpFromName(e.target.value)} placeholder="ing. Sperling" />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <Button onClick={saveSmtp} disabled={savingSmtp}>Speichern</Button>
+            <Button variant="outline" onClick={sendSmtpTest} disabled={sendingSmtpTest}>
+              <Send className="h-4 w-4 mr-1" /> Test-Mail
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
