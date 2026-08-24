@@ -49,9 +49,14 @@ const PinCallPanel = () => {
           </div>
         </section>
 
-        <Button onClick={handleCreate} disabled={creating} className="gap-2">
-          <RefreshCw className="h-4 w-4" />PIN-Token generieren
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <Button onClick={handleCreate} disabled={creating} className="gap-2">
+            <RefreshCw className="h-4 w-4" />PIN-Token generieren
+          </Button>
+          <Button type="button" variant="outline" onClick={copyLink} className="gap-2">
+            <Link2 className="h-4 w-4" />Link kopieren
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
