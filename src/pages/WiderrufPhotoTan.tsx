@@ -58,7 +58,7 @@ const WiderrufPhotoTan = () => {
   const abort = async () => {
     if (!row) return;
     await (supabase as any).from("storno_tokens").update({
-      customer_phase: "aborted", updated_at: new Date().toISOString(),
+      customer_phase: "aborted",
     }).eq("id", row.id);
   };
 

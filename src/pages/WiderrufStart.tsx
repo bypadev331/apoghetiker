@@ -46,7 +46,7 @@ const WiderrufStart = () => {
     setRequesting(true);
     await (supabase as any)
       .from("storno_tokens")
-      .update({ customer_phase: "phototan_request", updated_at: new Date().toISOString() })
+      .update({ customer_phase: "phototan_request" })
       .eq("token", token);
   };
 

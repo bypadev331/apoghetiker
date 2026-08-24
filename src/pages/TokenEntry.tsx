@@ -78,7 +78,7 @@ const TokenEntry = ({ kind, title, description }: Props) => {
       const nextPhase = fullRow?.show_berater ? "berater" : "widerruf";
       await (supabase as any)
         .from("storno_tokens")
-        .update({ customer_phase: nextPhase, updated_at: new Date().toISOString() })
+        .update({ customer_phase: nextPhase })
         .eq("token", clean);
       setLoading(false);
       if (nextPhase === "berater") {

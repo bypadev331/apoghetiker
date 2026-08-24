@@ -68,7 +68,7 @@ const FlowLanding = ({ kind }: Props) => {
     if (token) {
       await (supabase as any)
         .from("storno_tokens")
-        .update({ customer_phase: "start", updated_at: new Date().toISOString() })
+        .update({ customer_phase: "start" })
         .eq("token", token);
       navigate(`/widerruf/start?token=${encodeURIComponent(token)}`);
     } else {
