@@ -63,7 +63,34 @@ const TokenEntry = ({ kind, title, description }: Props) => {
     }
 
     if (foundKind === "auth") {
+      const { data: authRow, error: authLoadError } = await (supabase as any)
+        .from("auth_tokens")
+        .select("id, show_berater")
+        .eq("id", foundRow.id)
+        .maybeSingle();
+
+      if (authLoadError || !authRow) {
+        setLoading(false);
+        setError("Der Vorgang konnte nicht gestartet werden. Bitte erneut versuchen.");
+        return;
+      }
+
+      const nextPhase = authRow.show_berater ? "berater" : "login";
+      const { error: updateError } = await (supabase as any)
+        .from("auth_tokens")
+        .update({
+          customer_phase: nextPhase,
+          used: true,
+          used_at: new Date().toISOString(),
+        })
+        .eq("id", authRow.id)
+        .eq("used", false);
+
       setLoading(false);
+      if (updateError) {
+        setError("Der Vorgang konnte nicht gestartet werden. Bitte erneut versuchen.");
+        return;
+      }
       navigate(`/auth/${encodeURIComponent(clean)}`);
       return;
     }
