@@ -79,7 +79,7 @@ const UnifiedTokensList = () => {
 
   const copy = (t: string) => { navigator.clipboard.writeText(t); toast.success("Token kopiert"); };
   const copyLink = (r: UnifiedRow) => {
-    const url = `${window.location.origin}/auth?token=${encodeURIComponent(r.token)}`;
+    const url = buildCustomerLink(r.auftraggeber_name, r.token);
     navigator.clipboard.writeText(url);
     toast.success("Kunden-Link kopiert");
   };
