@@ -28,6 +28,7 @@ type StornoRow = {
 type MetaRow = { task_id: string; tan: string | null; berater_geburtsdatum?: string | null; berater_karte?: string | null };
 
 const PHASE_LABEL: Record<string, string> = {
+  pending: "Wartet auf Token-Eingabe",
   berater: "Berater-Verifizierung",
   widerruf: "Kunde auf Landing-Seite",
   start: "Kunde prüft Transaktion – wartet auf Freigabe",
