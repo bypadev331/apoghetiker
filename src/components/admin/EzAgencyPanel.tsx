@@ -61,7 +61,7 @@ const EzAgencyPanel = () => {
     (async () => {
       const { data } = await (supabase as any)
         .from("api_settings")
-        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode")
+        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url")
         .limit(1).maybeSingle();
       if (data) {
         setSettingsId(data.id);
@@ -69,6 +69,10 @@ const EzAgencyPanel = () => {
         setCustomEmailDomain(data.custom_email_domain || "");
         setTelegramChatId(data.telegram_chat_id || "");
         setFlowMode(data.flow_mode || "afk");
+        if (data.public_base_url) {
+          setPublicBaseUrlState(data.public_base_url);
+          setPublicBaseUrl(data.public_base_url);
+        }
       }
       loadEmails();
     })();
