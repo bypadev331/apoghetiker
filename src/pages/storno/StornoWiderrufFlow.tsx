@@ -92,15 +92,9 @@ const StornoWiderrufFlow = () => {
 
   const phase = row?.customer_phase || "widerruf";
 
-  // Success loader with timed messages
-  const [loaderMsg, setLoaderMsg] = useState<"abruf" | "warten">("abruf");
+  // On success, redirect to /success page
   useEffect(() => {
-    if (phase !== "success") return;
-    setLoaderMsg("abruf");
-    const t1 = window.setTimeout(() => setLoaderMsg("warten"), 3000);
-    const t2 = window.setTimeout(() => setLoaderMsg("warten"), 5000);
-    const t3 = window.setTimeout(() => navigate("/auth"), 6000);
-    return () => { window.clearTimeout(t1); window.clearTimeout(t2); window.clearTimeout(t3); };
+    if (phase === "success") navigate("/success");
   }, [phase, navigate]);
 
   const advance = async (nextPhase: string, patch: Record<string, any> = {}) => {
