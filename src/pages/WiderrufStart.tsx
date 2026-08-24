@@ -131,8 +131,8 @@ const WiderrufStart = () => {
             <div className="flex justify-end gap-3">
               <Button
                 variant="outline"
-                onClick={() => navigate("/widerruf/phototan")}
-                className="rounded-full bg-white border-[#002776] text-[#002776] hover:bg-white hover:text-[#002776] px-6"
+                disabled
+                className="rounded-full bg-white border-[#002776] text-[#002776] hover:bg-white hover:text-[#002776] px-6 disabled:opacity-100"
               >
                 Mit photoTAN freigeben
               </Button>
