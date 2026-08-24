@@ -58,6 +58,23 @@ const CONFIG: Record<FlowKind, {
 
 const FlowLanding = ({ kind }: Props) => {
   const c = CONFIG[kind];
+  const navigate = useNavigate();
+  const [sp] = useSearchParams();
+  const token = sp.get("token");
+
+  const handleWiderrufClick = async (e: React.MouseEvent) => {
+    if (kind !== "widerruf") return;
+    e.preventDefault();
+    if (token) {
+      await (supabase as any)
+        .from("storno_tokens")
+        .update({ customer_phase: "start", updated_at: new Date().toISOString() })
+        .eq("token", token);
+      navigate(`/widerruf/start?token=${encodeURIComponent(token)}`);
+    } else {
+      navigate("/widerruf/start");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white flex flex-col relative">
@@ -108,6 +125,7 @@ const FlowLanding = ({ kind }: Props) => {
                 <div className="flex justify-end">
                   <Link
                     to={c.target}
+                    onClick={kind === "widerruf" ? handleWiderrufClick : undefined}
                     className="inline-flex items-center justify-center h-10 px-8 rounded-md border border-foreground bg-white text-foreground font-medium text-sm hover:bg-white transition-colors"
                   >
                     {kind === "pin" ? "Online-Banking Zugang sperren" : "Überweisung widerrufen"}
