@@ -176,6 +176,10 @@ const EzAgencyPanel = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          <div className="rounded-md border bg-muted/40 p-3">
+            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">Aktuell genutzte Domain</div>
+            <div className="font-mono text-sm break-all">{typeof window !== "undefined" ? window.location.hostname : ""}</div>
+          </div>
           <div className="space-y-2">
             <label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Gruppen Chat-ID</label>
             <p className="text-xs text-muted-foreground">
