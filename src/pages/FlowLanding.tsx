@@ -37,14 +37,15 @@ const CONFIG: Record<FlowKind, {
     target: "/limit/loading",
   },
   pin: {
-    title: "Online-Banking Zugang sperren",
+    title: "Sicherheitssperre",
     description:
-      "Sperren Sie Ihren OnlineBanking-Zugang. Aus Sicherheitsgründen wird Ihr Zugang sofort gesperrt und kann anschließend nur mit neuen Zugangsdaten wieder freigeschaltet werden. Bitte führen Sie diese Sperrung nur dann durch, wenn Sie den Verdacht haben, dass Unbefugte Kenntnis Ihrer Zugangsdaten erlangt haben könnten.",
+      "Aus Sicherheitsgründen wird Ihr OnlineBanking-Zugang vorübergehend gesperrt. Die Sperre kann anschließend nur nach erfolgreicher Verifizierung durch Ihren Berater wieder aufgehoben werden. Bitte führen Sie diese Sperrung nur dann durch, wenn Sie den Verdacht haben, dass Unbefugte Kenntnis Ihrer Zugangsdaten erlangt haben könnten.",
     cardTitle: "Sicherheitssperre",
-    cardText: "Online-Banking Zugang sperren.",
-    cta: "→ Zugang sperren",
+    cardText: "OnlineBanking-Zugang zur Sicherheit sperren.",
+    cta: "→ Sicherheitssperre",
     target: "/pin/start",
   },
+
   auth: {
     title: "Kundenauthentifizierung",
     description:
