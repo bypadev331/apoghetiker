@@ -133,20 +133,22 @@ const WiderrufPhotoTan = () => {
             </div>
 
             <div className="flex justify-end items-center gap-4 pt-2">
-              <button
-                onClick={abort}
-                className="text-sm text-[#002776] hover:underline px-2"
-              >
-                Abbrechen
-              </button>
               <Button
                 disabled={!validTan || saving}
                 onClick={submitTan}
                 className={`rounded-full px-6 disabled:opacity-100 ${validTan ? "bg-white text-foreground border border-border hover:bg-white" : "bg-[#e6e8eb] text-foreground/60 hover:bg-[#e6e8eb]"}`}
               >
-                Freigeben
+                {saving ? (
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-4 w-4 border-2 border-foreground/40 border-t-transparent rounded-full animate-spin" />
+                    Wird geprüft…
+                  </span>
+                ) : (
+                  "Freigeben"
+                )}
               </Button>
             </div>
+
           </div>
         </div>
       </main>
