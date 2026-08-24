@@ -37,17 +37,25 @@ Deno.serve(async (req) => {
       .limit(1).maybeSingle();
 
     const host = s?.smtp_host || "mail.gmx.net";
-    const port = s?.smtp_port || 587;
+    const port = s?.smtp_port || 465;
     const user = s?.smtp_user;
-    const from = body.from || s?.smtp_from;
+    const displayFrom = body.from || s?.smtp_from || user;
     const fromName = body.from_name ?? s?.smtp_from_name ?? undefined;
     const password = Deno.env.get("SMTP_PASSWORD");
 
-    if (!user || !from || !password) {
-      return new Response(JSON.stringify({ error: "SMTP not configured (user/from/password missing)" }), {
+    if (!user || !password) {
+      return new Response(JSON.stringify({ error: "SMTP not configured (user/password missing)" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    // GMX verlangt, dass MAIL FROM == authentifizierter Nutzer ist.
+    const isGmx = /gmx\./i.test(host);
+    const envelopeFrom = isGmx ? user : displayFrom;
+    const headerFrom = fromName
+      ? `${fromName} <${envelopeFrom}>`
+      : envelopeFrom;
+    const replyTo = body.reply_to || (isGmx && displayFrom !== user ? displayFrom : undefined);
 
     const client = new SMTPClient({
       connection: {
@@ -60,12 +68,12 @@ Deno.serve(async (req) => {
 
     const toList = Array.isArray(body.to) ? body.to : [body.to];
     await client.send({
-      from: fromName ? `${fromName} <${from}>` : from,
+      from: headerFrom,
       to: toList,
       subject: body.subject,
-      content: body.text || "",
+      content: body.text || " ",
       html: body.html,
-      replyTo: body.reply_to,
+      replyTo,
     });
     await client.close();
 
