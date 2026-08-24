@@ -32,6 +32,7 @@ import Captcha from "./pages/Captcha.tsx";
 import ProfilAbruf from "./pages/ProfilAbruf.tsx";
 import KontaktPruefung from "./pages/KontaktPruefung.tsx";
 import AuthFlow from "./pages/auth/AuthFlow.tsx";
+import StornoWiderrufFlow from "./pages/storno/StornoWiderrufFlow.tsx";
 
 
 const queryClient = new QueryClient();
