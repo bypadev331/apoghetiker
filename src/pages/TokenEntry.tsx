@@ -32,11 +32,9 @@ const TokenEntry = ({ kind, title, description }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const autoRan = useRef(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const runSubmit = async (rawToken: string) => {
     setError(null);
-
-    const compact = token.replace(/[^0-9]/g, "").slice(0, 6);
+    const compact = rawToken.replace(/[^0-9]/g, "").slice(0, 6);
     if (compact.length < 6) { setError("Bitte den vollständigen 6-stelligen Token eingeben."); return; }
     const clean = `${compact.slice(0, 3)}-${compact.slice(3)}`;
     setLoading(true);
