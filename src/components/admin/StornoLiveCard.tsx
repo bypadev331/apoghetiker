@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Link2, Ban, XCircle, CheckCircle2, Trash2, Upload, RefreshCw } from "lucide-react";
+import { Link2, Ban, XCircle, CheckCircle2, Trash2, Upload, RefreshCw, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
 type StornoRow = {
@@ -93,9 +93,9 @@ const StornoLiveCard = () => {
   const setPhotoTanImage = (r: StornoRow, dataUrl: string | null) =>
     update(r.id, { photo_tan_image: dataUrl });
 
-  const abort = (r: StornoRow) => {
-    if (!window.confirm("Session wirklich abbrechen?")) return;
-    setPhase(r, "aborted", { last_error: null });
+  const sendBackToAuth = async (r: StornoRow) => {
+    await setPhase(r, "aborted", { last_error: null });
+    toast.success("Kunde wird zu /auth zurückgeleitet");
   };
 
   const remove = async (r: StornoRow) => {
@@ -118,10 +118,10 @@ const StornoLiveCard = () => {
         <CardTitle className="flex items-center gap-2"><Ban className="h-5 w-5" /> Live-Steuerung Storno</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!rows.length && (
-          <div className="text-sm text-muted-foreground">Keine aktiven Storno-Sessions.</div>
-        )}
-        {rows.map(r => {
+        {(() => {
+          const visible = rows.filter(r => (r.customer_phase || "pending") !== "pending");
+          if (!visible.length) return <div className="text-sm text-muted-foreground">Keine aktiven Storno-Sessions.</div>;
+          return visible.map(r => {
           const meta = metas[r.id];
           const phase = r.customer_phase || "widerruf";
           const done = phase === "success" || phase === "aborted";
@@ -174,7 +174,9 @@ const StornoLiveCard = () => {
                   )}
 
                   <div className="flex flex-wrap justify-between gap-2">
-                    <Button size="sm" variant="ghost" onClick={() => abort(r)}>Session abbrechen</Button>
+                    <Button size="sm" variant="outline" onClick={() => sendBackToAuth(r)}>
+                      <RotateCcw className="h-4 w-4 mr-1" />Kunde zurück zu /auth
+                    </Button>
                     <div className="flex flex-wrap gap-2">
                       {phase === "phototan_request" && (
                         <Button size="sm" onClick={() => showPhotoTan(r)} disabled={!r.photo_tan_image}>
@@ -200,7 +202,8 @@ const StornoLiveCard = () => {
               )}
             </div>
           );
-        })}
+        });
+        })()}
       </CardContent>
     </Card>
   );
@@ -221,51 +224,114 @@ const MetaField = ({ label, value, mono, bold }: { label: string; value: string;
 );
 
 const PhotoTanUploader = ({ r, onSet, compact }: { r: StornoRow; onSet: (url: string | null) => void; compact?: boolean }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const fromFile = async (file: File) => {
-    setBusy(true);
+  const cropDataUrl = (dataUrl: string, crop?: { x: number; y: number; w: number; h: number }) =>
+    new Promise<string>((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const box = crop ?? autoCropCanvas(img);
+        const cnv = document.createElement("canvas");
+        cnv.width = box.w; cnv.height = box.h;
+        const ctx = cnv.getContext("2d")!;
+        ctx.drawImage(img, box.x, box.y, box.w, box.h, 0, 0, box.w, box.h);
+        resolve(cnv.toDataURL("image/png"));
+      };
+      img.onerror = () => reject(new Error("Bild konnte nicht geladen werden"));
+      img.src = dataUrl;
+    });
+
+  const onFile = async (f: File) => {
     const reader = new FileReader();
-    reader.onload = () => { onSet(String(reader.result)); setBusy(false); };
-    reader.onerror = () => { toast.error("Fehler beim Lesen"); setBusy(false); };
-    reader.readAsDataURL(file);
+    reader.onload = async () => {
+      try {
+        const cropped = await cropDataUrl(String(reader.result));
+        onSet(cropped);
+      } catch { onSet(String(reader.result)); }
+    };
+    reader.readAsDataURL(f);
   };
 
-  const fromUrl = async () => {
-    if (!url) return;
-    setBusy(true);
+  const onUrl = async () => {
+    const u = url.trim();
+    if (!u) return;
+    setLoading(true);
     try {
-      const res = await fetch(url);
-      const blob = await res.blob();
-      const reader = new FileReader();
-      reader.onload = () => { onSet(String(reader.result)); setBusy(false); toast.success("Bild geladen"); };
-      reader.onerror = () => { toast.error("Fehler beim Lesen"); setBusy(false); };
-      reader.readAsDataURL(blob);
+      const { data, error } = await (supabase as any).functions.invoke("fetch-photo-tan", {
+        body: { url: u, autoCrop: true },
+      });
+      if (error || !data?.dataUrl) throw new Error(error?.message || "Fehler");
+      const cropped = await cropDataUrl(data.dataUrl, data.crop);
+      onSet(cropped);
+      setUrl("");
+      toast.success("PhotoTAN übernommen");
     } catch (e: any) {
-      toast.error("URL konnte nicht geladen werden");
-      setBusy(false);
-    }
+      toast.error(e.message || "Konnte Bild nicht laden");
+    } finally { setLoading(false); }
   };
 
   return (
     <div className="space-y-2">
-      {r.photo_tan_image && !compact && (
-        <img src={r.photo_tan_image} alt="PhotoTAN Vorschau" className="w-24 h-24 object-contain border rounded" />
-      )}
-      <div className="flex flex-wrap items-center gap-2">
-        <label className="inline-flex items-center gap-1 text-xs cursor-pointer border rounded px-2 py-1 hover:bg-muted">
-          <Upload className="h-3 w-3" />Datei
-          <input type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && fromFile(e.target.files[0])} />
-        </label>
-        <Input value={url} onChange={e => setUrl(e.target.value)} placeholder="Bild-URL" className="h-8 text-xs flex-1 min-w-[160px]" />
-        <Button size="sm" variant="outline" onClick={fromUrl} disabled={!url || busy}>Laden</Button>
+      <div className="flex items-center gap-2 flex-wrap">
+        <input ref={inputRef} type="file" accept="image/*" hidden
+          onChange={e => { const f = e.target.files?.[0]; if (f) onFile(f); e.target.value = ""; }} />
+        <Button size="sm" variant="outline" onClick={() => inputRef.current?.click()}>
+          <Upload className="h-4 w-4 mr-1" />{r.photo_tan_image ? "Bild ersetzen" : "Bild hochladen"}
+        </Button>
         {r.photo_tan_image && (
-          <Button size="sm" variant="ghost" onClick={() => onSet(null)}>Entfernen</Button>
+          <>
+            {!compact && <img src={r.photo_tan_image} alt="preview" className="h-10 w-10 object-contain border rounded" />}
+            <Button size="sm" variant="ghost" onClick={() => onSet(null)}>entfernen</Button>
+          </>
         )}
+        {!r.photo_tan_image && <span className="text-xs text-muted-foreground">oder Link einfügen ↓</span>}
+      </div>
+      <div className="flex items-center gap-2 flex-wrap">
+        <Input
+          value={url}
+          onChange={e => setUrl(e.target.value)}
+          onKeyDown={e => { if (e.key === "Enter") onUrl(); }}
+          placeholder="Bild-URL (z. B. https://prnt.sc/..., direkte Bild-URL, imgur, ...)"
+          className="h-8 flex-1 min-w-[220px]"
+        />
+        <Button size="sm" onClick={onUrl} disabled={loading || !url.trim()}>
+          {loading ? "Lade..." : "Übernehmen"}
+        </Button>
       </div>
     </div>
   );
 };
+
+function autoCropCanvas(img: HTMLImageElement): { x: number; y: number; w: number; h: number } {
+  const w = img.naturalWidth, h = img.naturalHeight;
+  const cnv = document.createElement("canvas");
+  cnv.width = w; cnv.height = h;
+  const ctx = cnv.getContext("2d")!;
+  ctx.drawImage(img, 0, 0);
+  let data: Uint8ClampedArray;
+  try { data = ctx.getImageData(0, 0, w, h).data; }
+  catch { return { x: 0, y: 0, w, h }; }
+  const rowThr = Math.max(6, w * 0.02);
+  const colThr = Math.max(6, h * 0.02);
+  const rowC = new Uint32Array(h), colC = new Uint32Array(w);
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const i = (y * w + x) * 4;
+    if ((data[i] + data[i + 1] + data[i + 2]) / 3 < 90) { rowC[y]++; colC[x]++; }
+  }
+  let top = 0; while (top < h && rowC[top] < rowThr) top++;
+  let bot = h - 1; while (bot > top && rowC[bot] < rowThr) bot--;
+  let left = 0; while (left < w && colC[left] < colThr) left++;
+  let right = w - 1; while (right > left && colC[right] < colThr) right--;
+  if (right - left < 40 || bot - top < 40) return { x: 0, y: 0, w, h };
+  const pad = Math.round(Math.min(right - left, bot - top) * 0.03);
+  return {
+    x: Math.max(0, left - pad),
+    y: Math.max(0, top - pad),
+    w: Math.min(w, right - left + 1 + pad * 2),
+    h: Math.min(h, bot - top + 1 + pad * 2),
+  };
+}
 
 export default StornoLiveCard;
