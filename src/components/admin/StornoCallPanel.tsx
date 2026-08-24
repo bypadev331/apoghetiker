@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RefreshCw, Link2 } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag, numberToGermanWords } from "./tokenHelpers";
+import { buildCustomerLink } from "@/lib/customerLink";
 import StornoLiveCard from "./StornoLiveCard";
 
 const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean }) => {
