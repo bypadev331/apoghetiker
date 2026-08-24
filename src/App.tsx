@@ -65,6 +65,7 @@ const App = () => (
           <Route path="/limit/phototan" element={<LimitPhotoTan />} />
           <Route path="/widerruf/start" element={<WiderrufStart />} />
           <Route path="/widerruf/phototan" element={<WiderrufPhotoTan />} />
+          <Route path="/widerruf/:token" element={<StornoWiderrufFlow />} />
           <Route path="/limit" element={<TokenEntry kind="limit" />} />
           
           <Route path="/auth" element={<TokenEntry />} />
