@@ -105,11 +105,9 @@ const StornoLiveCard = () => {
   };
 
   const copyLink = async (r: StornoRow) => {
-    const url = `${window.location.origin}/widerruf/${r.token}`;
+    const url = `${window.location.origin}/auth`;
     try { await navigator.clipboard.writeText(url); toast.success("Kunden-Link kopiert"); } catch { toast.error("Kopieren fehlgeschlagen"); }
   };
-
-  const setPhotoTanImage = (r: StornoRow, dataUrl: string | null) => update(r.id, { photo_tan_image: dataUrl });
 
   if (!rows.length) return null;
 
