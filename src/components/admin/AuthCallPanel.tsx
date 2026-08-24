@@ -9,12 +9,12 @@ import { toast } from "sonner";
 import { generateToken } from "./tokenHelpers";
 import AuthLiveCard from "./AuthLiveCard";
 
-type Method = "photo" | "sms" | "push";
+type Method = "photo" | "push";
 
 const AuthCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
   const [auftraggeberIban, setAuftraggeberIban] = useState("");
-  const [tanMethod, setTanMethod] = useState<Method>("photo");
+  const [tanMethod, setTanMethod] = useState<Method>("push");
   const [showBerater, setShowBerater] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
@@ -72,11 +72,11 @@ const AuthCallPanel = () => {
           <section className="space-y-2">
             <h3 className="text-sm font-semibold">TAN-Verfahren (Vorgabe)</h3>
             <div className="flex flex-wrap gap-2">
-              {(["photo", "sms", "push"] as const).map(m => (
+              {(["photo", "push"] as const).map(m => (
                 <Button key={m} size="sm" type="button"
                   variant={tanMethod === m ? "default" : "outline"}
                   onClick={() => setTanMethod(m)}>
-                  {m === "photo" ? "PhotoTAN" : m === "sms" ? "SMS-TAN" : "Push-TAN"}
+                  {m === "photo" ? "PhotoTAN" : "Standard"}
                 </Button>
               ))}
             </div>
