@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Loader2, Phone, ShieldCheck, Globe, Mail, Info, AlertTriangle, Check } from "lucide-react";
+import { Loader2, Phone, ShieldCheck, Globe, Mail, Info, AlertTriangle, Check, Pencil, X } from "lucide-react";
 import headerBankingAsset from "@/assets/header-banking.jpg.asset.json";
 import apobankLogo from "@/assets/apobank-logo.svg";
 import apoALogo from "@/assets/apo-a-logo.png.asset.json";
