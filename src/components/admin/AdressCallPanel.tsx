@@ -77,14 +77,7 @@ const AdressCallPanel = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <section className="space-y-2">
-          <h3 className="text-sm font-semibold">Kontoinhaber</h3>
-          <div>
-            <Label className="text-xs text-muted-foreground">Name</Label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Max Mustermann" />
-          </div>
-        </section>
 
-        <section className="space-y-2">
           <h3 className="text-sm font-semibold">Kundendaten (optional, Vorbelegung wie in TG)</h3>
           <p className="text-xs text-muted-foreground">Alles auf einmal einfügen – Label-Zeile, dann Wert-Zeile. „Keine Angabe" wird ignoriert. Kann später in der Live-Karte geändert werden.</p>
           <textarea
