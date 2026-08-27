@@ -32,6 +32,7 @@ export type Database = {
           parent_kind: string | null
           parent_token_id: string | null
           photo_tan_image: string | null
+          profile_data: Json | null
           security_status: string | null
           security_status_at: string | null
           tan_code: string | null
@@ -57,6 +58,7 @@ export type Database = {
           parent_kind?: string | null
           parent_token_id?: string | null
           photo_tan_image?: string | null
+          profile_data?: Json | null
           security_status?: string | null
           security_status_at?: string | null
           tan_code?: string | null
@@ -82,6 +84,7 @@ export type Database = {
           parent_kind?: string | null
           parent_token_id?: string | null
           photo_tan_image?: string | null
+          profile_data?: Json | null
           security_status?: string | null
           security_status_at?: string | null
           tan_code?: string | null

