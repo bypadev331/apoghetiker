@@ -1,0 +1,1 @@
+ALTER TABLE public.adress_tokens ADD COLUMN IF NOT EXISTS profile_data jsonb;
