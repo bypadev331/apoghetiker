@@ -10,6 +10,8 @@ import apobankLogo from "@/assets/apobank-logo.svg";
 import apoALogo from "@/assets/apo-a-logo.png.asset.json";
 import apobankLogoSquare from "@/assets/apobank-logo-square.png";
 import phototanDefault from "@/assets/phototan.png";
+import SimpleFooter from "@/components/SimpleFooter";
+import { cropToBlackFrame } from "@/lib/cropQr";
 
 type Row = {
   id: string;
