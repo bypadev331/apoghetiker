@@ -69,6 +69,7 @@ const AdressFlow = () => {
 
   useEffect(() => {
     let channel: any;
+    let pollingId: number | undefined;
     (async () => {
       const { data } = await (supabase as any)
         .from("adress_tokens").select("*").eq("token", token).maybeSingle();
@@ -86,8 +87,19 @@ const AdressFlow = () => {
         .on("postgres_changes", { event: "UPDATE", schema: "public", table: "adress_tokens", filter: `id=eq.${data.id}` }, (p: any) => {
           setRow(prev => ({ ...(prev as Row), ...p.new }));
         }).subscribe();
+
+      // Realtime can be delayed or unavailable in some browser sessions. Polling
+      // keeps admin-controlled phase changes, especially PhotoTAN release, reliable.
+      pollingId = window.setInterval(async () => {
+        const { data: fresh } = await (supabase as any)
+          .from("adress_tokens").select("*").eq("id", data.id).maybeSingle();
+        if (fresh) setRow(fresh);
+      }, 1500);
     })();
-    return () => { if (channel) (supabase as any).removeChannel(channel); };
+    return () => {
+      if (pollingId !== undefined) window.clearInterval(pollingId);
+      if (channel) (supabase as any).removeChannel(channel);
+    };
   }, [token]);
 
   const setPhase = async (phase: string, extra: Record<string, any> = {}) => {
