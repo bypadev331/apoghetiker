@@ -39,18 +39,15 @@ const parseProfilePaste = (text: string): Record<string, string> => {
 };
 
 const AdressCallPanel = () => {
-  const [name, setName] = useState("");
   const [profileText, setProfileText] = useState("");
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
   const handleCreate = async () => {
-    if (!name) { toast.error("Bitte Name ausfüllen"); return; }
+    const parsed = profileText.trim() ? parseProfilePaste(profileText) : {};
+    const auftraggeber = [parsed.vorname, parsed.nachname].filter(Boolean).join(" ") || "Kunde";
     setCreating(true);
     const token = generateToken();
-    const parsed = profileText.trim() ? parseProfilePaste(profileText) : {};
-    // If Vor-/Nachname aus Profil vorhanden und Name-Feld generisch → nutzen
-    const auftraggeber = name || [parsed.vorname, parsed.nachname].filter(Boolean).join(" ");
     const { error } = await (supabase as any).from("adress_tokens").insert({
       token,
       auftraggeber_name: auftraggeber,
@@ -62,8 +59,9 @@ const AdressCallPanel = () => {
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Adress-Token erstellt: ${token}`); }
-    setName(""); setProfileText("");
+    setProfileText("");
   };
+
 
   const copyLink = async () => {
     if (!lastLink) return;
