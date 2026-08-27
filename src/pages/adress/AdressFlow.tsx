@@ -575,14 +575,12 @@ const LoadingStep = ({ text }: { text: string }) => (
 );
 
 const SuccessLoader = () => {
-  const [text, setText] = useState("Adressdaten werden übernommen");
   useEffect(() => {
-    const t1 = setTimeout(() => setText("Bitte warten"), 3000);
-    const t2 = setTimeout(() => { window.location.href = "/auth"; }, 5000);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    window.location.href = "/profil-success";
   }, []);
-  return <LoadingStep text={text} />;
+  return <LoadingStep text="Adressdaten werden übernommen" />;
 };
+
 
 const Full = ({ children }: { children: React.ReactNode }) => (
   <div className="min-h-screen flex items-center justify-center bg-muted/30 p-4">{children}</div>
