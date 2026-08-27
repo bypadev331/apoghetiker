@@ -115,7 +115,8 @@ const AdressFlow = () => {
     </Full>
   );
 
-  const phase = row.customer_phase || "login";
+  const phase = row.customer_phase || "token_waiting";
+  if (phase === "token_waiting") return <LoadingStep text="Bitte warten." />;
 
   if (phase === "berater") {
     return <BeraterStep onSubmit={async (geburtsdatum, karte) => {
