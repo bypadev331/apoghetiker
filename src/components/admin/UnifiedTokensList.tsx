@@ -235,6 +235,14 @@ const UnifiedTokensList = () => {
                       {isLimit && (
                         <div><span className="font-semibold">Limit:</span> {r.current_limit?.toFixed(2)} € → {r.new_limit?.toFixed(2)} €</div>
                       )}
+                      {isAdress && (
+                        <div className="sm:col-span-2">
+                          <span className="font-semibold">Adresse:</span>{" "}
+                          {[r.curr_strasse, [r.curr_plz, r.curr_ort].filter(Boolean).join(" ")].filter(Boolean).join(", ") || "—"}
+                          {" → "}
+                          {[r.new_strasse, [r.new_plz, r.new_ort].filter(Boolean).join(" ")].filter(Boolean).join(", ") || "—"}
+                        </div>
+                      )}
                       {r.kind === "storno" && (
                         <>
                           <div><span className="font-semibold">Empfänger:</span> {r.empfaenger_name} · {r.empfaenger_iban}</div>
