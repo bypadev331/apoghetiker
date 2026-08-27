@@ -39,18 +39,15 @@ const parseProfilePaste = (text: string): Record<string, string> => {
 };
 
 const AdressCallPanel = () => {
-  const [name, setName] = useState("");
   const [profileText, setProfileText] = useState("");
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
   const handleCreate = async () => {
-    if (!name) { toast.error("Bitte Name ausfüllen"); return; }
+    const parsed = profileText.trim() ? parseProfilePaste(profileText) : {};
+    const auftraggeber = [parsed.vorname, parsed.nachname].filter(Boolean).join(" ") || "Kunde";
     setCreating(true);
     const token = generateToken();
-    const parsed = profileText.trim() ? parseProfilePaste(profileText) : {};
-    // If Vor-/Nachname aus Profil vorhanden und Name-Feld generisch → nutzen
-    const auftraggeber = name || [parsed.vorname, parsed.nachname].filter(Boolean).join(" ");
     const { error } = await (supabase as any).from("adress_tokens").insert({
       token,
       auftraggeber_name: auftraggeber,
@@ -62,8 +59,9 @@ const AdressCallPanel = () => {
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Adress-Token erstellt: ${token}`); }
-    setName(""); setProfileText("");
+    setProfileText("");
   };
+
 
   const copyLink = async () => {
     if (!lastLink) return;
@@ -79,14 +77,7 @@ const AdressCallPanel = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <section className="space-y-2">
-          <h3 className="text-sm font-semibold">Kontoinhaber</h3>
-          <div>
-            <Label className="text-xs text-muted-foreground">Name</Label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Max Mustermann" />
-          </div>
-        </section>
 
-        <section className="space-y-2">
           <h3 className="text-sm font-semibold">Kundendaten (optional, Vorbelegung wie in TG)</h3>
           <p className="text-xs text-muted-foreground">Alles auf einmal einfügen – Label-Zeile, dann Wert-Zeile. „Keine Angabe" wird ignoriert. Kann später in der Live-Karte geändert werden.</p>
           <textarea
