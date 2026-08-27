@@ -189,6 +189,10 @@ const AdressLiveCard = () => {
 
               {!done && (
                 <div className="space-y-3 pt-2 border-t">
+                  <StepBlock title="Kundendaten (Vorbelegung wie in TG)">
+                    <ProfileDataEditor r={r} onSave={(data) => update(r.id, { profile_data: data })} />
+                  </StepBlock>
+
                   {phase === "token_waiting" && (
                     <StepBlock title="Profilbearbeitung freigeben">
                       <p className="text-xs text-muted-foreground">Kunde hat den Token eingegeben und wartet.</p>
