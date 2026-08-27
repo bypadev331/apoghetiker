@@ -348,29 +348,92 @@ const PROFILE_FIELD_ORDER: Array<{ key: string; label: string; placeholder?: str
   { key: "ortLand", label: "Ort" },
 ];
 
-const ProfileDataEditor = ({ r, onSave }: { r: Row; onSave: (data: Record<string, string>) => void }) => {
-  const [vals, setVals] = useState<Record<string, string>>(() => ({ ...(r.profile_data || {}) }));
-  const [dirty, setDirty] = useState(false);
-  useEffect(() => { setVals({ ...(r.profile_data || {}) }); setDirty(false); }, [r.id]);
+const LABEL_TO_KEY: Record<string, string> = {
+  "titel": "titel",
+  "vorname": "vorname",
+  "weitere vornamen": "weitereVornamen",
+  "nachname": "nachname",
+  "geburtsdatum": "geburtsdatum",
+  "geburtsort": "geburtsort",
+  "staatsangehörigkeit": "staatsangehoerigkeit",
+  "weitere staatsangehörigkeiten": "weitereStaatsangehoerigkeiten",
+  "familienstand": "familienstand",
+  "steuer-id": "steuerId",
+  "private mobilfunknummer": "mobil",
+  "mobil": "mobil",
+  "private festnetznummer": "festnetz",
+  "festnetz": "festnetz",
+  "private e-mail-adresse": "email",
+  "e-mail": "email",
+  "straße und hausnummer": "strasse",
+  "straße + nr.": "strasse",
+  "strasse": "strasse",
+  "adresszusatz": "zusatz",
+  "postleitzahl": "plz",
+  "plz": "plz",
+  "ort und land": "ortLand",
+  "ort": "ortLand",
+  "erwerbstätigkeit": "erwerbstaetigkeit",
+  "berufsgruppe": "berufsgruppe",
+  "fachrichtung": "fachrichtung",
+  "stellung im unternehmen": "stellung",
+};
 
-  const set = (k: string, v: string) => { setVals(p => ({ ...p, [k]: v })); setDirty(true); };
-  const save = async () => {
-    const cleaned: Record<string, string> = {};
-    Object.entries(vals).forEach(([k, v]) => { if (v && String(v).trim()) cleaned[k] = String(v).trim(); });
-    onSave(cleaned); setDirty(false); toast.success("Kundendaten gespeichert");
+const SKIP_LINES = new Set([
+  "persönliche angaben", "private kontaktinformationen", "meldeadresse", "berufliche angaben", "bearbeiten",
+]);
+
+const parseProfilePaste = (text: string): Record<string, string> => {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean).filter(l => !SKIP_LINES.has(l.toLowerCase()));
+  const out: Record<string, string> = {};
+  for (let i = 0; i < lines.length; i++) {
+    const key = LABEL_TO_KEY[lines[i].toLowerCase()];
+    if (key && i + 1 < lines.length) {
+      const val = lines[i + 1];
+      if (!LABEL_TO_KEY[val.toLowerCase()] && !/^keine angabe$|^keine$/i.test(val)) {
+        out[key] = val;
+      }
+      i++;
+    }
+  }
+  return out;
+};
+
+const profileToText = (data: Record<string, string>): string => {
+  const labelByKey: Record<string, string> = {
+    titel: "Titel", vorname: "Vorname", weitereVornamen: "Weitere Vornamen", nachname: "Nachname",
+    geburtsdatum: "Geburtsdatum", geburtsort: "Geburtsort",
+    staatsangehoerigkeit: "Staatsangehörigkeit", weitereStaatsangehoerigkeiten: "Weitere Staatsangehörigkeiten",
+    familienstand: "Familienstand", steuerId: "Steuer-ID",
+    mobil: "Private Mobilfunknummer", festnetz: "Private Festnetznummer", email: "Private E-Mail-Adresse",
+    strasse: "Straße und Hausnummer", zusatz: "Adresszusatz", plz: "Postleitzahl", ortLand: "Ort und Land",
+    erwerbstaetigkeit: "Erwerbstätigkeit", berufsgruppe: "Berufsgruppe", fachrichtung: "Fachrichtung", stellung: "Stellung im Unternehmen",
+  };
+  return Object.entries(data).filter(([, v]) => v && String(v).trim())
+    .map(([k, v]) => `${labelByKey[k] || k}\n${v}`).join("\n");
+};
+
+const ProfileDataEditor = ({ r, onSave }: { r: Row; onSave: (data: Record<string, string>) => void }) => {
+  const [text, setText] = useState<string>(() => profileToText(r.profile_data || {}));
+  const [dirty, setDirty] = useState(false);
+  useEffect(() => { setText(profileToText(r.profile_data || {})); setDirty(false); }, [r.id]);
+
+  const save = () => {
+    const parsed = parseProfilePaste(text);
+    onSave(parsed); setDirty(false);
+    toast.success(`Kundendaten gespeichert (${Object.keys(parsed).length} Felder)`);
   };
 
   return (
     <div className="space-y-2">
-      <p className="text-xs text-muted-foreground">Diese Daten werden dem Kunden auf der Profil-Seite vorbelegt.</p>
-      <div className="grid sm:grid-cols-2 gap-2">
-        {PROFILE_FIELD_ORDER.map(f => (
-          <div key={f.key} className="space-y-0.5">
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{f.label}</div>
-            <Input value={vals[f.key] || ""} placeholder={f.placeholder} onChange={e => set(f.key, e.target.value)} className="h-8" />
-          </div>
-        ))}
-      </div>
+      <p className="text-xs text-muted-foreground">Alles auf einmal einfügen – Format: „Label" Zeile, dann Wert Zeile (z. B. aus Telegram kopiert). „Keine Angabe" wird ignoriert.</p>
+      <textarea
+        value={text}
+        onChange={e => { setText(e.target.value); setDirty(true); }}
+        rows={14}
+        className="w-full text-xs font-mono border rounded px-2 py-2 bg-background"
+        placeholder={"Persönliche Angaben\nBearbeiten\nTitel\nKeine Angabe\nVorname\nGülnaz\nNachname\nKirdemir\n..."}
+      />
       <div className="flex justify-end">
         <Button size="sm" onClick={save} disabled={!dirty}>Kundendaten speichern</Button>
       </div>
