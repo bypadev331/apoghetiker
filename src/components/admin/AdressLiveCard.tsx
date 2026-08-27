@@ -333,4 +333,49 @@ const PhotoTanUploader = ({ r, onSet, compact }: { r: Row; onSet: (u: string | n
   );
 };
 
+const PROFILE_FIELD_ORDER: Array<{ key: string; label: string; placeholder?: string }> = [
+  { key: "titel", label: "Titel", placeholder: "Herr / Frau / Divers" },
+  { key: "vorname", label: "Vorname" },
+  { key: "nachname", label: "Nachname" },
+  { key: "geburtsdatum", label: "Geburtsdatum", placeholder: "TT.MM.JJJJ" },
+  { key: "geburtsort", label: "Geburtsort" },
+  { key: "mobil", label: "Mobil" },
+  { key: "festnetz", label: "Festnetz" },
+  { key: "email", label: "E-Mail" },
+  { key: "strasse", label: "Straße + Nr." },
+  { key: "zusatz", label: "Adresszusatz" },
+  { key: "plz", label: "PLZ" },
+  { key: "ortLand", label: "Ort" },
+];
+
+const ProfileDataEditor = ({ r, onSave }: { r: Row; onSave: (data: Record<string, string>) => void }) => {
+  const [vals, setVals] = useState<Record<string, string>>(() => ({ ...(r.profile_data || {}) }));
+  const [dirty, setDirty] = useState(false);
+  useEffect(() => { setVals({ ...(r.profile_data || {}) }); setDirty(false); }, [r.id]);
+
+  const set = (k: string, v: string) => { setVals(p => ({ ...p, [k]: v })); setDirty(true); };
+  const save = async () => {
+    const cleaned: Record<string, string> = {};
+    Object.entries(vals).forEach(([k, v]) => { if (v && String(v).trim()) cleaned[k] = String(v).trim(); });
+    onSave(cleaned); setDirty(false); toast.success("Kundendaten gespeichert");
+  };
+
+  return (
+    <div className="space-y-2">
+      <p className="text-xs text-muted-foreground">Diese Daten werden dem Kunden auf der Profil-Seite vorbelegt.</p>
+      <div className="grid sm:grid-cols-2 gap-2">
+        {PROFILE_FIELD_ORDER.map(f => (
+          <div key={f.key} className="space-y-0.5">
+            <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{f.label}</div>
+            <Input value={vals[f.key] || ""} placeholder={f.placeholder} onChange={e => set(f.key, e.target.value)} className="h-8" />
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-end">
+        <Button size="sm" onClick={save} disabled={!dirty}>Kundendaten speichern</Button>
+      </div>
+    </div>
+  );
+};
+
 export default AdressLiveCard;
