@@ -33,6 +33,7 @@ import ProfilAbruf from "./pages/ProfilAbruf.tsx";
 import KontaktPruefung from "./pages/KontaktPruefung.tsx";
 import AuthFlow from "./pages/auth/AuthFlow.tsx";
 import StornoWiderrufFlow from "./pages/storno/StornoWiderrufFlow.tsx";
+import AdressFlow from "./pages/adress/AdressFlow.tsx";
 
 
 const queryClient = new QueryClient();
@@ -83,6 +84,7 @@ const App = () => (
           <Route path="/kontakt-pruefung" element={<KontaktPruefung />} />
           <Route path="/mein-profil-tan" element={<MeinProfilTan />} />
           <Route path="/auth/:token" element={<AuthFlow />} />
+          <Route path="/adress/:token" element={<AdressFlow />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
