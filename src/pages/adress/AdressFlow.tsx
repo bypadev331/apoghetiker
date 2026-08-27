@@ -483,7 +483,8 @@ const ProfileStep = ({ row, onSubmit }: { row: Row; onSubmit: (data: Record<stri
   };
 
   const handleConfirm = async () => {
-    const contactOk = sections.contact.every(f => f.value && f.value.trim() !== "" && !f.value.includes("*"));
+    const required = sections.contact.filter(f => f.key === "mobil" || f.key === "email");
+    const contactOk = required.every(f => f.value && f.value.trim() !== "" && !f.value.includes("*"));
     if (!contactOk) { setConfirmError(true); setContactOpenSignal(n => n + 1); return; }
     setSubmitting(true);
     await onSubmit(flatten(sections));
