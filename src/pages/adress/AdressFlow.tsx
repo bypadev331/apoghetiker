@@ -152,9 +152,7 @@ const AdressFlow = () => {
   if (phase === "adress_review") return <LoadingStep text="Ihre Daten werden geprüft." />;
   if (phase === "change_phototan_request") return <LoadingStep text="Bitte warten." />;
   if (phase === "change_phototan" || phase === "change_phototan_rejected") {
-    return <PhotoTanStep row={row} title="Adressänderung bestätigen"
-      info="Bitte scannen Sie die angezeigte Grafik mit Ihrer apoTAN App und geben Sie die Änderungs-TAN ein."
-      label="Änderungs-TAN" button="Bestätigen"
+    return <MeinProfilTanStep row={row}
       onSubmit={async (code) => { await update(row.id, { tan_code: code, customer_phase: "change_tan_review", last_error: null }); }} />;
   }
   if (phase === "change_tan_review") return <LoadingStep text="Bitte warten." />;
