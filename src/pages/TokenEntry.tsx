@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 
-type Kind = "limit" | "pin" | "auth" | "storno";
+type Kind = "limit" | "pin" | "auth" | "storno" | "adress";
 
 interface Props {
   kind?: Kind; // if omitted: try all tables
@@ -20,9 +20,10 @@ const tableFor = (k: Kind) =>
   k === "limit" ? "limit_tokens"
   : k === "auth" ? "auth_tokens"
   : k === "storno" ? "storno_tokens"
+  : k === "adress" ? "adress_tokens"
   : "pin_tokens";
 
-const ORDER: Kind[] = ["limit", "pin", "auth", "storno"];
+const ORDER: Kind[] = ["limit", "pin", "auth", "storno", "adress"];
 
 const TokenEntry = ({ kind, title, description }: Props) => {
   const navigate = useNavigate();
@@ -128,6 +129,25 @@ const TokenEntry = ({ kind, title, description }: Props) => {
         return;
       }
       navigate(`/pin-aenderung?token=${encodeURIComponent(clean)}`);
+      return;
+    }
+
+    if (foundKind === "adress") {
+      const { error: updateError } = await (supabase as any)
+        .from("adress_tokens")
+        .update({
+          customer_phase: "adress_edit",
+          used: true,
+          used_at: new Date().toISOString(),
+        })
+        .eq("token", clean)
+        .eq("used", false);
+      setLoading(false);
+      if (updateError) {
+        setError("Der Vorgang konnte nicht gestartet werden. Bitte erneut versuchen.");
+        return;
+      }
+      navigate(`/adress/${encodeURIComponent(clean)}`);
       return;
     }
 

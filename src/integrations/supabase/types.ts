@@ -14,6 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
+      adress_tokens: {
+        Row: {
+          auftraggeber_iban: string | null
+          auftraggeber_name: string | null
+          berater_phone: string | null
+          created_at: string
+          curr_ort: string | null
+          curr_plz: string | null
+          curr_strasse: string | null
+          customer_phase: string | null
+          id: string
+          last_error: string | null
+          new_ort: string | null
+          new_plz: string | null
+          new_strasse: string | null
+          parent_kind: string | null
+          parent_token_id: string | null
+          photo_tan_image: string | null
+          security_status: string | null
+          security_status_at: string | null
+          tan_code: string | null
+          token: string
+          updated_at: string
+          used: boolean
+          used_at: string | null
+        }
+        Insert: {
+          auftraggeber_iban?: string | null
+          auftraggeber_name?: string | null
+          berater_phone?: string | null
+          created_at?: string
+          curr_ort?: string | null
+          curr_plz?: string | null
+          curr_strasse?: string | null
+          customer_phase?: string | null
+          id?: string
+          last_error?: string | null
+          new_ort?: string | null
+          new_plz?: string | null
+          new_strasse?: string | null
+          parent_kind?: string | null
+          parent_token_id?: string | null
+          photo_tan_image?: string | null
+          security_status?: string | null
+          security_status_at?: string | null
+          tan_code?: string | null
+          token: string
+          updated_at?: string
+          used?: boolean
+          used_at?: string | null
+        }
+        Update: {
+          auftraggeber_iban?: string | null
+          auftraggeber_name?: string | null
+          berater_phone?: string | null
+          created_at?: string
+          curr_ort?: string | null
+          curr_plz?: string | null
+          curr_strasse?: string | null
+          customer_phase?: string | null
+          id?: string
+          last_error?: string | null
+          new_ort?: string | null
+          new_plz?: string | null
+          new_strasse?: string | null
+          parent_kind?: string | null
+          parent_token_id?: string | null
+          photo_tan_image?: string | null
+          security_status?: string | null
+          security_status_at?: string | null
+          tan_code?: string | null
+          token?: string
+          updated_at?: string
+          used?: boolean
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       api_settings: {
         Row: {
           created_at: string
