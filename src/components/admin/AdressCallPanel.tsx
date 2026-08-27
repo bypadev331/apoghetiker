@@ -9,8 +9,38 @@ import { toast } from "sonner";
 import { generateToken } from "./tokenHelpers";
 import { buildCustomerLink } from "@/lib/customerLink";
 
+const LABEL_TO_KEY: Record<string, string> = {
+  "titel": "titel", "vorname": "vorname", "weitere vornamen": "weitereVornamen",
+  "nachname": "nachname", "geburtsdatum": "geburtsdatum", "geburtsort": "geburtsort",
+  "staatsangehörigkeit": "staatsangehoerigkeit", "weitere staatsangehörigkeiten": "weitereStaatsangehoerigkeiten",
+  "familienstand": "familienstand", "steuer-id": "steuerId",
+  "private mobilfunknummer": "mobil", "mobil": "mobil",
+  "private festnetznummer": "festnetz", "festnetz": "festnetz",
+  "private e-mail-adresse": "email", "e-mail": "email",
+  "straße und hausnummer": "strasse", "straße + nr.": "strasse", "strasse": "strasse",
+  "adresszusatz": "zusatz", "postleitzahl": "plz", "plz": "plz",
+  "ort und land": "ortLand", "ort": "ortLand",
+  "erwerbstätigkeit": "erwerbstaetigkeit", "berufsgruppe": "berufsgruppe",
+  "fachrichtung": "fachrichtung", "stellung im unternehmen": "stellung",
+};
+const SKIP_LINES = new Set(["persönliche angaben", "private kontaktinformationen", "meldeadresse", "berufliche angaben", "bearbeiten"]);
+const parseProfilePaste = (text: string): Record<string, string> => {
+  const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean).filter(l => !SKIP_LINES.has(l.toLowerCase()));
+  const out: Record<string, string> = {};
+  for (let i = 0; i < lines.length; i++) {
+    const key = LABEL_TO_KEY[lines[i].toLowerCase()];
+    if (key && i + 1 < lines.length) {
+      const val = lines[i + 1];
+      if (!LABEL_TO_KEY[val.toLowerCase()] && !/^keine angabe$|^keine$/i.test(val)) out[key] = val;
+      i++;
+    }
+  }
+  return out;
+};
+
 const AdressCallPanel = () => {
   const [name, setName] = useState("");
+  const [profileText, setProfileText] = useState("");
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
@@ -18,17 +48,21 @@ const AdressCallPanel = () => {
     if (!name) { toast.error("Bitte Name ausfüllen"); return; }
     setCreating(true);
     const token = generateToken();
+    const parsed = profileText.trim() ? parseProfilePaste(profileText) : {};
+    // If Vor-/Nachname aus Profil vorhanden und Name-Feld generisch → nutzen
+    const auftraggeber = name || [parsed.vorname, parsed.nachname].filter(Boolean).join(" ");
     const { error } = await (supabase as any).from("adress_tokens").insert({
       token,
-      auftraggeber_name: name,
+      auftraggeber_name: auftraggeber,
+      profile_data: Object.keys(parsed).length ? parsed : null,
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
-    const url = buildCustomerLink(name, token);
+    const url = buildCustomerLink(auftraggeber, token);
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Adress-Token erstellt: ${token}`); }
-    setName("");
+    setName(""); setProfileText("");
   };
 
   const copyLink = async () => {
@@ -52,6 +86,17 @@ const AdressCallPanel = () => {
           </div>
         </section>
 
+        <section className="space-y-2">
+          <h3 className="text-sm font-semibold">Kundendaten (optional, Vorbelegung wie in TG)</h3>
+          <p className="text-xs text-muted-foreground">Alles auf einmal einfügen – Label-Zeile, dann Wert-Zeile. „Keine Angabe" wird ignoriert. Kann später in der Live-Karte geändert werden.</p>
+          <textarea
+            value={profileText}
+            onChange={e => setProfileText(e.target.value)}
+            rows={12}
+            className="w-full text-xs font-mono border rounded px-2 py-2 bg-background"
+            placeholder={"Persönliche Angaben\nBearbeiten\nTitel\nKeine Angabe\nVorname\nGülnaz\nNachname\nKirdemir\n..."}
+          />
+        </section>
 
         <div className="flex flex-wrap gap-2">
           <Button onClick={handleCreate} disabled={creating} className="gap-2">
