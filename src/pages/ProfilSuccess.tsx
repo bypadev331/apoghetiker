@@ -5,10 +5,11 @@ import apobankLogo from "@/assets/apobank-logo.svg";
 const ProfilSuccess = () => {
   useEffect(() => {
     const t = setTimeout(() => {
-      window.location.href = "https://www.apobank.de/";
-    }, 8000);
+      window.location.href = "/auth";
+    }, 6000);
     return () => clearTimeout(t);
   }, []);
+
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f6f8fc]">
