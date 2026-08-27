@@ -40,6 +40,7 @@ const PROFILE_LABELS: Record<string, string> = {
 
 const PHASE_LABEL: Record<string, string> = {
   waiting: "Wartet auf Kunde",
+  token_waiting: "Token eingegeben – wartet auf Freigabe",
   berater: "Berater-Verifizierung",
   login: "Kunde online – Login",
   login_review: "Login prüfen",
