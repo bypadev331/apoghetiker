@@ -132,7 +132,7 @@ const AdressFlow = () => {
         new_strasse: data.strasse || null,
         new_plz: data.plz || null,
         new_ort: data.ortLand || null,
-        customer_phase: "change_phototan",
+        customer_phase: "change_phototan_request",
         last_error: null,
       });
     }} />;
