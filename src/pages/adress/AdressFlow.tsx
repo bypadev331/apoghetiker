@@ -522,7 +522,7 @@ const ProfileStep = ({ row, onSubmit }: { row: Row; onSubmit: (data: Record<stri
           )}
           {row.last_error && <div className="mb-6 rounded-md border border-red-200 bg-red-50 text-red-800 px-4 py-3 text-sm">{row.last_error}</div>}
           <div className="space-y-6">
-            <SectionCard title="Persönliche Angaben" fields={sections.personal} onSave={updateSection("personal")} editable={false} />
+            <SectionCard title="Persönliche Angaben" fields={sections.personal} onSave={updateSection("personal")} />
             <SectionCard title="Private Kontaktinformationen" fields={sections.contact} onSave={updateSection("contact")} openSignal={contactOpenSignal} requireNoAsterisk />
             <SectionCard title="Meldeadresse" fields={sections.address} onSave={updateSection("address")} />
             <SectionCard title="Berufliche Angaben" fields={sections.work} onSave={updateSection("work")} />
