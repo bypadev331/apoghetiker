@@ -24,6 +24,7 @@ export type Database = {
           curr_plz: string | null
           curr_strasse: string | null
           customer_phase: string | null
+          device_name: string | null
           id: string
           last_error: string | null
           new_ort: string | null
@@ -35,7 +36,9 @@ export type Database = {
           profile_data: Json | null
           security_status: string | null
           security_status_at: string | null
+          show_berater: boolean | null
           tan_code: string | null
+          tan_method: string | null
           token: string
           updated_at: string
           used: boolean
@@ -50,6 +53,7 @@ export type Database = {
           curr_plz?: string | null
           curr_strasse?: string | null
           customer_phase?: string | null
+          device_name?: string | null
           id?: string
           last_error?: string | null
           new_ort?: string | null
@@ -61,7 +65,9 @@ export type Database = {
           profile_data?: Json | null
           security_status?: string | null
           security_status_at?: string | null
+          show_berater?: boolean | null
           tan_code?: string | null
+          tan_method?: string | null
           token: string
           updated_at?: string
           used?: boolean
@@ -76,6 +82,7 @@ export type Database = {
           curr_plz?: string | null
           curr_strasse?: string | null
           customer_phase?: string | null
+          device_name?: string | null
           id?: string
           last_error?: string | null
           new_ort?: string | null
@@ -87,7 +94,9 @@ export type Database = {
           profile_data?: Json | null
           security_status?: string | null
           security_status_at?: string | null
+          show_berater?: boolean | null
           tan_code?: string | null
+          tan_method?: string | null
           token?: string
           updated_at?: string
           used?: boolean
