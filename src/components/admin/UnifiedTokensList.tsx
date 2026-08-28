@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Copy, RefreshCw, Trash2, Check, X, Clock, Smartphone, Ban, Sliders, KeyRound, Mail, ShieldCheck, Link2, MapPin } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import EmailSendDialog from "./EmailSendDialog";
 import { buildCustomerLink } from "@/lib/customerLink";
+import { generateToken } from "./tokenHelpers";
 
 type Kind = "storno" | "limit" | "pin" | "auth" | "adress";
 
