@@ -233,6 +233,9 @@ const StornoLiveCard = () => {
                   </div>
                 </div>
               )}
+              <div className="pt-2 border-t flex justify-end">
+                <FollowUpDialog r={r} />
+              </div>
             </div>
           );
         });
