@@ -160,7 +160,6 @@ const StornoLiveCard = () => {
                 </div>
                 <div className="flex gap-1">
                   <Button size="sm" variant="ghost" onClick={() => copyLink(r)} title="Kunden-Link kopieren"><Link2 className="h-4 w-4" /></Button>
-                  <Button size="sm" variant="ghost" onClick={() => createFollowUp(r)} title="Folge-Token mit gleichen Daten erstellen"><KeyRound className="h-4 w-4" /></Button>
                   <Button size="sm" variant="ghost" onClick={() => remove(r)} title="Löschen"><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
