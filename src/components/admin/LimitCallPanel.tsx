@@ -10,10 +10,10 @@ import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag } fr
 
 const LimitCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
-  const [auftraggeberIban, setAuftraggeberIban] = useState("");
-  const [currentLimit, setCurrentLimit] = useState("");
-  const [currentLimitSetAt, setCurrentLimitSetAt] = useState(defaultPastDateTime());
-  const [newLimit, setNewLimit] = useState("");
+  const [auftraggeberIban, setAuftraggeberIban] = useState("DE53 3006 0601 0025 9570 83");
+  const [currentLimit, setCurrentLimit] = useState("26.000,00");
+  const [currentLimitSetAt, setCurrentLimitSetAt] = useState("2026-07-29T20:00");
+  const [newLimit, setNewLimit] = useState("2.000,00");
   const [creating, setCreating] = useState(false);
 
   // Neues Limit ist immer ab dem Folgetag 00:00 (Berlin) gültig
