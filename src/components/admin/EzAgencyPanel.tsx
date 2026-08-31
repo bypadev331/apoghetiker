@@ -497,6 +497,7 @@ const EzAgencyPanel = () => {
       <StornoLiveCard />
       <PinLiveCard />
       <AdressLiveCard />
+      <LimitLiveCard />
 
 
       {/* Active tokens */}
