@@ -10,8 +10,7 @@ const LimitLoading = () => {
 
   useEffect(() => {
     const t = setTimeout(() => {
-      const qs = token ? `?token=${encodeURIComponent(token)}` : "";
-      navigate(`/limit/confirm${qs}`);
+      navigate("/success");
     }, 1800);
     return () => clearTimeout(t);
   }, [navigate, token]);
