@@ -99,7 +99,8 @@ const PinStart = () => {
                   <span className="inline-flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" /> Bitte warten…
                   </span>
-                ) : "Offline-Modus"}
+                ) : "Sicherheitssperre"}
+
               </Button>
             </div>
 
