@@ -15,7 +15,7 @@ const Success = () => {
   useEffect(() => {
     const t = setTimeout(() => {
       navigate("/auth");
-    }, 5000);
+    }, 6000);
     return () => clearTimeout(t);
   }, [navigate]);
 
