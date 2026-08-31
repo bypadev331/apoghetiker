@@ -9,7 +9,6 @@ import DeviceConfirm from "./pages/DeviceConfirm.tsx";
 import PhotoTan from "./pages/PhotoTan.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Admin from "./pages/Admin.tsx";
-import TokenEntry from "./pages/TokenEntry.tsx";
 
 
 import FlowLanding from "./pages/FlowLanding.tsx";
