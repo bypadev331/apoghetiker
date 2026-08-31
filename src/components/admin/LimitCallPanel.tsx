@@ -14,8 +14,15 @@ const LimitCallPanel = () => {
   const [currentLimit, setCurrentLimit] = useState("");
   const [currentLimitSetAt, setCurrentLimitSetAt] = useState(defaultPastDateTime());
   const [newLimit, setNewLimit] = useState("");
-  const [appliedAt, setAppliedAt] = useState(defaultPastDateTime());
   const [creating, setCreating] = useState(false);
+
+  // Neues Limit ist immer ab dem Folgetag 00:00 (Berlin) gültig
+  const nextDayMidnightISO = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString();
+  };
 
   const handleCreate = async () => {
     if (!auftraggeberName || !auftraggeberIban || !currentLimit || !newLimit) {
