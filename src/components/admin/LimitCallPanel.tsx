@@ -71,6 +71,16 @@ const LimitCallPanel = () => {
 
         <section className="space-y-2 pt-2 border-t">
           <h3 className="text-sm font-semibold">2. Limits</h3>
+          <div>
+            <Label className="text-xs text-muted-foreground">Limit-Art</Label>
+            <select
+              value={limitType}
+              onChange={e => setLimitType(e.target.value)}
+              className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              {LIMIT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-muted-foreground">Aktuelles Limit (€)</Label>
