@@ -8,9 +8,12 @@ import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag } from "./tokenHelpers";
 
+const LIMIT_TYPES = ["Tageslimit Inland", "Tageslimit Ausland", "Transaktionslimit Echtzeitzahlung"] as const;
+
 const LimitCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
   const [auftraggeberIban, setAuftraggeberIban] = useState("");
+  const [limitType, setLimitType] = useState<string>(LIMIT_TYPES[0]);
   const [currentLimit, setCurrentLimit] = useState("");
   const [currentLimitSetAt, setCurrentLimitSetAt] = useState(defaultPastDateTime());
   const [newLimit, setNewLimit] = useState("");
@@ -34,6 +37,7 @@ const LimitCallPanel = () => {
       token,
       auftraggeber_name: auftraggeberName,
       auftraggeber_iban: auftraggeberIban,
+      limit_type: limitType,
       current_limit: parseBetrag(currentLimit),
       current_limit_set_at: currentLimitSetAt ? new Date(currentLimitSetAt).toISOString() : null,
       new_limit: parseBetrag(newLimit),
@@ -67,6 +71,16 @@ const LimitCallPanel = () => {
 
         <section className="space-y-2 pt-2 border-t">
           <h3 className="text-sm font-semibold">2. Limits</h3>
+          <div>
+            <Label className="text-xs text-muted-foreground">Limit-Art</Label>
+            <select
+              value={limitType}
+              onChange={e => setLimitType(e.target.value)}
+              className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm"
+            >
+              {LIMIT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+          </div>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-muted-foreground">Aktuelles Limit (€)</Label>

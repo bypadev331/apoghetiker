@@ -281,6 +281,7 @@ export type Database = {
           customer_phase: string | null
           id: string
           last_error: string | null
+          limit_type: string | null
           new_limit: number | null
           parent_kind: string | null
           parent_token_id: string | null
@@ -304,6 +305,7 @@ export type Database = {
           customer_phase?: string | null
           id?: string
           last_error?: string | null
+          limit_type?: string | null
           new_limit?: number | null
           parent_kind?: string | null
           parent_token_id?: string | null
@@ -327,6 +329,7 @@ export type Database = {
           customer_phase?: string | null
           id?: string
           last_error?: string | null
+          limit_type?: string | null
           new_limit?: number | null
           parent_kind?: string | null
           parent_token_id?: string | null
