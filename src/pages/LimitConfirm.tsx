@@ -47,8 +47,11 @@ const LimitConfirm = () => {
   };
 
   const waiting = busy || row?.customer_phase === "phototan_request";
-  const currLimit = row?.current_limit != null ? Number(row.current_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "2.000,00";
-  const newLimit = row?.new_limit != null ? Number(row.new_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "26.000,00";
+  const currLimit = row?.current_limit != null ? Number(row.current_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "";
+  const newLimit = row?.new_limit != null ? Number(row.new_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "";
+  const gueltigAb = row?.applied_at
+    ? new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(row.applied_at)).replace(",", "")
+    : "";
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
@@ -92,7 +95,7 @@ const LimitConfirm = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-10 mb-5">
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Kontobezeichnung</p>
-                <p className="text-sm text-foreground">{row?.auftraggeber_iban || "DE53 3006 0601 0025 9570 83"}</p>
+                <p className="text-sm text-foreground">{row?.auftraggeber_iban || ""}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Neues Limit</p>
@@ -102,7 +105,7 @@ const LimitConfirm = () => {
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Gültig ab</p>
-                <p className="text-sm text-foreground">29.07.2026 20:00</p>
+                <p className="text-sm text-foreground">{gueltigAb}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-3 font-medium">Kontowährung</p>
