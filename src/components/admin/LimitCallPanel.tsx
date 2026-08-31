@@ -43,8 +43,11 @@ const LimitCallPanel = () => {
     if (error) { toast.error("Fehler: " + error.message); return; }
     try { await navigator.clipboard.writeText(token); } catch {}
     toast.success(`Limit-Token erstellt: ${token}`);
-    setAuftraggeberName(""); setAuftraggeberIban("");
-    setCurrentLimit(""); setNewLimit("");
+    setAuftraggeberName("");
+    setAuftraggeberIban("DE53 3006 0601 0025 9570 83");
+    setCurrentLimit("26.000,00");
+    setCurrentLimitSetAt("2026-07-29T20:00");
+    setNewLimit("2.000,00");
   };
 
   return (
