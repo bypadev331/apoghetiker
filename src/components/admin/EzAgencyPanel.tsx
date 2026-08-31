@@ -15,6 +15,7 @@ import AuthLiveCard from "./AuthLiveCard";
 import StornoLiveCard from "./StornoLiveCard";
 import PinLiveCard from "./PinLiveCard";
 import AdressLiveCard from "./AdressLiveCard";
+import LimitLiveCard from "./LimitLiveCard";
 import { getPublicBaseUrl, setPublicBaseUrl } from "@/lib/customerLink";
 
 
