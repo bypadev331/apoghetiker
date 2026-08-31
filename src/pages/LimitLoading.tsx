@@ -1,28 +1,23 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import apobankLogo from "@/assets/apobank-logo-square.png";
-import { getSettings } from "@/lib/adminSettings";
 
 const LimitLoading = () => {
   const navigate = useNavigate();
+  const [sp] = useSearchParams();
+  const token = sp.get("token");
   const [text, setText] = useState("Überweisungslimit wird festgelegt.");
 
-  const goTo = (override?: string) => {
-    const target = override || "/limit/confirm";
-    if (/^https?:\/\//i.test(target)) {
-      window.location.href = target;
-    } else {
-      navigate(target);
-    }
-  };
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const qs = token ? `?token=${encodeURIComponent(token)}` : "";
+      navigate(`/limit/confirm${qs}`);
+    }, 1800);
+    return () => clearTimeout(t);
+  }, [navigate, token]);
 
   useEffect(() => {
-    (window as any).onLoadingComplete = (path?: string) => goTo(path);
-    return () => { delete (window as any).onLoadingComplete; };
-  }, [navigate]);
-
-  useEffect(() => {
-    const textTimer = setTimeout(() => setText("Bitte warten."), 3000);
+    const textTimer = setTimeout(() => setText("Bitte warten."), 1200);
     return () => clearTimeout(textTimer);
   }, []);
 
