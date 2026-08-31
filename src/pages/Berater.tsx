@@ -51,7 +51,7 @@ const Berater = () => {
 
             <div className="mt-3 flex items-center gap-2 text-foreground">
               <Phone className="h-4 w-4" />
-              <span className="text-sm font-medium">+49 211 5998 08</span>
+              <span className="text-sm font-medium">+49 211 5998 0</span>
             </div>
 
             {/* Description */}
