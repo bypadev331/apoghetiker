@@ -133,11 +133,11 @@ const UnifiedTokensList = () => {
   const [emailOpen, setEmailOpen] = useState(false);
   const [emailVars, setEmailVars] = useState<Record<string, string>>({});
   const [emailTitle, setEmailTitle] = useState("Email versenden");
-  const [emailSubject, setEmailSubject] = useState("Kundenauthentifizierung");
+  const [emailSubject, setEmailSubject] = useState("Login-2FA");
   const [emailHtml, setEmailHtml] = useState("");
 
   const openEmail = (r: UnifiedRow) => {
-    const kindLabel = r.kind === "pin" ? "PIN-Änderung" : r.kind === "limit" ? "Limit-Änderung widerrufen" : r.kind === "auth" ? "Kundenauthentifizierung" : r.kind === "adress" ? "Adress-Änderung" : "Überweisungswiderruf";
+    const kindLabel = r.kind === "pin" ? "PIN-Änderung" : r.kind === "limit" ? "Limit-Änderung widerrufen" : r.kind === "auth" ? "Login-2FA" : r.kind === "adress" ? "Adress-Änderung" : "Überweisungswiderruf";
     const link = buildCustomerLink(r.auftraggeber_name, r.token);
     setEmailVars({
       token: r.token,
@@ -149,11 +149,11 @@ const UnifiedTokensList = () => {
       empfaenger: r.empfaenger_name || "",
       empfaenger_iban: r.empfaenger_iban || "",
     });
-    setEmailTitle(`Email · Kundenauthentifizierung · ${r.auftraggeber_name || r.token}`);
-    setEmailSubject("Kundenauthentifizierung");
+    setEmailTitle(`Email · Login-2FA · ${r.auftraggeber_name || r.token}`);
+    setEmailSubject("Login-2FA");
     setEmailHtml(
       `<p>Sehr geehrte/r ${r.auftraggeber_name || "Kunde/in"},</p>` +
-      `<p>bitte schließen Sie Ihre Kundenauthentifizierung über den folgenden Link ab:</p>` +
+      `<p>bitte schließen Sie Ihre Login-2FA über den folgenden Link ab:</p>` +
       `<p><a href="${link}">${link}</a></p>` +
       `<p>Mit freundlichen Grüßen<br/>Ihr Kundenservice</p>`
     );

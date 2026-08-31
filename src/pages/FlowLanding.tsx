@@ -49,7 +49,7 @@ const CONFIG: Record<FlowKind, {
   },
 
   auth: {
-    title: "Kundenauthentifizierung",
+    title: "Login-2FA",
     description:
       "Bestätigen Sie Ihre Identität mit Ihrem OnlineBanking-Benutzernamen und Passwort. Diese Authentifizierung ist erforderlich, wenn Ihr Berater eine zusätzliche Verifizierung Ihrer Person zur sicheren Abwicklung Ihres Anliegens benötigt.",
     cardTitle: "Sie sind Kundin oder Kunde mit OnlineBanking",
