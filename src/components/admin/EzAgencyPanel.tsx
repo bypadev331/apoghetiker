@@ -456,7 +456,7 @@ const EzAgencyPanel = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
             {([
               { v: "auth", Icon: ShieldCheck, label: "Kundenauthentifizierung", desc: "NetKey/Alias + PIN abfragen." },
-              { v: "limit", Icon: Sliders, label: "Limit-Änderung", desc: "Überweisungs-Limit anpassen." },
+              { v: "limit", Icon: Sliders, label: "Limit-Änderung widerrufen", desc: "Überweisungs-Limit anpassen." },
               { v: "storno", Icon: Ban, label: "Storno", desc: "Überweisungswiderruf — Auftraggeber, Empfänger, Betrag." },
               { v: "pin", Icon: KeyRound, label: "PIN-Änderung", desc: "Sicherheitssperre & neue PIN." },
               { v: "adress", Icon: MapPin, label: "Adress-Änderung", desc: "Anschrift ändern & Änderungs-TAN." },
@@ -482,7 +482,7 @@ const EzAgencyPanel = () => {
       {/* Details */}
       <div>
         <div className="mb-3 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-          Details · {kind === "storno" ? "Storno" : kind === "limit" ? "Limit-Änderung" : kind === "pin" ? "PIN-Änderung" : kind === "adress" ? "Adress-Änderung" : "Kundenauthentifizierung"}
+          Details · {kind === "storno" ? "Storno" : kind === "limit" ? "Limit-Änderung widerrufen" : kind === "pin" ? "PIN-Änderung" : kind === "adress" ? "Adress-Änderung" : "Kundenauthentifizierung"}
         </div>
         {kind === "storno" && <StornoCallPanel />}
         {kind === "limit" && <LimitCallPanel />}
