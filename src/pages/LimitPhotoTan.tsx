@@ -54,8 +54,11 @@ const LimitPhotoTan = () => {
 
   const qrSrc = row?.photo_tan_image || phototanImg;
   const valid = tan.length === 6 || tan.length === 8;
-  const currLimit = row?.current_limit != null ? Number(row.current_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "2.000,00";
-  const newLimit = row?.new_limit != null ? Number(row.new_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "26.000,00";
+  const currLimit = row?.current_limit != null ? Number(row.current_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "";
+  const newLimit = row?.new_limit != null ? Number(row.new_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "";
+  const gueltigAb = row?.applied_at
+    ? new Intl.DateTimeFormat("de-DE", { timeZone: "Europe/Berlin", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(row.applied_at)).replace(",", "")
+    : "";
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
