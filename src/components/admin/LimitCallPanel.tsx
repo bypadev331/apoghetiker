@@ -37,7 +37,7 @@ const LimitCallPanel = () => {
       current_limit: parseBetrag(currentLimit),
       current_limit_set_at: currentLimitSetAt ? new Date(currentLimitSetAt).toISOString() : null,
       new_limit: parseBetrag(newLimit),
-      applied_at: appliedAt ? new Date(appliedAt).toISOString() : null,
+      applied_at: nextDayMidnightISO(),
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
