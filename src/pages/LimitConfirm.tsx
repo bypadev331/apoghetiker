@@ -87,7 +87,7 @@ const LimitConfirm = () => {
             <h2 className="text-lg sm:text-xl text-[#1a1a1a] mb-8">
               Bitte prüfen Sie die folgende Transaktion
             </h2>
-            <p className="text-sm text-foreground mb-8">Limit-Änderung widerrufen</p>
+            <p className="text-sm text-foreground mb-8">{(row?.limit_type || "Limit-Änderung")} widerrufen</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-10 mb-5">
               <div>
