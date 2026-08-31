@@ -30,12 +30,12 @@ const CONFIG: Record<FlowKind, {
     target: "/widerruf/start",
   },
   limit: {
-    title: "Limit-Änderung",
+    title: "Limit-Änderung widerrufen",
     description:
       "Passen Sie Ihr Überweisungslimit im OnlineBanking an. Eine Anpassung kann sinnvoll sein, wenn Sie höhere Beträge überweisen möchten oder Ihr Limit aus Sicherheitsgründen reduzieren wollen. Nach Prüfung durch Ihren Berater wird die Änderung am folgenden Werktag wirksam.",
     cardTitle: "Sie sind Kundin oder Kunde mit OnlineBanking",
     cardText: "Überweisungs-Limit direkt im OnlineBanking ändern.",
-    cta: "→ Limit-Änderung",
+    cta: "→ Limit-Änderung widerrufen",
     target: "/limit/loading",
   },
   pin: {
