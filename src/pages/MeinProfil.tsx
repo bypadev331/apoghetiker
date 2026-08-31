@@ -303,9 +303,8 @@ const PersoenlicheDaten = () => {
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-10 h-16">
           <div className="flex items-center gap-3 sm:gap-8">
-            <div className="w-10 h-10 rounded-full bg-[#001f5b] text-white flex items-center justify-center font-semibold text-lg">
-              a
-            </div>
+            <img src={apoALogo.url} alt="apoBank" className="w-10 h-10 rounded-full object-contain" />
+
             <span className="text-[15px] font-medium text-[#001f5b]">Profildaten</span>
           </div>
         </div>
