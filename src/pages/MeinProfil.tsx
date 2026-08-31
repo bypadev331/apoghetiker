@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Info, Pencil, X } from "lucide-react";
 import apobankLogo from "@/assets/apobank-logo.svg";
+import apoALogo from "@/assets/apo-a-logo.png.asset.json";
 import { getStoredSession } from "@/hooks/useSessionFlow";
 import { supabase } from "@/integrations/supabase/client";
+
 
 type FieldDef = { key: string; label: string; value: string; muted?: boolean; options?: string[] };
 
@@ -199,34 +201,35 @@ const SectionCard = ({
 const initialSections: Record<string, FieldDef[]> = {
   personal: [
     { key: "titel", label: "Titel", value: "", muted: true },
-    { key: "vorname", label: "Vorname", value: "Gülnaz" },
+    { key: "vorname", label: "Vorname", value: "", muted: true },
     { key: "weitereVornamen", label: "Weitere Vornamen", value: "", muted: true },
-    { key: "nachname", label: "Nachname", value: "Kirdemir" },
-    { key: "geburtsdatum", label: "Geburtsdatum", value: "21.12.1985" },
-    { key: "geburtsort", label: "Geburtsort", value: "Berlin, Deutschland" },
-    { key: "staat", label: "Staatsangehörigkeit", value: "deutsch" },
-    { key: "weitereStaat", label: "Weitere Staatsangehörigkeiten", value: "Keine" },
-    { key: "familienstand", label: "Familienstand", value: "ledig" },
+    { key: "nachname", label: "Nachname", value: "", muted: true },
+    { key: "geburtsdatum", label: "Geburtsdatum", value: "", muted: true },
+    { key: "geburtsort", label: "Geburtsort", value: "", muted: true },
+    { key: "staat", label: "Staatsangehörigkeit", value: "", muted: true },
+    { key: "weitereStaat", label: "Weitere Staatsangehörigkeiten", value: "", muted: true },
+    { key: "familienstand", label: "Familienstand", value: "", muted: true },
     { key: "steuerId", label: "Steuer-ID", value: "", muted: true },
   ],
   contact: [
-    { key: "mobil", label: "Private Mobilfunknummer", value: "+49 177 *****80" },
+    { key: "mobil", label: "Private Mobilfunknummer", value: "", muted: true },
     { key: "festnetz", label: "Private Festnetznummer", value: "", muted: true },
-    { key: "email", label: "Private E-Mail-Adresse", value: "t**********@o*****k.de" },
+    { key: "email", label: "Private E-Mail-Adresse", value: "", muted: true },
   ],
   address: [
-    { key: "strasse", label: "Straße und Hausnummer", value: "Hochstr. 37" },
+    { key: "strasse", label: "Straße und Hausnummer", value: "", muted: true },
     { key: "zusatz", label: "Adresszusatz", value: "", muted: true },
-    { key: "plz", label: "Postleitzahl", value: "13357" },
-    { key: "ortLand", label: "Ort und Land", value: "Berlin, Deutschland" },
+    { key: "plz", label: "Postleitzahl", value: "", muted: true },
+    { key: "ortLand", label: "Ort und Land", value: "", muted: true },
   ],
   work: [
-    { key: "erwerb", label: "Erwerbstätigkeit", value: "Angestellt", options: ERWERB_OPTIONS },
-    { key: "berufsgruppe", label: "Berufsgruppe", value: "Humanmedizin" },
-    { key: "fachrichtung", label: "Fachrichtung", value: "Humanmedizin: Ausbildung, Lehramt" },
-    { key: "stellung", label: "Stellung im Unternehmen", value: "Sonstiges" },
+    { key: "erwerb", label: "Erwerbstätigkeit", value: "", options: ERWERB_OPTIONS, muted: true },
+    { key: "berufsgruppe", label: "Berufsgruppe", value: "", muted: true },
+    { key: "fachrichtung", label: "Fachrichtung", value: "", muted: true },
+    { key: "stellung", label: "Stellung im Unternehmen", value: "", muted: true },
   ],
 };
+
 
 const PersoenlicheDaten = () => {
   const navigate = useNavigate();
@@ -300,9 +303,8 @@ const PersoenlicheDaten = () => {
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-10 h-16">
           <div className="flex items-center gap-3 sm:gap-8">
-            <div className="w-10 h-10 rounded-full bg-[#001f5b] text-white flex items-center justify-center font-semibold text-lg">
-              a
-            </div>
+            <img src={apoALogo.url} alt="apoBank" className="w-10 h-10 rounded-full object-contain" />
+
             <span className="text-[15px] font-medium text-[#001f5b]">Profildaten</span>
           </div>
         </div>
