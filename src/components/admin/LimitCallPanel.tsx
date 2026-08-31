@@ -80,11 +80,8 @@ const LimitCallPanel = () => {
               <Label className="text-xs text-muted-foreground">Neues Limit (€)</Label>
               <Input value={newLimit} onChange={e => setNewLimit(formatBetragInput(e.target.value))} placeholder="0,00" inputMode="decimal" className="text-right font-mono tabular-nums" />
             </div>
-            <div>
-              <Label className="text-xs text-muted-foreground">Neues Limit gültig ab</Label>
-              <Input type="datetime-local" value={appliedAt} onChange={e => setAppliedAt(e.target.value)} />
-            </div>
           </div>
+          <p className="text-xs text-muted-foreground">Neues Limit ist immer ab Folgetag 00:00 Uhr gültig.</p>
         </section>
 
         <Button onClick={handleCreate} disabled={creating} className="gap-2">
