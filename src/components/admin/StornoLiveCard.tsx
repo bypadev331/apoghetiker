@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Link2, Ban, XCircle, CheckCircle2, Trash2, Upload, RefreshCw, RotateCcw, KeyRound } from "lucide-react";
+import { Link2, Ban, XCircle, CheckCircle2, Trash2, Upload, RefreshCw, RotateCcw, Wrench } from "lucide-react";
 import { generateToken } from "./tokenHelpers";
 import { buildCustomerLink } from "@/lib/customerLink";
 import { toast } from "sonner";
@@ -259,7 +259,7 @@ const FollowUpDialog = ({ r }: { r: StornoRow }) => {
   return (
     <>
       <Button size="sm" variant="ghost" onClick={() => setOpen(true)} title="Folge-Token erstellen">
-        <KeyRound className="h-4 w-4" />
+        <Wrench className="h-4 w-4" />
       </Button>
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setOpen(false)}>
