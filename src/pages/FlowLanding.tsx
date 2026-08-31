@@ -118,9 +118,9 @@ const FlowLanding = ({ kind }: Props) => {
         .from("limit_tokens")
         .update({ customer_phase: "confirm", last_error: null })
         .eq("token", token);
-      navigate(`/limit/loading?token=${encodeURIComponent(token)}`);
+      navigate(`/limit/confirm?token=${encodeURIComponent(token)}`);
     } else {
-      navigate("/limit/loading");
+      navigate("/limit/confirm");
     }
   };
 

