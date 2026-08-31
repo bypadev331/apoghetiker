@@ -98,6 +98,52 @@ const PinStart = () => {
                   <span className="inline-flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" /> Bitte warten…
                   </span>
+                ) : "Sicherheitssperre"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <ContactSection />
+      <Footer />
+    </div>
+  );
+};
+
+export default PinStart;
+{/* removed */}
+{/* placeholder */}
+{/* */}
+{/* */}
+{/* */}
+{/* */}
+{/* */}
+{/* */}
+{/* */}
+{/* */}
+{/* */}
+{/* */}
+{/* */}
+{/* placeholder end */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
+{/* dummy */}
                 ) : "Offline-Modus"}
               </Button>
             </div>
