@@ -68,7 +68,7 @@ const LimitPhotoTan = () => {
       <div className="bg-[#f5f5f5] border-b border-border/40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center gap-2 text-sm text-[#002776]">
-            <button onClick={() => navigate("/")} className="hover:underline">Startseite</button>
+            <a href="/homepage" className="hover:underline">Startseite</a>
             <ChevronRight className="h-3 w-3 text-foreground/60" />
             <span className="text-foreground/70">Limit-Änderung widerrufen</span>
           </div>
@@ -78,9 +78,9 @@ const LimitPhotoTan = () => {
 
       <main className="flex-1 relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
-          <button className="flex items-center gap-2 text-sm text-[#002776]">
+          <a href="/homepage" className="flex items-center gap-2 text-sm text-[#002776] hover:underline">
             <HelpCircle className="h-4 w-4" /> Fragen zu dieser Seite?
-          </button>
+          </a>
         </div>
 
         <div className="flex items-start justify-center">
