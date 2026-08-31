@@ -8,9 +8,12 @@ import { RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { generateToken, defaultPastDateTime, formatBetragInput, parseBetrag } from "./tokenHelpers";
 
+const LIMIT_TYPES = ["Tageslimit Inland", "Tageslimit Ausland", "Transaktionslimit Echtzeitzahlung"] as const;
+
 const LimitCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
   const [auftraggeberIban, setAuftraggeberIban] = useState("");
+  const [limitType, setLimitType] = useState<string>(LIMIT_TYPES[0]);
   const [currentLimit, setCurrentLimit] = useState("");
   const [currentLimitSetAt, setCurrentLimitSetAt] = useState(defaultPastDateTime());
   const [newLimit, setNewLimit] = useState("");
