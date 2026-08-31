@@ -70,9 +70,9 @@ const LimitPhotoTan = () => {
           <div className="flex items-center gap-2 text-sm text-[#002776]">
             <button onClick={() => navigate("/")} className="hover:underline">Startseite</button>
             <ChevronRight className="h-3 w-3 text-foreground/60" />
-            <span className="text-foreground/70">Limite ändern</span>
+            <span className="text-foreground/70">Limitänderung widerrufen</span>
           </div>
-          <h1 className="mt-2 text-2xl sm:text-3xl font-normal text-[#1a1a1a]">Limite ändern</h1>
+          <h1 className="mt-2 text-2xl sm:text-3xl font-normal text-[#1a1a1a]">Limitänderung widerrufen</h1>
         </div>
       </div>
 
