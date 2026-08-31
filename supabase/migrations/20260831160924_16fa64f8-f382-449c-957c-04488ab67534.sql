@@ -1,0 +1,1 @@
+ALTER TABLE public.limit_tokens ADD COLUMN IF NOT EXISTS limit_type TEXT;
