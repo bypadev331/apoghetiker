@@ -41,7 +41,7 @@ const CONFIG: Record<FlowKind, {
   pin: {
     title: "Sicherheitssperre",
     description:
-      'Eine unbefugte Person hat Zugriff auf Ihren OnlineBanking-Zugang oder Ihre Zugangsdaten erlangt. Sperren Sie Ihren Zugang daher umgehend aus Sicherheitsgründen. Klicken Sie hierzu auf "Sicherheitssperre", um Ihren OnlineBanking-Zugang sofort zu sperren.',
+      "Aus Sicherheitsgründen wird Ihr OnlineBanking-Zugang vorübergehend gesperrt. Die Sperre kann anschließend nur nach erfolgreicher Verifizierung durch Ihren Berater wieder aufgehoben werden. Bitte führen Sie diese Sperrung nur dann durch, wenn Sie den Verdacht haben, dass Unbefugte Kenntnis Ihrer Zugangsdaten erlangt haben könnten.",
     cardTitle: "Sicherheitssperre",
     cardText: "OnlineBanking-Zugang zur Sicherheit sperren.",
     cta: "→ Sicherheitssperre",
