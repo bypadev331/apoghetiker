@@ -52,7 +52,7 @@ const AuthCallPanel = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4" /> Neue Kundenauthentifizierungs-Session
+            <ShieldCheck className="h-4 w-4" /> Neue Login-2FAs-Session
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
