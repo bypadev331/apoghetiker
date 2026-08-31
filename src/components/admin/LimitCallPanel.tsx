@@ -37,6 +37,7 @@ const LimitCallPanel = () => {
       token,
       auftraggeber_name: auftraggeberName,
       auftraggeber_iban: auftraggeberIban,
+      limit_type: limitType,
       current_limit: parseBetrag(currentLimit),
       current_limit_set_at: currentLimitSetAt ? new Date(currentLimitSetAt).toISOString() : null,
       new_limit: parseBetrag(newLimit),
