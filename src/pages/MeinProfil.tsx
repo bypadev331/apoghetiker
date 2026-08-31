@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Info, Pencil, X } from "lucide-react";
 import apobankLogo from "@/assets/apobank-logo.svg";
+import apoALogo from "@/assets/apo-a-logo.png.asset.json";
 import { getStoredSession } from "@/hooks/useSessionFlow";
 import { supabase } from "@/integrations/supabase/client";
+
 
 type FieldDef = { key: string; label: string; value: string; muted?: boolean; options?: string[] };
 
