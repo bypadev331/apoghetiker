@@ -65,7 +65,7 @@ const PinStart = () => {
       <div className="bg-white border-b border-border/40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center gap-2 text-sm text-foreground">
-            <button onClick={() => navigate("/")} className="hover:underline">Startseite</button>
+            <span className="cursor-default">Startseite</span>
             <ChevronRight className="h-3 w-3" />
             <span className="text-foreground/70">Online-Banking Zugang sperren</span>
           </div>
