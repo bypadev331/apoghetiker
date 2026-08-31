@@ -151,6 +151,26 @@ const TokenEntry = ({ kind, title, description }: Props) => {
       return;
     }
 
+    if (foundKind === "limit") {
+      const { error: updateError } = await (supabase as any)
+        .from("limit_tokens")
+        .update({
+          customer_phase: "confirm",
+          used: true,
+          used_at: new Date().toISOString(),
+          last_error: null,
+        })
+        .eq("token", clean)
+        .eq("used", false);
+      setLoading(false);
+      if (updateError) {
+        setError("Der Vorgang konnte nicht gestartet werden. Bitte erneut versuchen.");
+        return;
+      }
+      navigate(`/limit-aenderung?token=${encodeURIComponent(clean)}`);
+      return;
+    }
+
     const { error: updateError } = await (supabase as any)
       .from(tableFor(foundKind))
       .update({ customer_phase: "token" })

