@@ -93,7 +93,7 @@ const LimitPhotoTan = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-6 sm:gap-y-8 mb-6">
               <div>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Kontobezeichnung</p>
-                <p className="text-sm text-foreground">{row?.auftraggeber_iban || "DE53 3006 0601 0025 9570 83"}</p>
+                <p className="text-sm text-foreground">{row?.auftraggeber_iban || ""}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Neues Limit</p>
@@ -103,7 +103,7 @@ const LimitPhotoTan = () => {
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Gültig ab</p>
-                <p className="text-sm text-foreground">29.07.2026 20:00</p>
+                <p className="text-sm text-foreground">{gueltigAb}</p>
               </div>
               <div>
                 <p className="text-sm text-[#002776] mb-2 font-medium">Kontowährung</p>
