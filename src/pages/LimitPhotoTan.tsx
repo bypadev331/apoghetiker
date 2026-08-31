@@ -78,9 +78,6 @@ const LimitPhotoTan = () => {
 
       <main className="flex-1 relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
-          <span className="flex items-center gap-2 text-sm text-[#002776] cursor-default">
-            <HelpCircle className="h-4 w-4" /> Fragen zu dieser Seite?
-          </span>
         </div>
 
         <div className="flex items-start justify-center">
