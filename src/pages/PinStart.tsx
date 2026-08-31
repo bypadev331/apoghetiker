@@ -83,12 +83,10 @@ const PinStart = () => {
           </div>
 
           <div className="bg-[#eef1f5] border border-border/60 border-t-0 rounded-sm px-6 py-6">
-            <p className="text-sm text-foreground mb-2">
-              Bitte bestätigen Sie die Sperrung des Online-Banking Zugangs auf Ihrem Gerät mit dem Namen 'A20'.
-            </p>
             <p className="text-sm text-foreground mb-6">
-              Um die Sperrung des Online-Banking Zugangs manuell zu bestätigen, wechseln Sie in den Offline-Modus.
+              Eine unbefugte Person hat Zugriff auf Ihre OnlineBanking-Zugang oder Ihre Zugangsdaten erlangt. Sperren Sie Ihren Zugang daher umgehend aus Sicherheitsgründen. Klicken Sie hierzu auf „Sicherheitssperre", um Ihren OnlineBanking-Zugang sofort zu sperren.
             </p>
+
             {error && <p className="text-xs text-destructive mb-3">{error}</p>}
             <div className="flex justify-end gap-3">
               <Button
