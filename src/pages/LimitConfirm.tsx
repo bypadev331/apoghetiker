@@ -26,7 +26,7 @@ const LimitConfirm = () => {
       const phase = data.customer_phase;
       const qs = `?token=${encodeURIComponent(token)}`;
       if (phase === "phototan") navigate(`/limit/phototan${qs}`);
-      else if (phase === "success") navigate("/success");
+      else if (phase === "success") navigate(`/limit/loading${qs}`);
       else if (phase === "aborted") navigate("/auth");
     };
     load();
