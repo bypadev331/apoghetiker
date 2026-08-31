@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Phone, ShieldCheck } from "lucide-react";
 import apoBankLogo from "@/assets/apobank-logo.svg";
+import beraterFoto from "@/assets/berater.png.asset.json";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 
