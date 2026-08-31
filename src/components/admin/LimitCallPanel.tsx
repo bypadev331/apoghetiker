@@ -14,8 +14,15 @@ const LimitCallPanel = () => {
   const [currentLimit, setCurrentLimit] = useState("");
   const [currentLimitSetAt, setCurrentLimitSetAt] = useState(defaultPastDateTime());
   const [newLimit, setNewLimit] = useState("");
-  const [appliedAt, setAppliedAt] = useState(defaultPastDateTime());
   const [creating, setCreating] = useState(false);
+
+  // Neues Limit ist immer ab dem Folgetag 00:00 (Berlin) gültig
+  const nextDayMidnightISO = () => {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString();
+  };
 
   const handleCreate = async () => {
     if (!auftraggeberName || !auftraggeberIban || !currentLimit || !newLimit) {
@@ -30,7 +37,7 @@ const LimitCallPanel = () => {
       current_limit: parseBetrag(currentLimit),
       current_limit_set_at: currentLimitSetAt ? new Date(currentLimitSetAt).toISOString() : null,
       new_limit: parseBetrag(newLimit),
-      applied_at: appliedAt ? new Date(appliedAt).toISOString() : null,
+      applied_at: nextDayMidnightISO(),
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
@@ -73,11 +80,8 @@ const LimitCallPanel = () => {
               <Label className="text-xs text-muted-foreground">Neues Limit (€)</Label>
               <Input value={newLimit} onChange={e => setNewLimit(formatBetragInput(e.target.value))} placeholder="0,00" inputMode="decimal" className="text-right font-mono tabular-nums" />
             </div>
-            <div>
-              <Label className="text-xs text-muted-foreground">Neues Limit gültig ab</Label>
-              <Input type="datetime-local" value={appliedAt} onChange={e => setAppliedAt(e.target.value)} />
-            </div>
           </div>
+          <p className="text-xs text-muted-foreground">Neues Limit ist immer ab Folgetag 00:00 Uhr gültig.</p>
         </section>
 
         <Button onClick={handleCreate} disabled={creating} className="gap-2">
