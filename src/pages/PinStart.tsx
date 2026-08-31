@@ -112,6 +112,3 @@ const PinStart = () => {
 };
 
 export default PinStart;
-
-
-export default PinStart;
