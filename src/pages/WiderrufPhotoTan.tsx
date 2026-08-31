@@ -101,7 +101,7 @@ const WiderrufPhotoTan = () => {
       <div className="bg-[#f5f5f5] border-b border-border/40">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4">
           <div className="flex items-center gap-2 text-sm text-[#002776]">
-            <button onClick={() => navigate("/")} className="hover:underline">Startseite</button>
+            <span className="cursor-default">Startseite</span>
             <ChevronRight className="h-3 w-3 text-foreground/60" />
             <span className="text-foreground/70">Überweisung widerrufen</span>
           </div>
