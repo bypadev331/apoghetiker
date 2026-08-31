@@ -34,13 +34,8 @@ const Berater = () => {
         <div className="w-full max-w-xl bg-[#f5f5f5] rounded-tr-[16px] overflow-hidden border border-border/40 shadow-[0_2px_16px_rgba(0,0,0,0.08)] mt-20 sm:mt-[114px]">
           <div className="px-4 sm:px-8 py-8 sm:py-10 flex flex-col items-center text-center">
             {/* Avatar */}
-            <div className="h-36 w-36 rounded-full bg-muted border-4 border-white shadow-[0_4px_18px_rgba(0,0,0,0.12)] flex items-center justify-center overflow-hidden">
-              <span
-                className="text-5xl font-semibold text-primary"
-                style={{ fontFamily: "'Arial Greek', Arial, sans-serif" }}
-              >
-                JS
-              </span>
+            <div className="h-36 w-36 rounded-full bg-muted border-4 border-white shadow-[0_4px_18px_rgba(0,0,0,0.12)] overflow-hidden">
+              <img src={beraterFoto.url} alt="Justus Sperling" className="h-full w-full object-cover" />
             </div>
 
             {/* Labels */}
