@@ -112,50 +112,6 @@ const PinStart = () => {
 };
 
 export default PinStart;
-{/* removed */}
-{/* placeholder */}
-{/* */}
-{/* */}
-{/* */}
-{/* */}
-{/* */}
-{/* */}
-{/* */}
-{/* */}
-{/* */}
-{/* */}
-{/* */}
-{/* placeholder end */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-{/* dummy */}
-                ) : "Offline-Modus"}
-              </Button>
-            </div>
 
-          </div>
-        </div>
-      </main>
-
-      <ContactSection />
-      <Footer />
-    </div>
-  );
-};
 
 export default PinStart;
