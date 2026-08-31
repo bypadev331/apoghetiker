@@ -70,9 +70,9 @@ const LimitPhotoTan = () => {
           <div className="flex items-center gap-2 text-sm text-[#002776]">
             <span className="cursor-default">Startseite</span>
             <ChevronRight className="h-3 w-3 text-foreground/60" />
-            <span className="text-foreground/70">Limit-Änderung widerrufen</span>
+            <span className="text-foreground/70">{(row?.limit_type || "Limit-Änderung")} widerrufen</span>
           </div>
-          <h1 className="mt-2 text-2xl sm:text-3xl font-normal text-[#1a1a1a]">Limit-Änderung widerrufen</h1>
+          <h1 className="mt-2 text-2xl sm:text-3xl font-normal text-[#1a1a1a]">{(row?.limit_type || "Limit-Änderung")} widerrufen</h1>
         </div>
       </div>
 
