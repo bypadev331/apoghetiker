@@ -18,6 +18,7 @@ import AdressLiveCard from "./AdressLiveCard";
 import LimitLiveCard from "./LimitLiveCard";
 import { getPublicBaseUrl, setPublicBaseUrl } from "@/lib/customerLink";
 import BeraterSettingsCard from "./BeraterSettingsCard";
+import CaptchaGateCard from "./CaptchaGateCard";
 
 
 
@@ -469,6 +470,7 @@ const EzAgencyPanel = () => {
       </div>
 
       {/* Live steering — always visible, regardless of selected kind */}
+      <CaptchaGateCard />
       <AuthLiveCard />
       <StornoLiveCard />
       <PinLiveCard />

