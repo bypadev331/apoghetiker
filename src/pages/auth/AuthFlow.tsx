@@ -9,6 +9,7 @@ import headerBankingAsset from "@/assets/header-banking.jpg.asset.json";
 import apobankLogo from "@/assets/apobank-logo.svg";
 import apobankLogoSquare from "@/assets/apobank-logo-square.png";
 import phototanDefault from "@/assets/phototan.png";
+import { useBerater } from "@/hooks/useBerater";
 
 type AuthRow = {
   id: string;
