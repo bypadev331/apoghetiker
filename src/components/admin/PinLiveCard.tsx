@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { KeyRound, Link2, XCircle, CheckCircle2, Trash2, Upload, RotateCcw } from "lucide-react"; import { Share2 } from "lucide-react";
 import { toast } from "sonner";
 import LiveChatDialog from "./LiveChatDialog";
+import DeviceInfo from "./DeviceInfo";
 
 type PinRow = {
   id: string;
