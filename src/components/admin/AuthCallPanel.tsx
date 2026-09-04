@@ -33,6 +33,7 @@ const AuthCallPanel = () => {
       tan_method: tanMethod,
       show_berater: showBerater,
       show_live_chat: showLiveChat,
+      require_captcha: requireCaptcha,
       customer_phase: "waiting",
     });
     setCreating(false);
