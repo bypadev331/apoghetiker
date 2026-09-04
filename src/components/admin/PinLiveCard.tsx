@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { KeyRound, Link2, XCircle, CheckCircle2, Trash2, Upload, RotateCcw } from "lucide-react";
+import { KeyRound, Link2, XCircle, CheckCircle2, Trash2, Upload, RotateCcw } from "lucide-react"; import { Share2 } from "lucide-react";
 import { toast } from "sonner";
 import LiveChatDialog from "./LiveChatDialog";
 
