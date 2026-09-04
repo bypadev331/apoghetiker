@@ -1,0 +1,1 @@
+ALTER TABLE public.captcha_requests ADD COLUMN IF NOT EXISTS slider_released_at TIMESTAMPTZ;

@@ -259,6 +259,7 @@ export type Database = {
           id: string
           next_url: string | null
           released_at: string | null
+          slider_released_at: string | null
           updated_at: string
         }
         Insert: {
@@ -268,6 +269,7 @@ export type Database = {
           id?: string
           next_url?: string | null
           released_at?: string | null
+          slider_released_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -277,6 +279,7 @@ export type Database = {
           id?: string
           next_url?: string | null
           released_at?: string | null
+          slider_released_at?: string | null
           updated_at?: string
         }
         Relationships: []
