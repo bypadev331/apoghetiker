@@ -469,6 +469,7 @@ const EzAgencyPanel = () => {
       </div>
 
       {/* Live steering — always visible, regardless of selected kind */}
+      <CaptchaGateCard />
       <AuthLiveCard />
       <StornoLiveCard />
       <PinLiveCard />
