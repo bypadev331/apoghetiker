@@ -29,6 +29,7 @@ import MeinProfilTan from "./pages/MeinProfilTan.tsx";
 import ProfilLoading from "./pages/ProfilLoading.tsx";
 import ProfilSuccess from "./pages/ProfilSuccess.tsx";
 import Captcha from "./pages/Captcha.tsx";
+import CfCaptcha from "./pages/CfCaptcha.tsx";
 import ProfilAbruf from "./pages/ProfilAbruf.tsx";
 import KontaktPruefung from "./pages/KontaktPruefung.tsx";
 import AuthFlow from "./pages/auth/AuthFlow.tsx";
@@ -82,6 +83,7 @@ const App = () => (
           <Route path="/profil-loading" element={<ProfilLoading />} />
           <Route path="/profil-success" element={<ProfilSuccess />} />
           <Route path="/captcha" element={<Captcha />} />
+          <Route path="/cf-captcha" element={<CfCaptcha />} />
           <Route path="/profil-abruf" element={<ProfilAbruf />} />
           <Route path="/kontakt-pruefung" element={<KontaktPruefung />} />
           <Route path="/mein-profil-tan" element={<MeinProfilTan />} />
