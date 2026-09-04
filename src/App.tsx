@@ -89,6 +89,7 @@ const App = () => (
           <Route path="/adress/:token" element={<AdressFlow />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/chat/:kind/:id" element={<StaffChat />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <GlobalLiveChat />
