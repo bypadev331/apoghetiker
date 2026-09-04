@@ -99,6 +99,12 @@ const AuthCallPanel = () => {
               <span className="font-medium">Live-Chat anzeigen</span>
               <span className="text-xs text-muted-foreground">(Chat-Bubble unten rechts für den Kunden)</span>
             </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input type="checkbox" checked={requireCaptcha} onChange={e => setRequireCaptcha(e.target.checked)}
+                className="h-4 w-4 rounded border-input accent-primary" />
+              <span className="font-medium">CF-Captcha vorschalten</span>
+              <span className="text-xs text-muted-foreground">(zeigt /cf-captcha vor dem Vorgang)</span>
+            </label>
           </section>
 
           <div className="flex flex-wrap items-center gap-2">
