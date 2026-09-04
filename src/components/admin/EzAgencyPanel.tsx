@@ -318,30 +318,8 @@ const EzAgencyPanel = () => {
         </CardContent>
       </Card>
 
-      {/* Berater-Telefon */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Phone className="h-5 w-5" />Standard Berater-Telefonnummer
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <p className="text-xs text-muted-foreground">
-            Wird beim Erstellen neuer Tokens als Vorbelegung verwendet.
-          </p>
-          <p className="text-sm font-medium">+49 211 5998 0</p>
-          <div className="flex gap-2">
-            <Input
-              type="tel"
-              placeholder="+49 211 5998 0"
-              value={defaultBeraterPhone}
-              onChange={e => setDefaultBeraterPhone(e.target.value)}
-              className="font-mono"
-            />
-            <Button onClick={savePhone} disabled={savingPhone}>Speichern</Button>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Berater (Name, Foto, Standard-Telefonnummer) */}
+      <BeraterSettingsCard />
 
       {/* Custom Email */}
       <Card>
