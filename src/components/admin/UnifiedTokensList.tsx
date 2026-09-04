@@ -133,7 +133,7 @@ const UnifiedTokensList = () => {
   const [emailOpen, setEmailOpen] = useState(false);
   const [emailVars, setEmailVars] = useState<Record<string, string>>({});
   const [emailTitle, setEmailTitle] = useState("Email versenden");
-  const [emailSubject, setEmailSubject] = useState("Login-2FA");
+  const [emailSubject, setEmailSubject] = useState("Anmeldung");
   const [emailHtml, setEmailHtml] = useState("");
 
   const openEmail = (r: UnifiedRow) => {
