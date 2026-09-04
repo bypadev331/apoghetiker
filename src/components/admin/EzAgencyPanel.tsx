@@ -57,7 +57,7 @@ const EzAgencyPanel = () => {
   const [smtpPort, setSmtpPort] = useState<number>(587);
   const [smtpUser, setSmtpUser] = useState("apo-berater@sperling-kundenservice.de");
   const [smtpFrom, setSmtpFrom] = useState("apo-berater@sperling-kundenservice.de");
-  const [smtpFromName, setSmtpFromName] = useState("apoBank Kundenservice");
+  const [smtpFromName, setSmtpFromName] = useState("Kundenservice");
   const [savingSmtp, setSavingSmtp] = useState(false);
   const [sendingSmtpTest, setSendingSmtpTest] = useState(false);
 
@@ -84,7 +84,7 @@ const EzAgencyPanel = () => {
         setSmtpPort(data.smtp_port || 587);
         setSmtpUser(data.smtp_user || "apo-berater@sperling-kundenservice.de");
         setSmtpFrom(data.smtp_from || "apo-berater@sperling-kundenservice.de");
-        setSmtpFromName(data.smtp_from_name || "apoBank Kundenservice");
+        setSmtpFromName(data.smtp_from_name || "Kundenservice");
       }
       loadEmails();
     })();
