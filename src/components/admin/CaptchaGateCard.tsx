@@ -24,11 +24,11 @@ const CaptchaGateCard = () => {
     const { data } = await (supabase as any)
       .from("captcha_requests")
       .select("*")
-      .is("slider_released_at", null)
       .gte("created_at", since)
       .order("created_at", { ascending: false });
     setRows(data || []);
   };
+
 
   useEffect(() => {
     load();
@@ -60,8 +60,8 @@ const CaptchaGateCard = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4" /> CF-Captcha Freigaben
-          {rows.length > 0 && (
-            <span className="ml-2 text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5">{rows.length}</span>
+          {rows.filter(r => !r.slider_released_at).length > 0 && (
+            <span className="ml-2 text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5">{rows.filter(r => !r.slider_released_at).length}</span>
           )}
         </CardTitle>
       </CardHeader>
@@ -71,28 +71,41 @@ const CaptchaGateCard = () => {
             Keine wartenden Kunden. Sobald ein Kunde die Captcha-Checkbox anklickt, erscheint hier eine Freigabe.
           </p>
         )}
-        {rows.map(r => (
-          <div key={r.id} className="border rounded-md p-3 space-y-2">
-            <div className="text-xs text-muted-foreground">
-              {new Date(r.created_at).toLocaleString("de-DE", { timeZone: "Europe/Berlin" })}
+        {rows.map(r => {
+          const completed = !!r.slider_released_at;
+          return (
+            <div key={r.id} className={`border rounded-md p-3 space-y-2 ${completed ? "opacity-70 bg-muted/40" : ""}`}>
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-xs text-muted-foreground">
+                  {new Date(r.created_at).toLocaleString("de-DE", { timeZone: "Europe/Berlin" })}
+                </div>
+                {completed && (
+                  <span className="text-[11px] font-medium bg-green-100 text-green-700 rounded-full px-2 py-0.5 flex items-center gap-1">
+                    <Check className="h-3 w-3" />Abgeschlossen
+                  </span>
+                )}
+              </div>
+              {r.next_url && (
+                <div className="text-xs break-all"><span className="font-medium">Ziel:</span> {r.next_url}</div>
+              )}
+              <DeviceInfo ua={r.client_ua} ip={r.client_ip} seenAt={r.created_at} />
+              <div className="flex flex-wrap gap-2">
+                {!completed && (
+                  <Button size="sm" onClick={() => releaseSlider(r.id)} className="gap-1">
+                    <Check className="h-4 w-4" />Schieberegler freigeben
+                  </Button>
+                )}
+                <Button size="sm" variant="outline" onClick={() => remove(r.id)} className="gap-1">
+                  <Trash2 className="h-4 w-4" />Verwerfen
+                </Button>
+              </div>
             </div>
-            {r.next_url && (
-              <div className="text-xs break-all"><span className="font-medium">Ziel:</span> {r.next_url}</div>
-            )}
-            <DeviceInfo ua={r.client_ua} ip={r.client_ip} seenAt={r.created_at} />
-            <div className="flex flex-wrap gap-2">
-              <Button size="sm" onClick={() => releaseSlider(r.id)} className="gap-1">
-                <Check className="h-4 w-4" />Schieberegler freigeben
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => remove(r.id)} className="gap-1">
-                <Trash2 className="h-4 w-4" />Verwerfen
-              </Button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
 
       </CardContent>
     </Card>
+
   );
 };
 
