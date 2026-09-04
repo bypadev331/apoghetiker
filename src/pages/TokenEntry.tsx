@@ -64,6 +64,8 @@ const TokenEntry = ({ kind, title, description }: Props) => {
       return;
     }
 
+    void recordClientDevice(tableFor(foundKind) as TokenTable, foundRow.id);
+
     if (foundKind === "auth") {
       const { data: authRow, error: authLoadError } = await (supabase as any)
         .from("auth_tokens")
