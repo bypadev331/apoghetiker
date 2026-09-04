@@ -17,6 +17,7 @@ const AuthCallPanel = () => {
   const [auftraggeberIban, setAuftraggeberIban] = useState("");
   const [tanMethod, setTanMethod] = useState<Method>("push");
   const [showBerater, setShowBerater] = useState(false);
+  const [showLiveChat, setShowLiveChat] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
@@ -30,6 +31,7 @@ const AuthCallPanel = () => {
       auftraggeber_iban: auftraggeberIban || null,
       tan_method: tanMethod,
       show_berater: showBerater,
+      show_live_chat: showLiveChat,
       customer_phase: "waiting",
     });
     setCreating(false);
@@ -88,6 +90,12 @@ const AuthCallPanel = () => {
               />
               <span className="font-medium">Berater-Seite anzeigen</span>
               <span className="text-xs text-muted-foreground">(wird nach /auth als zweite Seite angezeigt)</span>
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input type="checkbox" checked={showLiveChat} onChange={e => setShowLiveChat(e.target.checked)}
+                className="h-4 w-4 rounded border-input accent-primary" />
+              <span className="font-medium">Live-Chat anzeigen</span>
+              <span className="text-xs text-muted-foreground">(Chat-Bubble unten rechts für den Kunden)</span>
             </label>
           </section>
 

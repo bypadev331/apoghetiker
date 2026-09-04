@@ -40,6 +40,7 @@ const parseProfilePaste = (text: string): Record<string, string> => {
 
 const AdressCallPanel = () => {
   const [profileText, setProfileText] = useState("");
+  const [showLiveChat, setShowLiveChat] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
@@ -52,6 +53,7 @@ const AdressCallPanel = () => {
       token,
       auftraggeber_name: auftraggeber,
       profile_data: Object.keys(parsed).length ? parsed : null,
+      show_live_chat: showLiveChat,
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
@@ -88,6 +90,12 @@ const AdressCallPanel = () => {
             placeholder={"Persönliche Angaben\nBearbeiten\nTitel\nKeine Angabe\nVorname\nGülnaz\nNachname\nKirdemir\n..."}
           />
         </section>
+
+        <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+          <input type="checkbox" checked={showLiveChat} onChange={e => setShowLiveChat(e.target.checked)}
+            className="h-4 w-4 rounded border-input accent-primary" />
+          <span className="font-medium">Live-Chat anzeigen</span>
+        </label>
 
         <div className="flex flex-wrap gap-2">
           <Button onClick={handleCreate} disabled={creating} className="gap-2">

@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Link2, ShieldCheck, XCircle, RefreshCw, CheckCircle2, Trash2, Upload, Smartphone } from "lucide-react";
 import { toast } from "sonner";
+import LiveChatDialog from "./LiveChatDialog";
 
 type AuthRow = {
   id: string;
@@ -150,6 +151,7 @@ const AuthLiveCard = () => {
                 </div>
                 <div className="flex gap-1">
                   <Button size="sm" variant="ghost" onClick={() => copyLink(r)} title="Kunden-Link kopieren"><Link2 className="h-4 w-4" /></Button>
+                  <LiveChatDialog taskId={`auth:${r.id}`} label={r.auftraggeber_name || undefined} />
                   <Button size="sm" variant="ghost" onClick={() => remove(r)} title="Löschen"><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>

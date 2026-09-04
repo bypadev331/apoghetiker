@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Sliders, Link2, XCircle, CheckCircle2, Trash2, Upload, RotateCcw, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import LiveChatDialog from "./LiveChatDialog";
 
 type Row = {
   id: string;
@@ -104,6 +105,7 @@ const LimitLiveCard = () => {
                 </div>
                 <div className="flex gap-1">
                   <Button size="sm" variant="ghost" onClick={() => copyLink(r)} title="Kunden-Link kopieren"><Link2 className="h-4 w-4" /></Button>
+                  <LiveChatDialog taskId={`limit:${r.id}`} label={r.auftraggeber_name || undefined} />
                   <Button size="sm" variant="ghost" onClick={() => remove(r)} title="Löschen"><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
