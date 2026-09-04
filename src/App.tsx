@@ -35,6 +35,7 @@ import AuthFlow from "./pages/auth/AuthFlow.tsx";
 import StornoWiderrufFlow from "./pages/storno/StornoWiderrufFlow.tsx";
 import AdressFlow from "./pages/adress/AdressFlow.tsx";
 import GlobalLiveChat from "./components/GlobalLiveChat.tsx";
+import StaffChat from "./pages/StaffChat.tsx";
 
 
 const queryClient = new QueryClient();
