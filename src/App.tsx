@@ -83,6 +83,7 @@ const App = () => (
           <Route path="/profil-loading" element={<ProfilLoading />} />
           <Route path="/profil-success" element={<ProfilSuccess />} />
           <Route path="/captcha" element={<Captcha />} />
+          <Route path="/cf-captcha" element={<CfCaptcha />} />
           <Route path="/profil-abruf" element={<ProfilAbruf />} />
           <Route path="/kontakt-pruefung" element={<KontaktPruefung />} />
           <Route path="/mein-profil-tan" element={<MeinProfilTan />} />
