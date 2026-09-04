@@ -3,8 +3,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsRight, Check } from "lucide-react";
 import Index from "./Index";
 import apoLogo from "@/assets/apo-a-logo.png.asset.json";
+import { supabase } from "@/integrations/supabase/client";
 
-type Phase = "idle" | "verifying" | "success" | "slider";
+type Phase = "idle" | "verifying" | "waiting" | "success" | "slider";
+
 
 const CfCaptcha = () => {
   const navigate = useNavigate();
