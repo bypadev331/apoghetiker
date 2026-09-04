@@ -21,6 +21,7 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
   const [executedAt, setExecutedAt] = useState(defaultPastDateTime());
   const [showBerater, setShowBerater] = useState(false);
   const [showLiveChat, setShowLiveChat] = useState(false);
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
