@@ -49,7 +49,7 @@ const Berater = () => {
           <div className="px-4 sm:px-8 py-8 sm:py-10 flex flex-col items-center text-center">
             {/* Avatar */}
             <div className="h-36 w-36 rounded-full bg-muted border-4 border-white shadow-[0_4px_18px_rgba(0,0,0,0.12)] overflow-hidden">
-              <img src={beraterFoto.url} alt="Justus Sperling" className="h-full w-full object-cover" />
+              <img src={berater.photoUrl} alt={berater.name} className="h-full w-full object-cover" />
             </div>
 
             {/* Labels */}
@@ -60,7 +60,7 @@ const Berater = () => {
               className="mt-2 text-3xl font-bold text-[#0f1b2d]"
               style={{ fontFamily: "'Arial Greek', Arial, sans-serif" }}
             >
-              Justus Sperling
+              {berater.name}
             </h1>
 
             <div className="mt-3 flex items-center gap-2 text-foreground">
