@@ -413,7 +413,7 @@ const EzAgencyPanel = () => {
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-xs text-muted-foreground">
-            Login-Konto (z. B. GMX) und Absenderadresse. Passwort ist als Secret <code>SMTP_PASSWORD</code> gespeichert.
+            Login-Konto (STRATO) und Absenderadresse. Passwort ist als Secret <code>SMTP_PASSWORD</code> gespeichert.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="space-y-1">
