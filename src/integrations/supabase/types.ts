@@ -251,6 +251,36 @@ export type Database = {
         }
         Relationships: []
       }
+      captcha_requests: {
+        Row: {
+          client_ip: string | null
+          client_ua: string | null
+          created_at: string
+          id: string
+          next_url: string | null
+          released_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          client_ip?: string | null
+          client_ua?: string | null
+          created_at?: string
+          id?: string
+          next_url?: string | null
+          released_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          client_ip?: string | null
+          client_ua?: string | null
+          created_at?: string
+          id?: string
+          next_url?: string | null
+          released_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       custom_emails: {
         Row: {
           address: string | null
