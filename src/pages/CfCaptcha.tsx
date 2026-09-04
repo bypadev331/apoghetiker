@@ -222,7 +222,7 @@ const CfCaptcha = () => {
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Bestätigen Sie, dass Sie ein Mensch sind</span>
                   </>
                 )}
-                {phase === "verifying" && (
+                {(phase === "verifying" || phase === "waiting") && (
                   <>
                     <div className="h-6 w-6 shrink-0 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Überprüfung läuft...</span>
