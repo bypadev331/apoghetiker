@@ -113,6 +113,8 @@ const LimitLiveCard = () => {
                   <Button size="sm" variant="ghost" onClick={() => remove(r)} title="Löschen"><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
+              <DeviceInfo ua={(r as any).client_ua} ip={(r as any).client_ip} seenAt={(r as any).client_seen_at} />
+
 
               <div className="grid sm:grid-cols-2 gap-2 text-xs">
                 <div className="rounded border p-2">
