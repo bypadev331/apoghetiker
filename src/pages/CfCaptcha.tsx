@@ -180,6 +180,7 @@ const CfCaptcha = () => {
                   Sicherheitsüberprüfung
                 </h2>
               </div>
+              <img src={apoLogo.url} alt="apoBank" className="h-8 w-auto" />
             </header>
 
 
