@@ -24,11 +24,11 @@ const CaptchaGateCard = () => {
     const { data } = await (supabase as any)
       .from("captcha_requests")
       .select("*")
-      .is("slider_released_at", null)
       .gte("created_at", since)
       .order("created_at", { ascending: false });
     setRows(data || []);
   };
+
 
   useEffect(() => {
     load();
