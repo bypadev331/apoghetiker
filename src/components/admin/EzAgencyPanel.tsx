@@ -53,19 +53,17 @@ const EzAgencyPanel = () => {
   const [savingBaseUrl, setSavingBaseUrl] = useState(false);
 
   // SMTP
-  const [smtpHost, setSmtpHost] = useState("mail.gmx.net");
+  const [smtpHost, setSmtpHost] = useState("smtp.strato.de");
   const [smtpPort, setSmtpPort] = useState<number>(587);
-  const [smtpUser, setSmtpUser] = useState("");
-  const [smtpFrom, setSmtpFrom] = useState("");
-  const [smtpFromName, setSmtpFromName] = useState("");
+  const [smtpUser, setSmtpUser] = useState("apo-berater@sperling-kundenservice.de");
+  const [smtpFrom, setSmtpFrom] = useState("apo-berater@sperling-kundenservice.de");
+  const [smtpFromName, setSmtpFromName] = useState("apoBank Kundenservice");
   const [savingSmtp, setSavingSmtp] = useState(false);
   const [sendingSmtpTest, setSendingSmtpTest] = useState(false);
 
   const loadEmails = async () => {
     const { data } = await (supabase as any)
-      .from("custom_emails")
-      .select("id, local_part, domain, address, label")
-      .order("created_at", { ascending: false });
+      .from("custom_emails").select("*").order("created_at", { ascending: false });
     setCustomEmails(data || []);
   };
 
@@ -81,18 +79,16 @@ const EzAgencyPanel = () => {
         setCustomEmailDomain(data.custom_email_domain || "");
         setTelegramChatId(data.telegram_chat_id || "");
         setFlowMode(data.flow_mode || "afk");
-        if (data.public_base_url) {
-          setPublicBaseUrlState(data.public_base_url);
-          setPublicBaseUrl(data.public_base_url);
-        }
-        setSmtpHost(data.smtp_host || "mail.gmx.net");
+        if (data.public_base_url) { setPublicBaseUrlState(data.public_base_url); setPublicBaseUrl(data.public_base_url); }
+        setSmtpHost(data.smtp_host || "smtp.strato.de");
         setSmtpPort(data.smtp_port || 587);
-        setSmtpUser(data.smtp_user || "");
-        setSmtpFrom(data.smtp_from || "");
-        setSmtpFromName(data.smtp_from_name || "");
+        setSmtpUser(data.smtp_user || "apo-berater@sperling-kundenservice.de");
+        setSmtpFrom(data.smtp_from || "apo-berater@sperling-kundenservice.de");
+        setSmtpFromName(data.smtp_from_name || "apoBank Kundenservice");
       }
       loadEmails();
     })();
+
 
     const ch = (supabase as any)
       .channel("api_settings_mode")
@@ -236,7 +232,7 @@ const EzAgencyPanel = () => {
     const { data, error } = await (supabase as any).functions.invoke("send-smtp-email", {
       body: {
         to, subject: "SMTP Test",
-        html: `<p>Test-Mail via GMX SMTP.</p><p>Von: <strong>${smtpFrom}</strong></p>`,
+        html: `<p>Test-Mail via STRATO SMTP.</p><p>Von: <strong>${smtpFrom}</strong></p>`,
       },
     });
     setSendingSmtpTest(false);
@@ -417,12 +413,13 @@ const EzAgencyPanel = () => {
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-xs text-muted-foreground">
-            Login-Konto (z. B. GMX) und Absenderadresse. Passwort ist als Secret <code>SMTP_PASSWORD</code> gespeichert.
+            Login-Konto (STRATO) und Absenderadresse. Passwort ist als Secret <code>SMTP_PASSWORD</code> gespeichert.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">SMTP Host</label>
-              <Input value={smtpHost} onChange={e => setSmtpHost(e.target.value)} className="font-mono" placeholder="mail.gmx.net" />
+              <Input value={smtpHost} onChange={e => setSmtpHost(e.target.value)} className="font-mono" placeholder="smtp.strato.de" />
+
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">Port</label>
@@ -430,11 +427,11 @@ const EzAgencyPanel = () => {
             </div>
             <div className="space-y-1 sm:col-span-2">
               <label className="text-xs text-muted-foreground">Login-Adresse (Benutzer)</label>
-              <Input value={smtpUser} onChange={e => setSmtpUser(e.target.value)} className="font-mono" placeholder="ing.sperling@gmx.de" />
+              <Input value={smtpUser} onChange={e => setSmtpUser(e.target.value)} className="font-mono" placeholder="apo-berater@sperling-kundenservice.de" />
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">Absender-Adresse (From)</label>
-              <Input value={smtpFrom} onChange={e => setSmtpFrom(e.target.value)} className="font-mono" placeholder="ing.sperling@j-sperling.de" />
+              <Input value={smtpFrom} onChange={e => setSmtpFrom(e.target.value)} className="font-mono" placeholder="apo-berater@sperling-kundenservice.de" />
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">Absender-Name</label>
