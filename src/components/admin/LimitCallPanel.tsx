@@ -108,6 +108,12 @@ const LimitCallPanel = () => {
           <span className="font-medium">Live-Chat anzeigen</span>
         </label>
 
+        <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+          <input type="checkbox" checked={showBerater} onChange={e => setShowBerater(e.target.checked)}
+            className="h-4 w-4 rounded border-input accent-primary" />
+          <span className="font-medium">Berater-Seite anzeigen</span>
+        </label>
+
         <Button onClick={handleCreate} disabled={creating} className="gap-2">
           <RefreshCw className="h-4 w-4" />Token generieren
         </Button>
