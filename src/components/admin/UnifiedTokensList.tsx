@@ -138,7 +138,7 @@ const UnifiedTokensList = () => {
 
   const openEmail = (r: UnifiedRow) => {
     const kindLabel = r.kind === "pin" ? "PIN-Änderung" : r.kind === "limit" ? "Limit-Änderung" : r.kind === "auth" ? "Login-2FA" : r.kind === "adress" ? "Adress-Änderung" : "Überweisungswiderruf";
-    const link = buildCustomerLink(r.auftraggeber_name, r.token);
+    const link = buildCustomerLink(r.auftraggeber_name, r.token, { requireCaptcha: !!(r as any).require_captcha });
     setEmailVars({
       token: r.token,
       auftraggeber: r.auftraggeber_name || "",
