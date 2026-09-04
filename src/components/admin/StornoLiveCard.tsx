@@ -9,6 +9,7 @@ import { generateToken } from "./tokenHelpers";
 import { buildCustomerLink } from "@/lib/customerLink";
 import { toast } from "sonner";
 import LiveChatDialog from "./LiveChatDialog";
+import DeviceInfo from "./DeviceInfo";
 
 type StornoRow = {
   id: string;
