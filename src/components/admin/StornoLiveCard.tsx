@@ -248,6 +248,7 @@ const FollowUpDialog = ({ r }: { r: StornoRow }) => {
       executed_at: r.executed_at,
       tan_method: "photo",
       show_berater: r.show_berater ?? false,
+      show_live_chat: (r as any).show_live_chat ?? false,
       customer_phase: "pending",
     });
     setBusy(false);
