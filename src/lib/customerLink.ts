@@ -28,7 +28,16 @@ export const setPublicBaseUrl = (url: string) => {
   } catch {}
 };
 
-export const buildCustomerLink = (name: string | null | undefined, _token?: string) => {
+export const buildCustomerLink = (
+  name: string | null | undefined,
+  _token?: string,
+  opts?: { requireCaptcha?: boolean }
+) => {
   const slug = lastNameSlug(name);
-  return `${getPublicBaseUrl()}/auth/ui/app/auth/flow/apo-${slug}/access`;
+  const base = getPublicBaseUrl();
+  const target = `${base}/auth/ui/app/auth/flow/apo-${slug}/access`;
+  if (opts?.requireCaptcha) {
+    return `${base}/cf-captcha?next=${encodeURIComponent(target)}`;
+  }
+  return target;
 };
