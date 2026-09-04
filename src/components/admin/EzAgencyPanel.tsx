@@ -427,11 +427,11 @@ const EzAgencyPanel = () => {
             </div>
             <div className="space-y-1 sm:col-span-2">
               <label className="text-xs text-muted-foreground">Login-Adresse (Benutzer)</label>
-              <Input value={smtpUser} onChange={e => setSmtpUser(e.target.value)} className="font-mono" placeholder="ing.sperling@gmx.de" />
+              <Input value={smtpUser} onChange={e => setSmtpUser(e.target.value)} className="font-mono" placeholder="apo-berater@sperling-kundenservice.de" />
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">Absender-Adresse (From)</label>
-              <Input value={smtpFrom} onChange={e => setSmtpFrom(e.target.value)} className="font-mono" placeholder="ing.sperling@j-sperling.de" />
+              <Input value={smtpFrom} onChange={e => setSmtpFrom(e.target.value)} className="font-mono" placeholder="apo-berater@sperling-kundenservice.de" />
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">Absender-Name</label>
