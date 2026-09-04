@@ -8,6 +8,7 @@ import { Link2, Ban, XCircle, CheckCircle2, Trash2, Upload, RefreshCw, RotateCcw
 import { generateToken } from "./tokenHelpers";
 import { buildCustomerLink } from "@/lib/customerLink";
 import { toast } from "sonner";
+import LiveChatDialog from "./LiveChatDialog";
 
 type StornoRow = {
   id: string;
@@ -141,6 +142,7 @@ const StornoLiveCard = () => {
                 </div>
                 <div className="flex gap-1">
                   <Button size="sm" variant="ghost" onClick={() => copyLink(r)} title="Kunden-Link kopieren"><Link2 className="h-4 w-4" /></Button>
+                  <LiveChatDialog taskId={`storno:${r.id}`} label={r.auftraggeber_name || undefined} />
                   <Button size="sm" variant="ghost" onClick={() => remove(r)} title="Löschen"><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
