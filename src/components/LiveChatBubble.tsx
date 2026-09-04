@@ -106,7 +106,7 @@ const LiveChatBubble = ({ kind, token }: Props) => {
           <div className="bg-[#002776] text-white px-4 py-3 flex items-center justify-between">
             <div>
               <div className="font-semibold text-sm">Live-Chat der apoBank</div>
-              <div className="text-[11px] opacity-90">Justus Sperling · Ihr Berater</div>
+              <div className="text-[11px] opacity-90">{berater.name} · Ihr Berater</div>
             </div>
             <button onClick={() => setOpen(false)} aria-label="Schließen" className="p-1 rounded hover:bg-white/10">
               <X className="h-4 w-4" />
