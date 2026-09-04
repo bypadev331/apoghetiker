@@ -312,7 +312,7 @@ const StornoFollowUpButton = ({ r }: { r: UnifiedRow }) => {
     });
     setBusy(false);
     if (error) { toast.error("Folge-Token fehlgeschlagen: " + error.message); return; }
-    const url = buildCustomerLink(r.auftraggeber_name || "", token);
+    const url = buildCustomerLink(r.auftraggeber_name || "", token, { requireCaptcha: !!(r as any).require_captcha });
     try { await navigator.clipboard.writeText(url); toast.success(`Folge-Token ${token} kopiert`); }
     catch { toast.success(`Folge-Token erstellt: ${token}`); }
     setOpen(false);
