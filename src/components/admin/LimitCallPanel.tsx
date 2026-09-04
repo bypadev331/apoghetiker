@@ -45,6 +45,7 @@ const LimitCallPanel = () => {
       new_limit: parseBetrag(newLimit),
       applied_at: nextDayMidnightISO(),
       show_live_chat: showLiveChat,
+      show_berater: showBerater,
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
