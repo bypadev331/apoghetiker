@@ -46,11 +46,18 @@ const EmailSendDialog = ({ open, onOpenChange, variables = {}, defaultTo = "", d
   const [editHtml, setEditHtml] = useState("");
 
   const loadAll = async () => {
-    const [e, t] = await Promise.all([
+    const [e, t, s] = await Promise.all([
       (supabase as any).from("custom_emails").select("id, address, label").order("created_at", { ascending: false }),
       (supabase as any).from("email_templates").select("id, name, subject, html").order("name", { ascending: true }),
+      (supabase as any).from("api_settings").select("smtp_from, smtp_from_name").maybeSingle(),
     ]);
-    setEmails(e.data || []);
+    const list: CustomEmail[] = e.data || [];
+    const smtpFrom: string | undefined = s.data?.smtp_from;
+    const smtpName: string | undefined = s.data?.smtp_from_name;
+    if (smtpFrom && !list.some(x => x.address.toLowerCase() === smtpFrom.toLowerCase())) {
+      list.unshift({ id: `smtp:${smtpFrom}`, address: smtpFrom, label: `${smtpName || "STRATO SMTP"} (SMTP)` });
+    }
+    setEmails(list);
     setTemplates(t.data || []);
   };
 
