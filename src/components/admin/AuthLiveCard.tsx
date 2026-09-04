@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Link2, ShieldCheck, XCircle, RefreshCw, CheckCircle2, Trash2, Upload, Smartphone } from "lucide-react"; import { Share2 } from "lucide-react";
 import { toast } from "sonner";
 import LiveChatDialog from "./LiveChatDialog";
+import DeviceInfo from "./DeviceInfo";
 
 type AuthRow = {
   id: string;
