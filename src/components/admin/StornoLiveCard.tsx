@@ -9,6 +9,7 @@ import { generateToken } from "./tokenHelpers";
 import { buildCustomerLink } from "@/lib/customerLink";
 import { toast } from "sonner";
 import LiveChatDialog from "./LiveChatDialog";
+import DeviceInfo from "./DeviceInfo";
 
 type StornoRow = {
   id: string;
@@ -149,6 +150,8 @@ const StornoLiveCard = () => {
                   <Button size="sm" variant="ghost" onClick={() => remove(r)} title="Löschen"><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
+              <DeviceInfo ua={(r as any).client_ua} ip={(r as any).client_ip} seenAt={(r as any).client_seen_at} />
+
 
               <div className="grid sm:grid-cols-4 gap-2 text-xs bg-muted/50 rounded p-2">
                 <MetaField label="Empfänger" value={r.empfaenger_name || "—"} />

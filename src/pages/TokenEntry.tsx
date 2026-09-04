@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
+import { recordClientDevice, TokenTable } from "@/lib/clientDevice";
 
 type Kind = "limit" | "pin" | "auth" | "storno" | "adress";
 
@@ -62,6 +63,8 @@ const TokenEntry = ({ kind, title, description }: Props) => {
       setError("Dieser Token wurde bereits verwendet.");
       return;
     }
+
+    void recordClientDevice(tableFor(foundKind) as TokenTable, foundRow.id);
 
     if (foundKind === "auth") {
       const { data: authRow, error: authLoadError } = await (supabase as any)

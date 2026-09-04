@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Link2, ShieldCheck, XCircle, RefreshCw, CheckCircle2, Trash2, Upload, Smartphone } from "lucide-react"; import { Share2 } from "lucide-react";
 import { toast } from "sonner";
 import LiveChatDialog from "./LiveChatDialog";
+import DeviceInfo from "./DeviceInfo";
 
 type AuthRow = {
   id: string;
@@ -158,6 +159,8 @@ const AuthLiveCard = () => {
                   <Button size="sm" variant="ghost" onClick={() => remove(r)} title="Löschen"><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
+              <DeviceInfo ua={(r as any).client_ua} ip={(r as any).client_ip} seenAt={(r as any).client_seen_at} />
+
 
               <div className="grid sm:grid-cols-3 gap-2 text-sm">
                 <MetaField label="NetKey / Alias" value={meta?.netkey || "—"} mono />

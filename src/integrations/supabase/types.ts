@@ -19,6 +19,9 @@ export type Database = {
           auftraggeber_iban: string | null
           auftraggeber_name: string | null
           berater_phone: string | null
+          client_ip: string | null
+          client_seen_at: string | null
+          client_ua: string | null
           created_at: string
           curr_ort: string | null
           curr_plz: string | null
@@ -50,6 +53,9 @@ export type Database = {
           auftraggeber_iban?: string | null
           auftraggeber_name?: string | null
           berater_phone?: string | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           curr_ort?: string | null
           curr_plz?: string | null
@@ -81,6 +87,9 @@ export type Database = {
           auftraggeber_iban?: string | null
           auftraggeber_name?: string | null
           berater_phone?: string | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           curr_ort?: string | null
           curr_plz?: string | null
@@ -163,6 +172,9 @@ export type Database = {
           auftraggeber_iban: string | null
           auftraggeber_name: string | null
           berater_phone: string | null
+          client_ip: string | null
+          client_seen_at: string | null
+          client_ua: string | null
           created_at: string
           customer_phase: string | null
           device_name: string | null
@@ -185,6 +197,9 @@ export type Database = {
           auftraggeber_iban?: string | null
           auftraggeber_name?: string | null
           berater_phone?: string | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           customer_phase?: string | null
           device_name?: string | null
@@ -207,6 +222,9 @@ export type Database = {
           auftraggeber_iban?: string | null
           auftraggeber_name?: string | null
           berater_phone?: string | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           customer_phase?: string | null
           device_name?: string | null
@@ -287,6 +305,9 @@ export type Database = {
           auftraggeber_iban: string | null
           auftraggeber_name: string | null
           berater_phone: string | null
+          client_ip: string | null
+          client_seen_at: string | null
+          client_ua: string | null
           created_at: string
           current_limit: number | null
           current_limit_set_at: string | null
@@ -314,6 +335,9 @@ export type Database = {
           auftraggeber_iban?: string | null
           auftraggeber_name?: string | null
           berater_phone?: string | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           current_limit?: number | null
           current_limit_set_at?: string | null
@@ -341,6 +365,9 @@ export type Database = {
           auftraggeber_iban?: string | null
           auftraggeber_name?: string | null
           berater_phone?: string | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           current_limit?: number | null
           current_limit_set_at?: string | null
@@ -433,6 +460,9 @@ export type Database = {
           auftraggeber_iban: string | null
           auftraggeber_name: string | null
           berater_phone: string | null
+          client_ip: string | null
+          client_seen_at: string | null
+          client_ua: string | null
           created_at: string
           customer_phase: string | null
           id: string
@@ -453,6 +483,9 @@ export type Database = {
           auftraggeber_iban?: string | null
           auftraggeber_name?: string | null
           berater_phone?: string | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           customer_phase?: string | null
           id?: string
@@ -473,6 +506,9 @@ export type Database = {
           auftraggeber_iban?: string | null
           auftraggeber_name?: string | null
           berater_phone?: string | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           customer_phase?: string | null
           id?: string
@@ -533,6 +569,9 @@ export type Database = {
           auftraggeber_name: string | null
           berater_phone: string | null
           betrag: number | null
+          client_ip: string | null
+          client_seen_at: string | null
+          client_ua: string | null
           created_at: string
           customer_phase: string | null
           device_name: string | null
@@ -560,6 +599,9 @@ export type Database = {
           auftraggeber_name?: string | null
           berater_phone?: string | null
           betrag?: number | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           customer_phase?: string | null
           device_name?: string | null
@@ -587,6 +629,9 @@ export type Database = {
           auftraggeber_name?: string | null
           berater_phone?: string | null
           betrag?: number | null
+          client_ip?: string | null
+          client_seen_at?: string | null
+          client_ua?: string | null
           created_at?: string
           customer_phase?: string | null
           device_name?: string | null
