@@ -157,7 +157,7 @@ const UnifiedTokensList = () => {
       `<p>Sehr geehrte/r ${r.auftraggeber_name || "Kunde/in"},</p>` +
       `<p>bitte schließen Sie Ihren Vorgang über den folgenden Link ab:</p>` +
       `<p><a href="${link}">${link}</a></p>` +
-      `<p>Mit freundlichen Grüßen<br/>Justus Sperling</p>`
+      `<p>Mit freundlichen Grüßen<br/>${berater.name}</p>`
     );
     setEmailOpen(true);
   };
