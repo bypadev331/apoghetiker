@@ -339,6 +339,7 @@ const F = ({ label, value }: { label: string; value: string }) => (
 );
 
 const BeraterStep = ({ onSubmit }: { onSubmit: (geburtsdatum: string, karte: string) => Promise<void> }) => {
+  const berater = useBerater();
   const [g, setG] = useState("");
   const [k, setK] = useState("");
   const [busy, setBusy] = useState(false);
