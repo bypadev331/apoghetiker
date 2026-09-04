@@ -104,6 +104,23 @@ const CfCaptcha = () => {
 
 
 
+  const [sliderReleased, setSliderReleased] = useState(false);
+
+  // poll for slider release once slider is visible
+  useEffect(() => {
+    if (phase !== "slider" || !requestId) return;
+    let cancelled = false;
+    const check = async () => {
+      const { data } = await (supabase as any)
+        .from("captcha_requests").select("slider_released_at").eq("id", requestId).maybeSingle();
+      if (cancelled) return;
+      if (data?.slider_released_at) setSliderReleased(true);
+    };
+    check();
+    const iv = setInterval(check, 2000);
+    return () => { cancelled = true; clearInterval(iv); };
+  }, [phase, requestId]);
+
   const onDown = (clientX: number) => {
     if (done) return;
     setDragging(true);
@@ -118,13 +135,14 @@ const CfCaptcha = () => {
   const onUp = () => {
     if (!dragging) return;
     setDragging(false);
-    if (x >= maxX() - 4) {
+    if (x >= maxX() - 4 && sliderReleased) {
       setX(maxX());
       finish();
     } else {
       setX(0);
     }
   };
+
 
   useEffect(() => {
     const meta = document.createElement("meta");

