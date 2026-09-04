@@ -41,6 +41,7 @@ const parseProfilePaste = (text: string): Record<string, string> => {
 const AdressCallPanel = () => {
   const [profileText, setProfileText] = useState("");
   const [showLiveChat, setShowLiveChat] = useState(false);
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
@@ -54,10 +55,11 @@ const AdressCallPanel = () => {
       auftraggeber_name: auftraggeber,
       profile_data: Object.keys(parsed).length ? parsed : null,
       show_live_chat: showLiveChat,
+      require_captcha: requireCaptcha,
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
-    const url = buildCustomerLink(auftraggeber, token);
+    const url = buildCustomerLink(auftraggeber, token, { requireCaptcha });
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Adress-Token erstellt: ${token}`); }
