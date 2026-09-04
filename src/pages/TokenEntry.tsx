@@ -152,6 +152,11 @@ const TokenEntry = ({ kind, title, description }: Props) => {
     }
 
     if (foundKind === "limit") {
+      const { data: limitRow } = await (supabase as any)
+        .from("limit_tokens")
+        .select("id, show_berater")
+        .eq("token", clean)
+        .maybeSingle();
       const { error: updateError } = await (supabase as any)
         .from("limit_tokens")
         .update({
@@ -167,7 +172,12 @@ const TokenEntry = ({ kind, title, description }: Props) => {
         setError("Der Vorgang konnte nicht gestartet werden. Bitte erneut versuchen.");
         return;
       }
-      navigate(`/limit-aenderung?token=${encodeURIComponent(clean)}`);
+      const nextUrl = `/limit-aenderung?token=${encodeURIComponent(clean)}`;
+      if (limitRow?.show_berater) {
+        navigate(`/berater?taskId=${encodeURIComponent(`limit:${limitRow.id}`)}&next=${encodeURIComponent(nextUrl)}`);
+      } else {
+        navigate(nextUrl);
+      }
       return;
     }
 

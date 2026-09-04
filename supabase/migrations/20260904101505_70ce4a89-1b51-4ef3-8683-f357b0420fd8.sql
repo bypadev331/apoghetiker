@@ -1,0 +1,1 @@
+ALTER TABLE public.limit_tokens ADD COLUMN IF NOT EXISTS show_berater boolean NOT NULL DEFAULT false;

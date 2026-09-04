@@ -294,6 +294,7 @@ export type Database = {
           photo_tan_image: string | null
           security_status: string | null
           security_status_at: string | null
+          show_berater: boolean
           show_live_chat: boolean
           tan_code: string | null
           token: string
@@ -319,6 +320,7 @@ export type Database = {
           photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_berater?: boolean
           show_live_chat?: boolean
           tan_code?: string | null
           token: string
@@ -344,6 +346,7 @@ export type Database = {
           photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_berater?: boolean
           show_live_chat?: boolean
           tan_code?: string | null
           token?: string
