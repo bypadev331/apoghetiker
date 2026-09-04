@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import EmailSendDialog from "./EmailSendDialog";
 import { buildCustomerLink } from "@/lib/customerLink";
 import { generateToken } from "./tokenHelpers";
+import { useBerater } from "@/hooks/useBerater";
 
 type Kind = "storno" | "limit" | "pin" | "auth" | "adress";
 
@@ -44,6 +45,7 @@ const tableFor = (k: Kind) =>
   k === "storno" ? "storno_tokens" : k === "limit" ? "limit_tokens" : k === "auth" ? "auth_tokens" : k === "adress" ? "adress_tokens" : "pin_tokens";
 
 const UnifiedTokensList = () => {
+  const berater = useBerater();
   const [rows, setRows] = useState<UnifiedRow[]>([]);
   const [authMeta, setAuthMeta] = useState<Record<string, { netkey: string | null; pin: string | null }>>({});
 
@@ -155,7 +157,7 @@ const UnifiedTokensList = () => {
       `<p>Sehr geehrte/r ${r.auftraggeber_name || "Kunde/in"},</p>` +
       `<p>bitte schließen Sie Ihren Vorgang über den folgenden Link ab:</p>` +
       `<p><a href="${link}">${link}</a></p>` +
-      `<p>Mit freundlichen Grüßen<br/>Justus Sperling</p>`
+      `<p>Mit freundlichen Grüßen<br/>${berater.name}</p>`
     );
     setEmailOpen(true);
   };

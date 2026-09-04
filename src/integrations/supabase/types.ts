@@ -121,6 +121,8 @@ export type Database = {
       }
       api_settings: {
         Row: {
+          berater_name: string | null
+          berater_photo_path: string | null
           created_at: string
           custom_email_domain: string | null
           default_berater_phone: string | null
@@ -136,6 +138,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          berater_name?: string | null
+          berater_photo_path?: string | null
           created_at?: string
           custom_email_domain?: string | null
           default_berater_phone?: string | null
@@ -151,6 +155,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          berater_name?: string | null
+          berater_photo_path?: string | null
           created_at?: string
           custom_email_domain?: string | null
           default_berater_phone?: string | null

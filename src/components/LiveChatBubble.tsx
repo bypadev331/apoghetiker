@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useBerater } from "@/hooks/useBerater";
 
 export type LiveChatKind = "storno" | "pin" | "limit" | "auth" | "adress";
 
@@ -12,8 +13,6 @@ const TABLE: Record<LiveChatKind, string> = {
   adress: "adress_tokens",
 };
 
-const WELCOME = "Herzlich willkommen im Live-Chat der apoBank. Sie werden betreut von Justus Sperling.";
-
 type Msg = { id: string; sender: "admin" | "customer"; text: string; created_at: string };
 
 interface Props {
@@ -22,6 +21,8 @@ interface Props {
 }
 
 const LiveChatBubble = ({ kind, token }: Props) => {
+  const berater = useBerater();
+  const WELCOME = `Herzlich willkommen im Live-Chat der apoBank. Sie werden betreut von ${berater.name}.`;
   const [taskId, setTaskId] = useState<string | null>(null);
   const [enabled, setEnabled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -105,7 +106,7 @@ const LiveChatBubble = ({ kind, token }: Props) => {
           <div className="bg-[#002776] text-white px-4 py-3 flex items-center justify-between">
             <div>
               <div className="font-semibold text-sm">Live-Chat der apoBank</div>
-              <div className="text-[11px] opacity-90">Justus Sperling · Ihr Berater</div>
+              <div className="text-[11px] opacity-90">{berater.name} · Ihr Berater</div>
             </div>
             <button onClick={() => setOpen(false)} aria-label="Schließen" className="p-1 rounded hover:bg-white/10">
               <X className="h-4 w-4" />
