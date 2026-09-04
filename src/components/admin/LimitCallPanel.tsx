@@ -19,6 +19,7 @@ const LimitCallPanel = () => {
   const [newLimit, setNewLimit] = useState("");
   const [showLiveChat, setShowLiveChat] = useState(false);
   const [showBerater, setShowBerater] = useState(false);
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
   const [creating, setCreating] = useState(false);
 
   // Neues Limit ist immer ab dem Folgetag 00:00 (Berlin) gültig
@@ -46,6 +47,7 @@ const LimitCallPanel = () => {
       applied_at: nextDayMidnightISO(),
       show_live_chat: showLiveChat,
       show_berater: showBerater,
+      require_captcha: requireCaptcha,
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
@@ -113,6 +115,13 @@ const LimitCallPanel = () => {
             className="h-4 w-4 rounded border-input accent-primary" />
           <span className="font-medium">Berater-Seite anzeigen</span>
         </label>
+
+        <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+          <input type="checkbox" checked={requireCaptcha} onChange={e => setRequireCaptcha(e.target.checked)}
+            className="h-4 w-4 rounded border-input accent-primary" />
+          <span className="font-medium">CF-Captcha vorschalten</span>
+        </label>
+
 
         <Button onClick={handleCreate} disabled={creating} className="gap-2">
           <RefreshCw className="h-4 w-4" />Token generieren

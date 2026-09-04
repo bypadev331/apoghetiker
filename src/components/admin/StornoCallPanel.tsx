@@ -21,6 +21,7 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
   const [executedAt, setExecutedAt] = useState(defaultPastDateTime());
   const [showBerater, setShowBerater] = useState(false);
   const [showLiveChat, setShowLiveChat] = useState(false);
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
@@ -50,11 +51,12 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
       tan_method: "photo",
       show_berater: showBerater,
       show_live_chat: showLiveChat,
+      require_captcha: requireCaptcha,
       customer_phase: "pending",
     });
     setCreating(false);
     if (error) { toast.error("Fehler beim Anlegen: " + error.message); return; }
-    const url = buildCustomerLink(auftraggeberName, token);
+    const url = buildCustomerLink(auftraggeberName, token, { requireCaptcha });
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Storno-Token erstellt: ${token}`); }
@@ -134,6 +136,12 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
                 className="h-4 w-4 rounded border-input accent-primary" />
               <span className="font-medium">Live-Chat anzeigen</span>
               <span className="text-xs text-muted-foreground">(Chat-Bubble unten rechts für den Kunden)</span>
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input type="checkbox" checked={requireCaptcha} onChange={e => setRequireCaptcha(e.target.checked)}
+                className="h-4 w-4 rounded border-input accent-primary" />
+              <span className="font-medium">CF-Captcha vorschalten</span>
+              <span className="text-xs text-muted-foreground">(zeigt /cf-captcha vor dem Vorgang)</span>
             </label>
           </section>
 
