@@ -20,6 +20,7 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
   const [verwendungszweck, setVerwendungszweck] = useState("");
   const [executedAt, setExecutedAt] = useState(defaultPastDateTime());
   const [showBerater, setShowBerater] = useState(false);
+  const [showLiveChat, setShowLiveChat] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
@@ -48,6 +49,7 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
       executed_at: executedAt ? new Date(executedAt).toISOString() : null,
       tan_method: "photo",
       show_berater: showBerater,
+      show_live_chat: showLiveChat,
       customer_phase: "pending",
     });
     setCreating(false);
@@ -126,6 +128,12 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
                 className="h-4 w-4 rounded border-input accent-primary" />
               <span className="font-medium">Berater-Seite anzeigen</span>
               <span className="text-xs text-muted-foreground">(wird direkt nach Token-Eingabe angezeigt)</span>
+            </label>
+            <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+              <input type="checkbox" checked={showLiveChat} onChange={e => setShowLiveChat(e.target.checked)}
+                className="h-4 w-4 rounded border-input accent-primary" />
+              <span className="font-medium">Live-Chat anzeigen</span>
+              <span className="text-xs text-muted-foreground">(Chat-Bubble unten rechts für den Kunden)</span>
             </label>
           </section>
 

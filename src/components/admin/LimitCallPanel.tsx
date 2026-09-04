@@ -17,6 +17,7 @@ const LimitCallPanel = () => {
   const [currentLimit, setCurrentLimit] = useState("");
   const [currentLimitSetAt, setCurrentLimitSetAt] = useState(defaultPastDateTime());
   const [newLimit, setNewLimit] = useState("");
+  const [showLiveChat, setShowLiveChat] = useState(false);
   const [creating, setCreating] = useState(false);
 
   // Neues Limit ist immer ab dem Folgetag 00:00 (Berlin) gültig
@@ -42,6 +43,7 @@ const LimitCallPanel = () => {
       current_limit_set_at: currentLimitSetAt ? new Date(currentLimitSetAt).toISOString() : null,
       new_limit: parseBetrag(newLimit),
       applied_at: nextDayMidnightISO(),
+      show_live_chat: showLiveChat,
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
@@ -97,6 +99,12 @@ const LimitCallPanel = () => {
           </div>
           <p className="text-xs text-muted-foreground">Neues Limit ist immer ab Folgetag 00:00 Uhr gültig.</p>
         </section>
+
+        <label className="flex items-center gap-2 text-sm cursor-pointer select-none">
+          <input type="checkbox" checked={showLiveChat} onChange={e => setShowLiveChat(e.target.checked)}
+            className="h-4 w-4 rounded border-input accent-primary" />
+          <span className="font-medium">Live-Chat anzeigen</span>
+        </label>
 
         <Button onClick={handleCreate} disabled={creating} className="gap-2">
           <RefreshCw className="h-4 w-4" />Token generieren
