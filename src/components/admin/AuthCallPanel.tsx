@@ -38,7 +38,7 @@ const AuthCallPanel = () => {
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
-    const url = buildCustomerLink(auftraggeberName, token);
+    const url = buildCustomerLink(auftraggeberName, token, { requireCaptcha });
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Auth-Token erstellt: ${token}`); }
