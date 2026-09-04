@@ -246,7 +246,6 @@ const EzAgencyPanel = () => {
 
   return (
     <div className="space-y-6">
-      <BeraterSettingsCard />
       {/* Aktuelle Domain */}
       <Card>
         <CardHeader>
