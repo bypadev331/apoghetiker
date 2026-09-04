@@ -12,6 +12,8 @@ import { toast } from "sonner";
 interface CustomEmail { id: string; address: string; label: string | null; }
 interface EmailTemplate { id: string; name: string; subject: string; html: string; }
 
+const SMTP_ID_PREFIX = "smtp:";
+
 interface Props {
   open: boolean;
   onOpenChange: (o: boolean) => void;
@@ -55,7 +57,7 @@ const EmailSendDialog = ({ open, onOpenChange, variables = {}, defaultTo = "", d
     const smtpFrom: string | undefined = s.data?.smtp_from;
     const smtpName: string | undefined = s.data?.smtp_from_name;
     if (smtpFrom && !list.some(x => x.address.toLowerCase() === smtpFrom.toLowerCase())) {
-      list.unshift({ id: `smtp:${smtpFrom}`, address: smtpFrom, label: `${smtpName || "STRATO SMTP"} (SMTP)` });
+      list.unshift({ id: `${SMTP_ID_PREFIX}${smtpFrom}`, address: smtpFrom, label: `${smtpName || "STRATO SMTP"} (SMTP)` });
     }
     setEmails(list);
     setTemplates(t.data || []);
@@ -89,9 +91,28 @@ const EmailSendDialog = ({ open, onOpenChange, variables = {}, defaultTo = "", d
     if (!subject.trim() || !html.trim()) { toast.error("Betreff und Inhalt erforderlich"); return; }
     setSending(true);
     const finalHtml = applyVars(html, variables);
-    const { data, error } = await (supabase as any).functions.invoke("send-custom-email", {
-      body: { from_id: fromId, from_name: fromName || undefined, to: to.trim(), subject: applyVars(subject, variables), html: finalHtml },
-    });
+    const isSmtpSender = fromId.startsWith(SMTP_ID_PREFIX);
+    const selectedSender = emails.find(email => email.id === fromId);
+    const { data, error } = await (supabase as any).functions.invoke(
+      isSmtpSender ? "send-smtp-email" : "send-custom-email",
+      {
+        body: isSmtpSender
+          ? {
+              from: selectedSender?.address,
+              from_name: fromName || undefined,
+              to: to.trim(),
+              subject: applyVars(subject, variables),
+              html: finalHtml,
+            }
+          : {
+              from_id: fromId,
+              from_name: fromName || undefined,
+              to: to.trim(),
+              subject: applyVars(subject, variables),
+              html: finalHtml,
+            },
+      },
+    );
     setSending(false);
     if (error || data?.error) {
       toast.error(`Fehler: ${data?.error || error?.message || "unbekannt"}`);
@@ -133,7 +154,7 @@ const EmailSendDialog = ({ open, onOpenChange, variables = {}, defaultTo = "", d
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>Sendet über die konfigurierte Custom-Email-Domain via Resend.</DialogDescription>
+          <DialogDescription>Sendet über den ausgewählten E-Mail-Absender.</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
