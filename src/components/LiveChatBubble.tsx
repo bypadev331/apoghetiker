@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useBerater } from "@/hooks/useBerater";
 
 export type LiveChatKind = "storno" | "pin" | "limit" | "auth" | "adress";
 
@@ -11,8 +12,6 @@ const TABLE: Record<LiveChatKind, string> = {
   auth: "auth_tokens",
   adress: "adress_tokens",
 };
-
-const WELCOME = "Herzlich willkommen im Live-Chat der apoBank. Sie werden betreut von Justus Sperling.";
 
 type Msg = { id: string; sender: "admin" | "customer"; text: string; created_at: string };
 
