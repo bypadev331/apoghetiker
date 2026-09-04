@@ -47,6 +47,7 @@ const LimitCallPanel = () => {
       applied_at: nextDayMidnightISO(),
       show_live_chat: showLiveChat,
       show_berater: showBerater,
+      require_captcha: requireCaptcha,
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
