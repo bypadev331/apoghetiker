@@ -418,7 +418,8 @@ const EzAgencyPanel = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">SMTP Host</label>
-              <Input value={smtpHost} onChange={e => setSmtpHost(e.target.value)} className="font-mono" placeholder="mail.gmx.net" />
+              <Input value={smtpHost} onChange={e => setSmtpHost(e.target.value)} className="font-mono" placeholder="smtp.strato.de" />
+
             </div>
             <div className="space-y-1">
               <label className="text-xs text-muted-foreground">Port</label>
