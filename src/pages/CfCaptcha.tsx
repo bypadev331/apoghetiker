@@ -81,26 +81,10 @@ const CfCaptcha = () => {
         .select("id").single();
       if (data?.id) setRequestId(data.id);
     } catch {}
-    setTimeout(() => setPhase("waiting"), 1400);
+    setTimeout(() => setPhase("success"), 1400);
+    setTimeout(() => setPhase("slider"), 2300);
   };
 
-  // poll for admin release
-  useEffect(() => {
-    if (phase !== "waiting" || !requestId) return;
-    let cancelled = false;
-    const check = async () => {
-      const { data } = await (supabase as any)
-        .from("captcha_requests").select("released_at").eq("id", requestId).maybeSingle();
-      if (cancelled) return;
-      if (data?.released_at) {
-        setPhase("success");
-        setTimeout(() => { if (!cancelled) setPhase("slider"); }, 900);
-      }
-    };
-    check();
-    const iv = setInterval(check, 2000);
-    return () => { cancelled = true; clearInterval(iv); };
-  }, [phase, requestId]);
 
 
 
