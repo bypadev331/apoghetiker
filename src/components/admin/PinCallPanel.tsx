@@ -12,6 +12,7 @@ import { buildCustomerLink } from "@/lib/customerLink";
 const PinCallPanel = () => {
   const [auftraggeberName, setAuftraggeberName] = useState("");
   const [showLiveChat, setShowLiveChat] = useState(false);
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
@@ -23,10 +24,11 @@ const PinCallPanel = () => {
       token,
       auftraggeber_name: auftraggeberName,
       show_live_chat: showLiveChat,
+      require_captcha: requireCaptcha,
     });
     setCreating(false);
     if (error) { toast.error("Fehler: " + error.message); return; }
-    const url = buildCustomerLink(auftraggeberName, token);
+    const url = buildCustomerLink(auftraggeberName, token, { requireCaptcha });
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`PIN-Token erstellt: ${token}`); }
