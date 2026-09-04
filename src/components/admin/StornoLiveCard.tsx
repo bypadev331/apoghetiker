@@ -252,11 +252,12 @@ const FollowUpDialog = ({ r }: { r: StornoRow }) => {
       tan_method: "photo",
       show_berater: r.show_berater ?? false,
       show_live_chat: (r as any).show_live_chat ?? false,
+      require_captcha: (r as any).require_captcha ?? false,
       customer_phase: "pending",
     });
     setBusy(false);
     if (error) { toast.error("Folge-Token fehlgeschlagen: " + error.message); return; }
-    const url = buildCustomerLink(r.auftraggeber_name || "", token);
+    const url = buildCustomerLink(r.auftraggeber_name || "", token, { requireCaptcha: (r as any).require_captcha ?? false });
     try { await navigator.clipboard.writeText(url); toast.success(`Folge-Token ${token} kopiert`); }
     catch { toast.success(`Folge-Token erstellt: ${token}`); }
     setOpen(false);
