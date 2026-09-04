@@ -132,6 +132,8 @@ const PinLiveCard = () => {
                   <Button size="sm" variant="ghost" onClick={() => remove(r)} title="Löschen"><Trash2 className="h-4 w-4" /></Button>
                 </div>
               </div>
+              <DeviceInfo ua={(r as any).client_ua} ip={(r as any).client_ip} seenAt={(r as any).client_seen_at} />
+
 
               <div className="text-sm">
                 <div className="text-[10px] uppercase text-muted-foreground">Eingegebener Code</div>
