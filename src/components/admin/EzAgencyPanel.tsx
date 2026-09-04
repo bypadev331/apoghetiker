@@ -17,6 +17,7 @@ import PinLiveCard from "./PinLiveCard";
 import AdressLiveCard from "./AdressLiveCard";
 import LimitLiveCard from "./LimitLiveCard";
 import { getPublicBaseUrl, setPublicBaseUrl } from "@/lib/customerLink";
+import BeraterSettingsCard from "./BeraterSettingsCard";
 
 
 
