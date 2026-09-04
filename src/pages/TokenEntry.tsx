@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
+import { recordClientDevice, TokenTable } from "@/lib/clientDevice";
 
 type Kind = "limit" | "pin" | "auth" | "storno" | "adress";
 
