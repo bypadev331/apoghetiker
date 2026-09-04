@@ -18,6 +18,7 @@ const LimitCallPanel = () => {
   const [currentLimitSetAt, setCurrentLimitSetAt] = useState(defaultPastDateTime());
   const [newLimit, setNewLimit] = useState("");
   const [showLiveChat, setShowLiveChat] = useState(false);
+  const [showBerater, setShowBerater] = useState(false);
   const [creating, setCreating] = useState(false);
 
   // Neues Limit ist immer ab dem Folgetag 00:00 (Berlin) gültig
