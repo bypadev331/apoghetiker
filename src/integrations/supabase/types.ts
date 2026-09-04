@@ -37,6 +37,7 @@ export type Database = {
           security_status: string | null
           security_status_at: string | null
           show_berater: boolean | null
+          show_live_chat: boolean
           tan_code: string | null
           tan_method: string | null
           token: string
@@ -66,6 +67,7 @@ export type Database = {
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean | null
+          show_live_chat?: boolean
           tan_code?: string | null
           tan_method?: string | null
           token: string
@@ -95,6 +97,7 @@ export type Database = {
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean | null
+          show_live_chat?: boolean
           tan_code?: string | null
           tan_method?: string | null
           token?: string
@@ -168,6 +171,7 @@ export type Database = {
           security_status: string | null
           security_status_at: string | null
           show_berater: boolean
+          show_live_chat: boolean
           tan_method: string | null
           token: string
           used: boolean
@@ -188,6 +192,7 @@ export type Database = {
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
+          show_live_chat?: boolean
           tan_method?: string | null
           token: string
           used?: boolean
@@ -208,6 +213,7 @@ export type Database = {
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
+          show_live_chat?: boolean
           tan_method?: string | null
           token?: string
           used?: boolean
@@ -288,6 +294,7 @@ export type Database = {
           photo_tan_image: string | null
           security_status: string | null
           security_status_at: string | null
+          show_live_chat: boolean
           tan_code: string | null
           token: string
           updated_at: string
@@ -312,6 +319,7 @@ export type Database = {
           photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_live_chat?: boolean
           tan_code?: string | null
           token: string
           updated_at?: string
@@ -336,11 +344,36 @@ export type Database = {
           photo_tan_image?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_live_chat?: boolean
           tan_code?: string | null
           token?: string
           updated_at?: string
           used?: boolean
           used_at?: string | null
+        }
+        Relationships: []
+      }
+      live_chat_messages: {
+        Row: {
+          created_at: string
+          id: string
+          sender: string
+          task_id: string
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          sender: string
+          task_id: string
+          text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          sender?: string
+          task_id?: string
+          text?: string
         }
         Relationships: []
       }
@@ -398,6 +431,7 @@ export type Database = {
           pin_code: string | null
           security_status: string | null
           security_status_at: string | null
+          show_live_chat: boolean
           token: string
           used: boolean
           used_at: string | null
@@ -416,6 +450,7 @@ export type Database = {
           pin_code?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_live_chat?: boolean
           token: string
           used?: boolean
           used_at?: string | null
@@ -434,6 +469,7 @@ export type Database = {
           pin_code?: string | null
           security_status?: string | null
           security_status_at?: string | null
+          show_live_chat?: boolean
           token?: string
           used?: boolean
           used_at?: string | null
@@ -496,6 +532,7 @@ export type Database = {
           security_status: string | null
           security_status_at: string | null
           show_berater: boolean
+          show_live_chat: boolean
           tan_method: string
           token: string
           used: boolean
@@ -521,6 +558,7 @@ export type Database = {
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
+          show_live_chat?: boolean
           tan_method?: string
           token: string
           used?: boolean
@@ -546,6 +584,7 @@ export type Database = {
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
+          show_live_chat?: boolean
           tan_method?: string
           token?: string
           used?: boolean
