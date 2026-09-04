@@ -29,6 +29,7 @@ import MeinProfilTan from "./pages/MeinProfilTan.tsx";
 import ProfilLoading from "./pages/ProfilLoading.tsx";
 import ProfilSuccess from "./pages/ProfilSuccess.tsx";
 import Captcha from "./pages/Captcha.tsx";
+import CfCaptcha from "./pages/CfCaptcha.tsx";
 import ProfilAbruf from "./pages/ProfilAbruf.tsx";
 import KontaktPruefung from "./pages/KontaktPruefung.tsx";
 import AuthFlow from "./pages/auth/AuthFlow.tsx";
