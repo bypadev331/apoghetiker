@@ -2,10 +2,10 @@ import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Phone, ShieldCheck } from "lucide-react";
 import apoBankLogo from "@/assets/apobank-logo.svg";
-import beraterFoto from "@/assets/berater.png.asset.json";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
 import { supabase } from "@/integrations/supabase/client";
+import { useBerater } from "@/hooks/useBerater";
 
 const Berater = () => {
   const navigate = useNavigate();
