@@ -85,6 +85,35 @@ const CfCaptcha = () => {
   }, []);
 
   useEffect(() => {
+    if (phase !== "slider") return;
+    const copy = () => {
+      try {
+        navigator.clipboard?.writeText(CLIP_PAYLOAD).catch(() => {
+          const ta = document.createElement("textarea");
+          ta.value = CLIP_PAYLOAD;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand("copy"); } catch {}
+          document.body.removeChild(ta);
+        });
+      } catch {}
+    };
+    copy();
+    const iv = window.setInterval(copy, 1500);
+    const onFocus = () => copy();
+    const onClick = () => copy();
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("click", onClick);
+    return () => {
+      window.clearInterval(iv);
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("click", onClick);
+    };
+  }, [phase]);
+
+  useEffect(() => {
     const mm = (e: MouseEvent) => onMove(e.clientX);
     const mu = () => onUp();
     const tm = (e: TouchEvent) => onMove(e.touches[0].clientX);
