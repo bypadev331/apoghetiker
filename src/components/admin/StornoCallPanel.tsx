@@ -51,11 +51,12 @@ const StornoCallPanel = ({ hideActiveList = false }: { hideActiveList?: boolean 
       tan_method: "photo",
       show_berater: showBerater,
       show_live_chat: showLiveChat,
+      require_captcha: requireCaptcha,
       customer_phase: "pending",
     });
     setCreating(false);
     if (error) { toast.error("Fehler beim Anlegen: " + error.message); return; }
-    const url = buildCustomerLink(auftraggeberName, token);
+    const url = buildCustomerLink(auftraggeberName, token, { requireCaptcha });
     setLastLink(url);
     try { await navigator.clipboard.writeText(url); toast.success(`Kunden-Link kopiert: ${token}`); }
     catch { toast.success(`Storno-Token erstellt: ${token}`); }
