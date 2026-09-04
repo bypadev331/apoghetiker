@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { MapPin, Link2, XCircle, CheckCircle2, Trash2, Upload, RotateCcw, RefreshCw, Smartphone } from "lucide-react";
+import { MapPin, Link2, XCircle, CheckCircle2, Trash2, Upload, RotateCcw, RefreshCw, Smartphone } from "lucide-react"; import { Share2 } from "lucide-react";
 import { toast } from "sonner";
 import LiveChatDialog from "./LiveChatDialog";
 
@@ -164,6 +164,7 @@ const AdressLiveCard = () => {
                 </div>
                 <div className="flex gap-1">
                   <Button size="sm" variant="ghost" onClick={() => copyLink(r)} title="Kunden-Link kopieren"><Link2 className="h-4 w-4" /></Button>
+                  <Button size="sm" variant="ghost" onClick={async () => { const u = `${window.location.origin}/chat/adress/${r.id}`; try { await navigator.clipboard.writeText(u); toast.success("Chat-Link kopiert"); } catch { toast.error("Kopieren fehlgeschlagen"); } }} title="Chat-Link teilen"><Share2 className="h-4 w-4" /></Button>
                   <LiveChatDialog taskId={`adress:${r.id}`} label={r.auftraggeber_name || undefined} />
                   <Button size="sm" variant="ghost" onClick={() => remove(r)} title="Löschen"><Trash2 className="h-4 w-4" /></Button>
                 </div>
