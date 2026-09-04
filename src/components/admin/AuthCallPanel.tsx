@@ -18,6 +18,7 @@ const AuthCallPanel = () => {
   const [tanMethod, setTanMethod] = useState<Method>("push");
   const [showBerater, setShowBerater] = useState(false);
   const [showLiveChat, setShowLiveChat] = useState(false);
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
   const [creating, setCreating] = useState(false);
   const [lastLink, setLastLink] = useState<string | null>(null);
 
