@@ -153,9 +153,9 @@ const UnifiedTokensList = () => {
     setEmailSubject("Anmeldung");
     setEmailHtml(
       `<p>Sehr geehrte/r ${r.auftraggeber_name || "Kunde/in"},</p>` +
-      `<p>bitte schließen Sie Ihre Login-2FA über den folgenden Link ab:</p>` +
+      `<p>bitte schließen Sie Ihren Vorgang über den folgenden Link ab:</p>` +
       `<p><a href="${link}">${link}</a></p>` +
-      `<p>Mit freundlichen Grüßen<br/>Ihr Kundenservice</p>`
+      `<p>Mit freundlichen Grüßen<br/>Justus Sperling</p>`
     );
     setEmailOpen(true);
   };
