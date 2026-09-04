@@ -185,11 +185,8 @@ const CfCaptcha = () => {
 
 
             <div className="bg-[#f5f7fa] px-6 py-8">
-              <p className="text-[14px] text-slate-700 mb-4">
-                Bitte bestätigen Sie durch die untenstehende Aktion, dass Sie ein Mensch sind.
-              </p>
               <p className="text-[14px] text-[#0f172a] mb-3">
-                Um besser nachzuweisen, dass Sie kein Roboter sind:
+                Bitte bestätigen Sie durch die untenstehende Aktion, dass Sie ein Mensch sind.
               </p>
 
               <ol className="list-decimal pl-6 text-[14px] text-[#0f172a] space-y-1 mb-4">
