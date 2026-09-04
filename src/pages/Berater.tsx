@@ -9,6 +9,7 @@ import { useBerater } from "@/hooks/useBerater";
 
 const Berater = () => {
   const navigate = useNavigate();
+  const berater = useBerater();
   const [sp] = useSearchParams();
   const nextUrl = sp.get("next");
   const taskId = sp.get("taskId");
