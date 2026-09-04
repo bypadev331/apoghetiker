@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsRight, Check } from "lucide-react";
 import Index from "./Index";
+import apoLogo from "@/assets/apo-a-logo.png.asset.json";
 
 type Phase = "idle" | "verifying" | "success" | "slider";
 
