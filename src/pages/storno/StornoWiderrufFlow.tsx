@@ -7,6 +7,7 @@ import phototanImg from "@/assets/phototan.png";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import ContactSection from "@/components/ContactSection";
+import { useBerater } from "@/hooks/useBerater";
 
 type Row = {
   id: string;
