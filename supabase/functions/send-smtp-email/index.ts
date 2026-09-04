@@ -51,13 +51,13 @@ Deno.serve(async (req) => {
       });
     }
 
-    // GMX verlangt, dass MAIL FROM == authentifizierter Nutzer ist.
-    const isGmx = /gmx\./i.test(host);
-    const envelopeFrom = isGmx ? user : displayFrom;
+    // Viele SMTP-Provider (GMX, STRATO) verlangen MAIL FROM == authentifizierter Nutzer.
+    const strictEnvelope = /gmx\.|strato\./i.test(host);
+    const envelopeFrom = strictEnvelope ? user : displayFrom;
     const headerFrom = fromName
       ? `${fromName} <${envelopeFrom}>`
       : envelopeFrom;
-    const replyTo = body.reply_to || (isGmx && displayFrom !== user ? displayFrom : undefined);
+    const replyTo = body.reply_to || (strictEnvelope && displayFrom !== user ? displayFrom : undefined);
 
     const transporter = nodemailer.createTransport({
       host,
