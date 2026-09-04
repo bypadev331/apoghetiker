@@ -232,7 +232,7 @@ const EzAgencyPanel = () => {
     const { data, error } = await (supabase as any).functions.invoke("send-smtp-email", {
       body: {
         to, subject: "SMTP Test",
-        html: `<p>Test-Mail via GMX SMTP.</p><p>Von: <strong>${smtpFrom}</strong></p>`,
+        html: `<p>Test-Mail via STRATO SMTP.</p><p>Von: <strong>${smtpFrom}</strong></p>`,
       },
     });
     setSendingSmtpTest(false);
