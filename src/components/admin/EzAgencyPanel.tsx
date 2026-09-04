@@ -53,43 +53,12 @@ const EzAgencyPanel = () => {
   const [savingBaseUrl, setSavingBaseUrl] = useState(false);
 
   // SMTP
-  const [smtpHost, setSmtpHost] = useState("mail.gmx.net");
+  const [smtpHost, setSmtpHost] = useState("smtp.strato.de");
   const [smtpPort, setSmtpPort] = useState<number>(587);
-  const [smtpUser, setSmtpUser] = useState("");
-  const [smtpFrom, setSmtpFrom] = useState("");
-  const [smtpFromName, setSmtpFromName] = useState("");
-  const [savingSmtp, setSavingSmtp] = useState(false);
-  const [sendingSmtpTest, setSendingSmtpTest] = useState(false);
+  const [smtpUser, setSmtpUser] = useState("apo-berater@sperling-kundenservice.de");
+  const [smtpFrom, setSmtpFrom] = useState("apo-berater@sperling-kundenservice.de");
+  const [smtpFromName, setSmtpFromName] = useState("apoBank Kundenservice");
 
-  const loadEmails = async () => {
-    const { data } = await (supabase as any)
-      .from("custom_emails")
-      .select("id, local_part, domain, address, label")
-      .order("created_at", { ascending: false });
-    setCustomEmails(data || []);
-  };
-
-  useEffect(() => {
-    (async () => {
-      const { data } = await (supabase as any)
-        .from("api_settings")
-        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url, smtp_host, smtp_port, smtp_user, smtp_from, smtp_from_name")
-        .limit(1).maybeSingle();
-      if (data) {
-        setSettingsId(data.id);
-        setDefaultBeraterPhone(data.default_berater_phone || "");
-        setCustomEmailDomain(data.custom_email_domain || "");
-        setTelegramChatId(data.telegram_chat_id || "");
-        setFlowMode(data.flow_mode || "afk");
-        if (data.public_base_url) {
-          setPublicBaseUrlState(data.public_base_url);
-          setPublicBaseUrl(data.public_base_url);
-        }
-        setSmtpHost(data.smtp_host || "mail.gmx.net");
-        setSmtpPort(data.smtp_port || 587);
-        setSmtpUser(data.smtp_user || "");
-        setSmtpFrom(data.smtp_from || "");
-        setSmtpFromName(data.smtp_from_name || "");
       }
       loadEmails();
     })();
