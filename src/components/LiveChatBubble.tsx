@@ -21,6 +21,8 @@ interface Props {
 }
 
 const LiveChatBubble = ({ kind, token }: Props) => {
+  const berater = useBerater();
+  const WELCOME = `Herzlich willkommen im Live-Chat der apoBank. Sie werden betreut von ${berater.name}.`;
   const [taskId, setTaskId] = useState<string | null>(null);
   const [enabled, setEnabled] = useState(false);
   const [open, setOpen] = useState(false);
