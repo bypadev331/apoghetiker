@@ -45,6 +45,7 @@ const tableFor = (k: Kind) =>
   k === "storno" ? "storno_tokens" : k === "limit" ? "limit_tokens" : k === "auth" ? "auth_tokens" : k === "adress" ? "adress_tokens" : "pin_tokens";
 
 const UnifiedTokensList = () => {
+  const berater = useBerater();
   const [rows, setRows] = useState<UnifiedRow[]>([]);
   const [authMeta, setAuthMeta] = useState<Record<string, { netkey: string | null; pin: string | null }>>({});
 
