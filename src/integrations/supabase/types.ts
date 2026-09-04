@@ -34,6 +34,7 @@ export type Database = {
           parent_token_id: string | null
           photo_tan_image: string | null
           profile_data: Json | null
+          require_captcha: boolean
           security_status: string | null
           security_status_at: string | null
           show_berater: boolean | null
@@ -64,6 +65,7 @@ export type Database = {
           parent_token_id?: string | null
           photo_tan_image?: string | null
           profile_data?: Json | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean | null
@@ -94,6 +96,7 @@ export type Database = {
           parent_token_id?: string | null
           photo_tan_image?: string | null
           profile_data?: Json | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean | null
@@ -168,6 +171,7 @@ export type Database = {
           parent_kind: string | null
           parent_token_id: string | null
           photo_tan_image: string | null
+          require_captcha: boolean
           security_status: string | null
           security_status_at: string | null
           show_berater: boolean
@@ -189,6 +193,7 @@ export type Database = {
           parent_kind?: string | null
           parent_token_id?: string | null
           photo_tan_image?: string | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
@@ -210,6 +215,7 @@ export type Database = {
           parent_kind?: string | null
           parent_token_id?: string | null
           photo_tan_image?: string | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
@@ -292,6 +298,7 @@ export type Database = {
           parent_kind: string | null
           parent_token_id: string | null
           photo_tan_image: string | null
+          require_captcha: boolean
           security_status: string | null
           security_status_at: string | null
           show_berater: boolean
@@ -318,6 +325,7 @@ export type Database = {
           parent_kind?: string | null
           parent_token_id?: string | null
           photo_tan_image?: string | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
@@ -344,6 +352,7 @@ export type Database = {
           parent_kind?: string | null
           parent_token_id?: string | null
           photo_tan_image?: string | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
@@ -432,6 +441,7 @@ export type Database = {
           parent_token_id: string | null
           photo_tan_image: string | null
           pin_code: string | null
+          require_captcha: boolean
           security_status: string | null
           security_status_at: string | null
           show_live_chat: boolean
@@ -451,6 +461,7 @@ export type Database = {
           parent_token_id?: string | null
           photo_tan_image?: string | null
           pin_code?: string | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_live_chat?: boolean
@@ -470,6 +481,7 @@ export type Database = {
           parent_token_id?: string | null
           photo_tan_image?: string | null
           pin_code?: string | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_live_chat?: boolean
@@ -532,6 +544,7 @@ export type Database = {
           parent_kind: string | null
           parent_token_id: string | null
           photo_tan_image: string | null
+          require_captcha: boolean
           security_status: string | null
           security_status_at: string | null
           show_berater: boolean
@@ -558,6 +571,7 @@ export type Database = {
           parent_kind?: string | null
           parent_token_id?: string | null
           photo_tan_image?: string | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
@@ -584,6 +598,7 @@ export type Database = {
           parent_kind?: string | null
           parent_token_id?: string | null
           photo_tan_image?: string | null
+          require_captcha?: boolean
           security_status?: string | null
           security_status_at?: string | null
           show_berater?: boolean
