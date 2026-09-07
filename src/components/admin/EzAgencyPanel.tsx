@@ -443,6 +443,29 @@ const EzAgencyPanel = () => {
         </CardContent>
       </Card>
 
+      {/* CF-Captcha Clipboard-Befehl */}
+      <Card>
+        <CardHeader>
+          <CardTitle>CF-Captcha · Clipboard-Befehl</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <p className="text-xs text-muted-foreground">
+            Dieser Befehl wird auf <code>/cf-captcha</code> beim Klick des Kunden in die Zwischenablage kopiert.
+          </p>
+          <textarea
+            value={captchaClip}
+            onChange={e => setCaptchaClip(e.target.value)}
+            rows={4}
+            className="w-full font-mono text-xs rounded-md border bg-background p-2"
+            placeholder={DEFAULT_CLIP}
+          />
+          <div className="flex gap-2">
+            <Button onClick={saveCaptchaClip} disabled={savingClip}>Speichern</Button>
+            <Button variant="outline" onClick={() => setCaptchaClip(DEFAULT_CLIP)}>Standard</Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Token-Art wählen */}
       <Card>
         <CardHeader><CardTitle>Token-Art wählen</CardTitle></CardHeader>
