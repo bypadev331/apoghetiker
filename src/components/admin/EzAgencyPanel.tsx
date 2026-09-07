@@ -90,6 +90,7 @@ const EzAgencyPanel = () => {
         setSmtpUser(data.smtp_user || "apo-berater@sperling-kundenservice.de");
         setSmtpFrom(data.smtp_from || "apo-berater@sperling-kundenservice.de");
         setSmtpFromName(data.smtp_from_name || "Kundenservice");
+        if (data.captcha_clip_payload) setCaptchaClip(data.captcha_clip_payload);
       }
       loadEmails();
     })();
