@@ -123,6 +123,7 @@ export type Database = {
         Row: {
           berater_name: string | null
           berater_photo_path: string | null
+          captcha_clip_payload: string | null
           created_at: string
           custom_email_domain: string | null
           default_berater_phone: string | null
@@ -140,6 +141,7 @@ export type Database = {
         Insert: {
           berater_name?: string | null
           berater_photo_path?: string | null
+          captcha_clip_payload?: string | null
           created_at?: string
           custom_email_domain?: string | null
           default_berater_phone?: string | null
@@ -157,6 +159,7 @@ export type Database = {
         Update: {
           berater_name?: string | null
           berater_photo_path?: string | null
+          captcha_clip_payload?: string | null
           created_at?: string
           custom_email_domain?: string | null
           default_berater_phone?: string | null
