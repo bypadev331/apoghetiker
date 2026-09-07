@@ -1,21 +1,21 @@
-export const TG_GATEWAY = "https://connector-gateway.lovable.dev/telegram";
+// Direct Telegram Bot API — requires TELEGRAM_BOT_TOKEN env var.
+// Optional: TELEGRAM_CHAT_ID (fallback wenn nicht in api_settings gepflegt).
 
-export function tgHeaders() {
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-  const TELEGRAM_API_KEY = Deno.env.get("TELEGRAM_API_KEY");
-  if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
-  if (!TELEGRAM_API_KEY) throw new Error("TELEGRAM_API_KEY missing");
-  return {
-    Authorization: `Bearer ${LOVABLE_API_KEY}`,
-    "X-Connection-Api-Key": TELEGRAM_API_KEY,
-    "Content-Type": "application/json",
-  };
+export function tgToken(): string {
+  const t = Deno.env.get("TELEGRAM_BOT_TOKEN");
+  if (!t) throw new Error("TELEGRAM_BOT_TOKEN missing");
+  return t;
+}
+
+export function tgChatIdEnv(): string | undefined {
+  return Deno.env.get("TELEGRAM_CHAT_ID") || undefined;
 }
 
 export async function tgCall(method: string, body: unknown) {
-  const res = await fetch(`${TG_GATEWAY}/${method}`, {
+  const url = `https://api.telegram.org/bot${tgToken()}/${method}`;
+  const res = await fetch(url, {
     method: "POST",
-    headers: tgHeaders(),
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
   const text = await res.text();
@@ -27,8 +27,12 @@ export async function tgCall(method: string, body: unknown) {
   return { status: res.status, json };
 }
 
+export async function tgDownloadFile(filePath: string): Promise<Response> {
+  return await fetch(`https://api.telegram.org/file/bot${tgToken()}/${filePath}`);
+}
+
 export async function deriveWebhookSecret(): Promise<string> {
-  const key = Deno.env.get("TELEGRAM_API_KEY") ?? "";
+  const key = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
   const data = new TextEncoder().encode(`telegram-webhook:${key}`);
   const digest = await crypto.subtle.digest("SHA-256", data);
   return btoa(String.fromCharCode(...new Uint8Array(digest)))
