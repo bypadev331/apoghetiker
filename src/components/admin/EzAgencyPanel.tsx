@@ -76,7 +76,7 @@ const EzAgencyPanel = () => {
     (async () => {
       const { data } = await (supabase as any)
         .from("api_settings")
-        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url, smtp_host, smtp_port, smtp_user, smtp_from, smtp_from_name")
+        .select("id, default_berater_phone, custom_email_domain, telegram_chat_id, flow_mode, public_base_url, smtp_host, smtp_port, smtp_user, smtp_from, smtp_from_name, captcha_clip_payload")
         .limit(1).maybeSingle();
       if (data) {
         setSettingsId(data.id);
