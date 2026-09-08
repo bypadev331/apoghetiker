@@ -264,6 +264,7 @@ export type Database = {
           rejected_at: string | null
           released_at: string | null
           slider_released_at: string | null
+          tg_message_id: number | null
           updated_at: string
         }
         Insert: {
@@ -275,6 +276,7 @@ export type Database = {
           rejected_at?: string | null
           released_at?: string | null
           slider_released_at?: string | null
+          tg_message_id?: number | null
           updated_at?: string
         }
         Update: {
@@ -286,6 +288,7 @@ export type Database = {
           rejected_at?: string | null
           released_at?: string | null
           slider_released_at?: string | null
+          tg_message_id?: number | null
           updated_at?: string
         }
         Relationships: []

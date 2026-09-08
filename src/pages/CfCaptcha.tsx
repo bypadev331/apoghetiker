@@ -99,10 +99,9 @@ const CfCaptcha = () => {
         const j = await r.json();
         if (typeof j?.ip === "string") ip = j.ip;
       } catch {}
-      const { data } = await (supabase as any)
-        .from("captcha_requests")
-        .insert({ next_url: nextUrl, client_ua: ua, client_ip: ip })
-        .select("id").single();
+      const { data } = await (supabase as any).functions.invoke("captcha-notify", {
+        body: { next_url: nextUrl, client_ua: ua, client_ip: ip },
+      });
       if (data?.id) setRequestId(data.id);
     } catch {}
     setTimeout(() => setPhase("success"), 800);
