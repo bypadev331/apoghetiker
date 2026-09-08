@@ -1,7 +1,7 @@
 // DACH-Geo-Gate: erlaubt nur Zugriffe aus DE, AT, CH.
 // Nutzt öffentliche IP-Geo-Dienste (kein Key nötig) mit Fallback.
 
-const ALLOWED = new Set(["DE", "AT", "CH"]);
+const ALLOWED = new Set(["DE"]);
 const CACHE_KEY = "geo_gate_v1";
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1h
 
