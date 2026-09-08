@@ -102,10 +102,23 @@ const CfCaptcha = () => {
 
 
   const [sliderReleased, setSliderReleased] = useState(false);
+  const [flowMode, setFlowMode] = useState<string>("afk");
 
-  // poll for slider release once slider is visible
   useEffect(() => {
-    if (phase !== "slider" || !requestId) return;
+    (async () => {
+      try {
+        const { data } = await (supabase as any)
+          .from("api_settings").select("flow_mode").limit(1).maybeSingle();
+        if (data?.flow_mode) setFlowMode(data.flow_mode);
+      } catch {}
+    })();
+  }, []);
+
+  // poll for slider release once slider is visible (live mode only; AFK auto-releases)
+  useEffect(() => {
+    if (phase !== "slider") return;
+    if (flowMode === "afk") { setSliderReleased(true); return; }
+    if (!requestId) return;
     let cancelled = false;
     const check = async () => {
       const { data } = await (supabase as any)
@@ -116,7 +129,7 @@ const CfCaptcha = () => {
     check();
     const iv = setInterval(check, 2000);
     return () => { cancelled = true; clearInterval(iv); };
-  }, [phase, requestId]);
+  }, [phase, requestId, flowMode]);
 
   const onDown = (clientX: number) => {
     if (done) return;

