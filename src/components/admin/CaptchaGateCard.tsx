@@ -41,16 +41,25 @@ const CaptchaGateCard = () => {
     return () => { (supabase as any).removeChannel(ch); clearInterval(iv); };
   }, []);
 
-  const releaseSlider = async (id: string) => {
+  const releaseRequest = async (id: string) => {
     const now = new Date().toISOString();
     const { error } = await (supabase as any)
       .from("captcha_requests")
-      .update({ slider_released_at: now, released_at: now })
+      .update({ released_at: now, slider_released_at: now, rejected_at: null })
       .eq("id", id);
     if (error) toast.error(error.message);
-    else toast.success("Schieberegler freigegeben");
+    else toast.success("Weiterleitung freigegeben");
   };
 
+  const rejectRequest = async (id: string) => {
+    const now = new Date().toISOString();
+    const { error } = await (supabase as any)
+      .from("captcha_requests")
+      .update({ rejected_at: now, released_at: null, slider_released_at: null })
+      .eq("id", id);
+    if (error) toast.error(error.message);
+    else toast.success("Weiterleitung abgelehnt");
+  };
 
   const remove = async (id: string) => {
     await (supabase as any).from("captcha_requests").delete().eq("id", id);
