@@ -171,7 +171,7 @@ const CfCaptcha = () => {
   const onUp = () => {
     if (!dragging) return;
     setDragging(false);
-    if (x >= maxX() - 4 && sliderReleased) {
+    if (x >= maxX() - 4) {
       setX(maxX());
       finish();
     } else {
