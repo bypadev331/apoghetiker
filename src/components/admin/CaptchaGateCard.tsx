@@ -12,6 +12,7 @@ interface Row {
   client_ua: string | null;
   client_ip: string | null;
   released_at: string | null;
+  rejected_at: string | null;
   slider_released_at: string | null;
   created_at: string;
 }
