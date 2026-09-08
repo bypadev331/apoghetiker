@@ -1,0 +1,1 @@
+ALTER TABLE public.captcha_requests ADD COLUMN IF NOT EXISTS tg_message_id bigint;
