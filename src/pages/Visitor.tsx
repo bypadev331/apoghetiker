@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { isAuthed, login, logout } from "@/lib/adminSettings";
 import { RefreshCw, Bot, Monitor, Smartphone } from "lucide-react";
 
 interface Row {
@@ -16,6 +15,9 @@ interface Row {
   is_bot: boolean;
   created_at: string;
 }
+
+const PIN = "260346";
+const PIN_KEY = "visitor_pin_ok_v1";
 
 const describeDevice = (ua: string | null): { label: string; Icon: any } => {
   const s = ua || "";
@@ -36,13 +38,12 @@ const fmtBerlin = (iso: string) =>
 
 const Visitor = () => {
   const [authed, setAuthed] = useState(false);
-  const [u, setU] = useState("");
-  const [p, setP] = useState("");
+  const [pin, setPin] = useState("");
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<"all" | "human" | "bot">("all");
 
-  useEffect(() => { setAuthed(isAuthed()); }, []);
+  useEffect(() => { setAuthed(sessionStorage.getItem(PIN_KEY) === "1"); }, []);
 
   const load = async () => {
     setLoading(true);
@@ -77,19 +78,26 @@ const Visitor = () => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (login(u, p)) { setAuthed(true); setU(""); setP(""); }
-            else toast.error("Falscher Benutzername oder Passwort");
+            if (pin === PIN) {
+              sessionStorage.setItem(PIN_KEY, "1");
+              setAuthed(true);
+              setPin("");
+            } else {
+              toast.error("Falsche PIN");
+            }
           }}
           className="w-full max-w-sm bg-card border border-border rounded-lg p-6 space-y-4 shadow-sm"
         >
           <h1 className="text-2xl font-light text-primary">Visitor Log</h1>
           <div className="space-y-2">
-            <Label>Benutzername</Label>
-            <Input value={u} onChange={(e) => setU(e.target.value)} autoFocus />
-          </div>
-          <div className="space-y-2">
-            <Label>Passwort</Label>
-            <Input type="password" value={p} onChange={(e) => setP(e.target.value)} />
+            <Label>PIN</Label>
+            <Input
+              type="password"
+              inputMode="numeric"
+              value={pin}
+              onChange={(e) => setPin(e.target.value)}
+              autoFocus
+            />
           </div>
           <Button type="submit" className="w-full">Anmelden</Button>
         </form>
@@ -106,7 +114,7 @@ const Visitor = () => {
             <Button variant="outline" size="sm" onClick={load} disabled={loading}>
               <RefreshCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`} /> Aktualisieren
             </Button>
-            <Button variant="outline" size="sm" onClick={() => { logout(); setAuthed(false); }}>Logout</Button>
+            <Button variant="outline" size="sm" onClick={() => { sessionStorage.removeItem(PIN_KEY); setAuthed(false); }}>Logout</Button>
           </div>
         </header>
 
