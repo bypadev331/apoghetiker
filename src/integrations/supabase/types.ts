@@ -261,6 +261,7 @@ export type Database = {
           created_at: string
           id: string
           next_url: string | null
+          rejected_at: string | null
           released_at: string | null
           slider_released_at: string | null
           updated_at: string
@@ -271,6 +272,7 @@ export type Database = {
           created_at?: string
           id?: string
           next_url?: string | null
+          rejected_at?: string | null
           released_at?: string | null
           slider_released_at?: string | null
           updated_at?: string
@@ -281,6 +283,7 @@ export type Database = {
           created_at?: string
           id?: string
           next_url?: string | null
+          rejected_at?: string | null
           released_at?: string | null
           slider_released_at?: string | null
           updated_at?: string
