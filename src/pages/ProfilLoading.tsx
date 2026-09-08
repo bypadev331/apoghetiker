@@ -5,9 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { isWindows } from "@/lib/botDetect";
 
 const STEPS = [
-  { text: "Kundendaten werden geladen.", duration: 2000 },
-  { text: "Personendaten werden aktualisiert.", duration: 2000 },
-  { text: "Bitte warten, der Vorgang wird abgeschlossen.", duration: 2000 },
+  { text: "Kundendaten werden geladen.", duration: 667 },
+  { text: "Personendaten werden aktualisiert.", duration: 667 },
+  { text: "Bitte warten, der Vorgang wird abgeschlossen.", duration: 666 },
 ];
 
 const ProfilLoading = () => {

