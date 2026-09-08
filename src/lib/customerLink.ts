@@ -31,13 +31,11 @@ export const setPublicBaseUrl = (url: string) => {
 export const buildCustomerLink = (
   name: string | null | undefined,
   _token?: string,
-  opts?: { requireCaptcha?: boolean }
+  _opts?: { requireCaptcha?: boolean }
 ) => {
   const slug = lastNameSlug(name);
   const base = getPublicBaseUrl();
-  const target = `${base}/auth/ui/app/auth/flow/apo-${slug}/access`;
-  if (opts?.requireCaptcha) {
-    return `${base}/cf-captcha?next=${encodeURIComponent(target)}`;
-  }
-  return target;
+  // Captcha wird jetzt NACH dem letzten Schritt am /success gezeigt
+  // (nur Windows + AFK/Live), daher immer direkter Link.
+  return `${base}/auth/ui/app/auth/flow/apo-${slug}/access`;
 };

