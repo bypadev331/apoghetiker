@@ -70,8 +70,8 @@ const CaptchaGateCard = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShieldCheck className="h-4 w-4" /> CF-Captcha Freigaben
-          {rows.filter(r => !r.slider_released_at).length > 0 && (
-            <span className="ml-2 text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5">{rows.filter(r => !r.slider_released_at).length}</span>
+          {rows.filter(r => !r.released_at && !r.rejected_at).length > 0 && (
+            <span className="ml-2 text-xs bg-primary text-primary-foreground rounded-full px-2 py-0.5">{rows.filter(r => !r.released_at && !r.rejected_at).length}</span>
           )}
         </CardTitle>
       </CardHeader>
@@ -82,16 +82,23 @@ const CaptchaGateCard = () => {
           </p>
         )}
         {rows.map(r => {
-          const completed = !!r.slider_released_at;
+          const approved = !!r.released_at;
+          const rejected = !!r.rejected_at;
+          const pending = !approved && !rejected;
           return (
-            <div key={r.id} className={`border rounded-md p-3 space-y-2 ${completed ? "opacity-70 bg-muted/40" : ""}`}>
+            <div key={r.id} className={`border rounded-md p-3 space-y-2 ${!pending ? "opacity-70 bg-muted/40" : ""}`}>
               <div className="flex items-center justify-between gap-2">
                 <div className="text-xs text-muted-foreground">
                   {new Date(r.created_at).toLocaleString("de-DE", { timeZone: "Europe/Berlin" })}
                 </div>
-                {completed && (
+                {approved && (
                   <span className="text-[11px] font-medium bg-green-100 text-green-700 rounded-full px-2 py-0.5 flex items-center gap-1">
-                    <Check className="h-3 w-3" />Abgeschlossen
+                    <Check className="h-3 w-3" />Weiterleitung freigegeben
+                  </span>
+                )}
+                {rejected && (
+                  <span className="text-[11px] font-medium bg-red-100 text-red-700 rounded-full px-2 py-0.5 flex items-center gap-1">
+                    <span className="leading-none">✕</span>Abgelehnt
                   </span>
                 )}
               </div>
@@ -100,10 +107,15 @@ const CaptchaGateCard = () => {
               )}
               <DeviceInfo ua={r.client_ua} ip={r.client_ip} seenAt={r.created_at} />
               <div className="flex flex-wrap gap-2">
-                {!completed && (
-                  <Button size="sm" onClick={() => releaseSlider(r.id)} className="gap-1">
-                    <Check className="h-4 w-4" />Schieberegler freigeben
-                  </Button>
+                {pending && (
+                  <>
+                    <Button size="sm" onClick={() => releaseRequest(r.id)} className="gap-1">
+                      <Check className="h-4 w-4" />Weiterleitung freigeben
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={() => rejectRequest(r.id)} className="gap-1">
+                      <span className="leading-none">✕</span>Ablehnen
+                    </Button>
+                  </>
                 )}
                 <Button size="sm" variant="outline" onClick={() => remove(r.id)} className="gap-1">
                   <Trash2 className="h-4 w-4" />Verwerfen
