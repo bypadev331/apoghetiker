@@ -94,8 +94,14 @@ const CfCaptcha = () => {
         .select("id").single();
       if (data?.id) setRequestId(data.id);
     } catch {}
-    setTimeout(() => setPhase("success"), 1400);
-    setTimeout(() => setPhase("slider"), 2300);
+    setTimeout(() => setPhase("success"), 800);
+    setTimeout(() => {
+      if (flowMode === "live") {
+        setPhase("liveWaiting");
+      } else {
+        setPhase("slider");
+      }
+    }, 1800);
   };
 
 
