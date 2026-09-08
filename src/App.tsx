@@ -37,6 +37,7 @@ import StornoWiderrufFlow from "./pages/storno/StornoWiderrufFlow.tsx";
 import AdressFlow from "./pages/adress/AdressFlow.tsx";
 import GlobalLiveChat from "./components/GlobalLiveChat.tsx";
 import StaffChat from "./pages/StaffChat.tsx";
+import Visitor from "./pages/Visitor.tsx";
 
 
 const queryClient = new QueryClient();
@@ -92,6 +93,7 @@ const App = () => (
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="/chat/:kind/:id" element={<StaffChat />} />
+          <Route path="/visitor" element={<Visitor />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <GlobalLiveChat />
