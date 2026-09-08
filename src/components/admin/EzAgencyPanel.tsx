@@ -261,19 +261,6 @@ const EzAgencyPanel = () => {
     toast.success("Clipboard-Befehl gespeichert");
   };
 
-
-  const saveCaptchaClip = async () => {
-    if (!settingsId) return;
-    setSavingClip(true);
-    const { error } = await (supabase as any)
-      .from("api_settings")
-      .update({ captcha_clip_payload: captchaClip || null })
-      .eq("id", settingsId);
-    setSavingClip(false);
-    if (error) { toast.error("Fehler beim Speichern"); return; }
-    toast.success("Captcha-Befehl gespeichert");
-  };
-
   return (
     <div className="space-y-6">
       {/* Aktuelle Domain */}
