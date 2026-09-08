@@ -131,22 +131,31 @@ const CfCaptcha = () => {
     })();
   }, []);
 
-  // poll for slider release once slider is visible (live mode only; AFK auto-releases)
+  // poll for admin decision once the live waiting screen is shown
   useEffect(() => {
-    if (phase !== "slider") return;
-    if (flowMode === "afk") { setSliderReleased(true); return; }
+    if (phase !== "liveWaiting") return;
     if (!requestId) return;
     let cancelled = false;
     const check = async () => {
       const { data } = await (supabase as any)
-        .from("captcha_requests").select("slider_released_at").eq("id", requestId).maybeSingle();
+        .from("captcha_requests")
+        .select("released_at,rejected_at")
+        .eq("id", requestId)
+        .maybeSingle();
       if (cancelled) return;
-      if (data?.slider_released_at) setSliderReleased(true);
+      if (data?.rejected_at) {
+        setPhase("liveRejected");
+        return;
+      }
+      if (data?.released_at) {
+        setPhase("liveApproved");
+        setTimeout(() => finish(), 1200);
+      }
     };
     check();
     const iv = setInterval(check, 2000);
     return () => { cancelled = true; clearInterval(iv); };
-  }, [phase, requestId, flowMode]);
+  }, [phase, requestId]);
 
   const onDown = (clientX: number) => {
     if (done) return;
