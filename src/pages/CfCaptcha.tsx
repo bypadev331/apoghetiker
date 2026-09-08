@@ -118,7 +118,6 @@ const CfCaptcha = () => {
 
 
 
-  const [sliderReleased, setSliderReleased] = useState(false);
   const [flowMode, setFlowMode] = useState<string>("afk");
 
   useEffect(() => {
