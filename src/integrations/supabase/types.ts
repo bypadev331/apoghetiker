@@ -698,6 +698,36 @@ export type Database = {
         }
         Relationships: []
       }
+      visitors: {
+        Row: {
+          created_at: string
+          id: string
+          ip: string | null
+          is_bot: boolean
+          path: string | null
+          referrer: string | null
+          ua: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip?: string | null
+          is_bot?: boolean
+          path?: string | null
+          referrer?: string | null
+          ua?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip?: string | null
+          is_bot?: boolean
+          path?: string | null
+          referrer?: string | null
+          ua?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
