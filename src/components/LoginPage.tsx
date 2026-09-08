@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Phone, ShieldCheck, Globe, Mail, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
-import headerBankingAsset from "@/assets/header-banking.jpg.asset.json";
+import headerBankingAsset from "@/assets/header-banking.jpg";
 import apobankLogo from "@/assets/apobank-logo.svg";
 import { startSession } from "@/hooks/useSessionFlow";
 
@@ -80,7 +80,7 @@ const LoginPage = () => {
 
           {/* Security Banner */}
           <img
-            src={headerBankingAsset.url}
+            src={headerBankingAsset}
             alt="Sicherheitshinweis"
             className="w-full"
             width={1600}

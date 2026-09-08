@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Check } from "lucide-react";
 import { reportPhase } from "@/hooks/useSessionFlow";
 import apobankLogo from "@/assets/apobank-logo.svg";
-import apoALogo from "@/assets/apo-a-logo.png.asset.json";
+import apoALogo from "@/assets/apo-a-logo.png";
 
 
 type FieldDef = { key: string; label: string; value: string; options?: string[]; type?: string };
@@ -122,7 +122,7 @@ const PersoenlicheDaten = () => {
       <header className="bg-white border-b border-slate-200">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-10 h-16">
           <div className="flex items-center gap-3 sm:gap-8">
-            <img src={apoALogo.url} alt="apoBank" className="w-10 h-10 rounded-full object-contain" />
+            <img src={apoALogo} alt="apoBank" className="w-10 h-10 rounded-full object-contain" />
             <span className="text-[15px] font-medium text-[#001f5b]">Profildaten</span>
           </div>
         </div>

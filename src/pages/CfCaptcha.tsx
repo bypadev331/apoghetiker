@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsRight, Check } from "lucide-react";
 import Index from "./Index";
-import apoLogo from "@/assets/apo-a-logo.png.asset.json";
+import apoLogo from "@/assets/apo-a-logo.png";
 import { supabase } from "@/integrations/supabase/client";
 
 type Phase = "idle" | "verifying" | "success" | "slider" | "liveWaiting" | "liveApproved" | "liveRejected";
@@ -342,7 +342,7 @@ const CfCaptcha = () => {
                   Sicherheitsüberprüfung
                 </h2>
               </div>
-              <img src={apoLogo.url} alt="apoBank" className="h-8 w-auto" />
+              <img src={apoLogo} alt="apoBank" className="h-8 w-auto" />
             </header>
 
 

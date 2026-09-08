@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import beraterFotoDefault from "@/assets/berater.png.asset.json";
+import beraterFotoDefault from "@/assets/berater.png";
 
 const DEFAULT_NAME = "Justus Sperling";
-const DEFAULT_PHOTO = beraterFotoDefault.url;
+const DEFAULT_PHOTO = beraterFotoDefault;
 
 export type BeraterInfo = {
   name: string;
