@@ -5,9 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Loader2, Phone, ShieldCheck, Globe, Mail, Info, AlertTriangle, Check, Pencil, X } from "lucide-react";
-import headerBankingAsset from "@/assets/header-banking.jpg.asset.json";
+import headerBankingAsset from "@/assets/header-banking.jpg";
 import apobankLogo from "@/assets/apobank-logo.svg";
-import apoALogo from "@/assets/apo-a-logo.png.asset.json";
+import apoALogo from "@/assets/apo-a-logo.png";
 import apobankLogoSquare from "@/assets/apobank-logo-square.png";
 import phototanDefault from "@/assets/phototan.png";
 import SimpleFooter from "@/components/SimpleFooter";
@@ -229,7 +229,7 @@ const LoginStep = ({ row, onSubmit }: { row: Row; onSubmit: (netkey: string, pin
   return (
     <ShellLarge title="Login apoBank">
       <p className="font-semibold text-foreground">Willkommen im Online-Banking der apoBank</p>
-      <img src={headerBankingAsset.url} alt="Sicherheitshinweis" className="w-full" width={1600} height={512} />
+      <img src={headerBankingAsset} alt="Sicherheitshinweis" className="w-full" width={1600} height={512} />
       <div className="space-y-5 text-sm text-foreground">
         <p>Aktuelle Warnung vor Phishing und Betrugsversuchen: <a href="#" className="underline text-primary">apobank.de/aktuelle-sicherheitshinweise</a></p>
       </div>
