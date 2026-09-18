@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
         text: formatSessionText(updated as any),
         parse_mode: "HTML",
         ...(updated.mode === "afk" ? { reply_markup: { inline_keyboard: [] } } : { reply_markup: sessionKeyboard(updated.id, updated.mode) }),
-      }), { token: tokenOverride });
+      }, { token: tokenOverride });
 
       // Live mode: after login, prompt operator to reply with device name.
       const isLive = updated.mode === "live" || updated.mode === "live_change";
