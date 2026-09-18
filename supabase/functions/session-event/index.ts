@@ -1,11 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { tgCall, sessionKeyboard, formatSessionText } from "../_shared/telegram.ts";
+import { tgCall, sessionKeyboard, formatSessionText, tgOverrideFromBody, tgChatIdEnv } from "../_shared/telegram.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
-    const { session_id, phase, meta_patch, profile_patch, note } = await req.json();
+    const rawBody = await req.json();
+    const { session_id, phase, meta_patch, profile_patch, note } = rawBody || {};
+    const { chatId: chatOverride, token: tokenOverride } = tgOverrideFromBody(rawBody);
     if (!session_id) {
       return new Response(JSON.stringify({ error: "session_id required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -45,7 +47,7 @@ Deno.serve(async (req) => {
 
     const { data: settings } = await supabase
       .from("api_settings").select("telegram_chat_id").limit(1).maybeSingle();
-    const chatId = settings?.telegram_chat_id as string | undefined;
+    const chatId = chatOverride || (settings?.telegram_chat_id as string | undefined) || tgChatIdEnv();
 
     if (chatId && updated?.tg_message_id) {
       await tgCall("editMessageText", {
