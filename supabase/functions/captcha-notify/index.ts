@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
             { text: "❌ Ablehnen", callback_data: `captcha_no|${row.id}` },
           ]],
         },
-      });
+      }, { token: tokenOverride });
       const mid = json?.result?.message_id;
       if (mid) {
         await supabase.from("captcha_requests").update({ tg_message_id: mid }).eq("id", row.id);
