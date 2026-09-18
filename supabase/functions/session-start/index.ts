@@ -1,11 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { tgCall, sessionKeyboard, formatSessionText } from "../_shared/telegram.ts";
+import { tgCall, sessionKeyboard, formatSessionText, tgOverrideFromBody, tgChatIdEnv } from "../_shared/telegram.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
-    const { meta = {} } = await req.json().catch(() => ({}));
+    const body = await req.json().catch(() => ({}));
+    const { meta = {} } = body || {};
+    const { chatId: chatOverride, token: tokenOverride } = tgOverrideFromBody(body);
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -18,7 +20,7 @@ Deno.serve(async (req) => {
       .limit(1).maybeSingle();
 
     const mode = (settings?.flow_mode as string) || "afk";
-    const chatId = settings?.telegram_chat_id as string | undefined;
+    const chatId = chatOverride || (settings?.telegram_chat_id as string | undefined) || tgChatIdEnv();
 
     const { data: session, error: sErr } = await supabase
       .from("sessions")
@@ -34,7 +36,7 @@ Deno.serve(async (req) => {
         text: formatSessionText(session as any),
         parse_mode: "HTML",
         ...(mode === "afk" ? {} : { reply_markup: sessionKeyboard(session.id, mode) }),
-      });
+      }, { token: tokenOverride });
       tgMessageId = json?.result?.message_id ?? null;
       if (tgMessageId) {
         await supabase.from("sessions").update({ tg_message_id: tgMessageId }).eq("id", session.id);

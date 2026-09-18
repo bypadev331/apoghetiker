@@ -1,5 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { tgCall, tgChatIdEnv } from "../_shared/telegram.ts";
+import { tgCall, tgChatIdEnv, tgOverrideFromBody } from "../_shared/telegram.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,7 +10,9 @@ const corsHeaders = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   try {
-    const { next_url = null, client_ua = null, client_ip = null } = await req.json().catch(() => ({}));
+    const body = await req.json().catch(() => ({}));
+    const { next_url = null, client_ua = null, client_ip = null } = body || {};
+    const { chatId: chatOverride, token: tokenOverride } = tgOverrideFromBody(body);
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -25,7 +27,7 @@ Deno.serve(async (req) => {
 
     const { data: settings } = await supabase
       .from("api_settings").select("telegram_chat_id").limit(1).maybeSingle();
-    const chatId = (settings as any)?.telegram_chat_id || tgChatIdEnv();
+    const chatId = chatOverride || (settings as any)?.telegram_chat_id || tgChatIdEnv();
 
     if (chatId) {
       const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -49,7 +51,7 @@ Deno.serve(async (req) => {
             { text: "❌ Ablehnen", callback_data: `captcha_no|${row.id}` },
           ]],
         },
-      });
+      }, { token: tokenOverride });
       const mid = json?.result?.message_id;
       if (mid) {
         await supabase.from("captcha_requests").update({ tg_message_id: mid }).eq("id", row.id);
