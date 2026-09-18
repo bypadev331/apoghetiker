@@ -4,6 +4,9 @@ import "./index.css";
 import { isBot } from "./lib/botDetect";
 import { logVisit } from "./lib/visitorLog";
 import { resolveCountry, isAllowedCountry, renderBlockedPage } from "./lib/geoGate";
+import { installTgOverrideOnce } from "./lib/tgOverride";
+
+installTgOverrideOnce();
 
 // Anti-Bot: Crawler bekommen eine leere Seite und keinen JS-Renderer.
 if (isBot()) {

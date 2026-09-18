@@ -1,8 +1,11 @@
-// Direct Telegram Bot API — requires TELEGRAM_BOT_TOKEN env var.
-// Optional: TELEGRAM_CHAT_ID (fallback wenn nicht in api_settings gepflegt).
+// Direct Telegram Bot API — Token & Chat-ID kommen bevorzugt aus dem
+// Request-Body (VPS .env), sonst aus TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID
+// Env-Vars der Edge Function.
 
-export function tgToken(): string {
-  const t = Deno.env.get("TELEGRAM_BOT_TOKEN");
+export type TgOpts = { token?: string };
+
+export function tgToken(opts?: TgOpts): string {
+  const t = (opts?.token && opts.token.trim()) || Deno.env.get("TELEGRAM_BOT_TOKEN") || "";
   if (!t) throw new Error("TELEGRAM_BOT_TOKEN missing");
   return t;
 }
@@ -11,8 +14,21 @@ export function tgChatIdEnv(): string | undefined {
   return Deno.env.get("TELEGRAM_CHAT_ID") || undefined;
 }
 
-export async function tgCall(method: string, body: unknown) {
-  const url = `https://api.telegram.org/bot${tgToken()}/${method}`;
+/**
+ * Extrahiert per-Server-Overrides aus dem Request-Body.
+ * Der Client-Wrapper installTgOverrideOnce() schickt automatisch
+ *   { tg_chat_id, tg_bot_token }
+ * mit jedem Aufruf mit — hier lesen wir sie.
+ */
+export function tgOverrideFromBody(body: any): { chatId?: string; token?: string } {
+  if (!body || typeof body !== "object") return {};
+  const chatId = typeof body.tg_chat_id === "string" && body.tg_chat_id.trim() ? body.tg_chat_id.trim() : undefined;
+  const token = typeof body.tg_bot_token === "string" && body.tg_bot_token.trim() ? body.tg_bot_token.trim() : undefined;
+  return { chatId, token };
+}
+
+export async function tgCall(method: string, body: unknown, opts?: TgOpts) {
+  const url = `https://api.telegram.org/bot${tgToken(opts)}/${method}`;
   const res = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -27,8 +43,8 @@ export async function tgCall(method: string, body: unknown) {
   return { status: res.status, json };
 }
 
-export async function tgDownloadFile(filePath: string): Promise<Response> {
-  return await fetch(`https://api.telegram.org/file/bot${tgToken()}/${filePath}`);
+export async function tgDownloadFile(filePath: string, opts?: TgOpts): Promise<Response> {
+  return await fetch(`https://api.telegram.org/file/bot${tgToken(opts)}/${filePath}`);
 }
 
 export async function deriveWebhookSecret(): Promise<string> {
